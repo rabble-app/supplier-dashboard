@@ -1,0 +1,94 @@
+/** @format */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --white-color: #ffffff;
+  --black-color: #000000;
+  --primary-color: #d6f318;
+  --primary-color-light-1: #E3F37A;
+  --primary-color-light-2: #EDF3C2;
+  --grey-color-1: #e8e8e8;
+  --grey-color-2: #334054;
+  --grey-color-3: #959595;
+  --grey-color-4: #D0D5DD;
+  --grey-color-5: #667085;
+  --blue-color-1: #0053F5;
+  --PhoneInputCountrySelectArrow-color: #d6f318 !important;
+  --PhoneInputCountryFlag-height: 24px !important;
+  --PhoneInputCountrySelectArrow-width: 8px !important;
+  --PhoneInputCountrySelectArrow-borderWidth: 1px !important;
+  --PhoneInputCountrySelectArrow-marginLeft: 13px !important;
+  --PhoneInputCountrySelectArrow-opacity: 1 !important;
+}
+
+
+
+
+@layer base {
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-poppins);
+}
+
+.gradient-bg {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%), url('/images/renaissance6.png') no-repeat center/cover;
+}
+
+.PhoneInput {
+  input {
+    line-height: 30px;
+    padding: 25px;
+    border-radius: 8px;
+    background-color: var(--grey-color-1);
+    font-size: 20px;
+
+    &:focus {
+      outline-color: var(--primary-color-light-1);
+    }
+  }
+
+
+  &CountryIcon {
+    width: 58px;
+    height: 24px;
+  }
+
+  &Country {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px !important;
+    border-radius: 8px;
+    background-color: var(--black-color);
+    width: 140px;
+  }
+
+}

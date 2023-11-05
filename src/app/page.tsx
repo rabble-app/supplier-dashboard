@@ -1,9 +1,11 @@
-import Image from 'next/image'
+/** @format */
+
+import LoginPage from '@/components/auth/LoginPage';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      Dummy Content
+    <main className='flex min-h-screen flex-col'>
+      <LoginPage />
     </main>
-  )
+  );
 }
