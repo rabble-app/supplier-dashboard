@@ -18,6 +18,7 @@ const config: Config = {
       'grey-3': 'var(--grey-color-3)',
       'grey-4': 'var(--grey-color-4)',
       'grey-5': 'var(--grey-color-5)',
+      'grey-6': 'var(--grey-color-6)',
       'blue-1': 'var(--blue-color-1)',
       black: 'var(--black-color)',
       white: 'var(--white-color)',

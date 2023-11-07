@@ -10,6 +10,7 @@ interface IInput {
   placeholder?: string;
   type: string;
   className?: string;
+  leftIcon?: string;
 }
 
 const Input = ({
@@ -18,6 +19,7 @@ const Input = ({
   placeholder = '',
   type,
   className = '',
+  leftIcon,
 }: IInput) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -36,9 +38,20 @@ const Input = ({
         {label}
       </label>
       <div className='flex flex-col relative'>
+        {leftIcon && (
+          <Image
+            src={leftIcon}
+            width={24}
+            height={24}
+            alt='eye-icon'
+            className='absolute left-[25px] top-7'
+          />
+        )}
         <input
           id={id}
-          className={`bg-grey-1 rounded-lg leading-[30px] p-[25px] text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 ${className}`}
+          className={`bg-grey-1 rounded-lg leading-[30px] p-[25px] ${
+            leftIcon ? 'pl-[60px]' : ''
+          } text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 ${className}`}
           type={inputType}
           placeholder={placeholder}
         />

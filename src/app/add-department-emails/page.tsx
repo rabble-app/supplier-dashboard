@@ -36,7 +36,7 @@ const AddDepartmentEmailsPage = () => {
                 placeholder='e.g. sales@meatsupplier.com'
               />
             </div>
-            <Button label='Continue' />
+            <Button label='Continue' to='/signup/choose-main-category' />
           </div>
         </div>
       </div>

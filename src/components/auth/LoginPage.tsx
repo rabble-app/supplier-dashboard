@@ -37,7 +37,7 @@ const LoginPage = () => {
                   </p>
                 </Link>
               </div>
-              <Button label='Log in' />
+              <Button label='Log in' to='/dashboard' />
             </div>
           </div>
           <p className='text-lg text-center font-gosha'>

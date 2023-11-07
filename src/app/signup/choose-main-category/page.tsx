@@ -1,12 +1,31 @@
 /** @format */
+'use client';
+import { useState } from 'react';
 
 import LeftPanel from '@/components/auth/LeftPanel';
 import Header from '@/components/auth/Header';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import BackButton from '@/components/BackButton';
+import Select from '@/components/Select';
+
+const categories = [
+  'Alcohol',
+  'Bakery',
+  'Coffee and Tea',
+  'Dairy',
+  'Drinks',
+  'Fish and Seafood',
+  'Fruits and Vegetables',
+  'General',
+  'Meat',
+  'Speciality',
+  'Supplies',
+];
 
 const ChooseMainCategoryPage = () => {
+  const [selectedCategory, setSelectedCategory] = useState('');
+
   return (
     <div className='flex'>
       <LeftPanel finishMessage='Finish setting up your supplier account' />
@@ -23,15 +42,39 @@ const ChooseMainCategoryPage = () => {
           />
 
           <div className='flex flex-col justify-between h-full'>
-            <div className='flex flex-col gap-6 mt-10'>
-              <Input
-                id='accounts_email'
-                label='Accounts Email'
-                type='email'
-                placeholder='e.g. accounts@meatsupplier.com'
+            <div className='flex flex-col gap-10 mt-10'>
+              <Select
+                id='main_category'
+                label='Main Category'
+                placeholder='Select a Category'
+                options={[
+                  { id: 1, value: 'Beverages' },
+                  { id: 2, value: 'Drinks' },
+                ]}
               />
+
+              <div>
+                <label className='text-grey-2 text-base leading-6 font-light'>
+                  Select any other categories you sell (optional)
+                </label>
+                <div className='mt-5 flex gap-4 flex-wrap w-[85%]'>
+                  {categories.map((cat) => (
+                    <div
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`${
+                        selectedCategory === cat
+                          ? 'bg-black text-primary'
+                          : 'bg-grey-1 text-grey-2'
+                      }  rounded-[100px] text-base leading-5 font-gosha px-6 py-2.5 cursor-pointer`}
+                    >
+                      {cat}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <Button label='Continue' />
+            <Button label='Continue' to='/signup/add-delivery-address' />
           </div>
         </div>
       </div>
