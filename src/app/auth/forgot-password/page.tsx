@@ -44,12 +44,12 @@ const ForgotPasswordPage = () => {
             </div>
           </div>
 
-          <p className='text-lg text-center font-gosha'>
+          <h4 className='text-lg text-center font-gosha'>
             Already have an account?{' '}
             <Link href='/' className='w-fit'>
               <span className='text-blue-1 cursor-pointer'>Log in</span>
             </Link>
-          </p>
+          </h4>
         </div>
       </div>
     </div>

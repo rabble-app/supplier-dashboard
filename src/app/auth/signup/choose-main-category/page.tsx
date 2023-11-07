@@ -68,13 +68,13 @@ const ChooseMainCategoryPage = () => {
                           : 'bg-grey-1 text-grey-2'
                       }  rounded-[100px] text-base leading-5 font-gosha px-6 py-2.5 cursor-pointer`}
                     >
-                      {cat}
+                      <h4>{cat}</h4>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-            <Button label='Continue' to='/signup/add-delivery-address' />
+            <Button label='Continue' to='/auth/signup/add-delivery-address' />
           </div>
         </div>
       </div>

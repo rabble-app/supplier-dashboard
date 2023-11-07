@@ -7,7 +7,7 @@ const LeftPanel = ({ finishMessage }: { finishMessage?: string }) => {
   return (
     <div className='w-full gradient-bg px-5 py-10 overflow-hidden sticky top-0'>
       <Link href='/'>
-        <h1 className='text-[64px] font-normal text-primary font-gosha leading-[88px] mb-2'>
+        <h1 className='text-[64px] text-primary font-gosha leading-[88px] mb-2'>
           Rabble
         </h1>
       </Link>

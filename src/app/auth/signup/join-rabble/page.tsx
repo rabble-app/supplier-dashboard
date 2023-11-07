@@ -57,7 +57,7 @@ const JoinRabblePage = () => {
                 </div>
               </div>
             </div>
-            <Button label='Continue' to='/signup/add-department-emails' />
+            <Button label='Continue' to='/auth/signup/add-department-emails' />
           </div>
         </div>
       </div>

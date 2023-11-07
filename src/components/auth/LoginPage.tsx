@@ -31,7 +31,7 @@ const LoginPage = () => {
                   type='password'
                   placeholder='password'
                 />
-                <Link href='/forgot-password' className='block w-fit'>
+                <Link href='/auth/forgot-password' className='block w-fit'>
                   <p className='text-blue-1 text-base mt-2.5 cursor-pointer w-fit'>
                     Forgot password?
                   </p>
@@ -40,14 +40,14 @@ const LoginPage = () => {
               <Button label='Log in' to='/dashboard' />
             </div>
           </div>
-          <p className='text-lg text-center font-gosha'>
+          <h4 className='text-lg text-center font-gosha'>
             New to RABBLE?{' '}
-            <Link href='/signup/set-up-supplier-account'>
+            <Link href='/auth/signup/set-up-supplier-account'>
               <span className='text-blue-1 cursor-pointer'>
                 set up a Supplier account
               </span>
             </Link>
-          </p>
+          </h4>
         </div>
       </div>
     </div>

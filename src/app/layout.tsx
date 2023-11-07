@@ -5,7 +5,10 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
 const goshaSans = localFont({
-  src: '../fonts/PPGoshaSans-Bold.otf',
+  src: [
+    { path: '../fonts/PPGoshaSans-Bold.otf', weight: '700' },
+    { path: '../fonts/PPGoshaSans-Regular.otf', weight: '400' },
+  ],
   variable: '--font-gosha',
 });
 

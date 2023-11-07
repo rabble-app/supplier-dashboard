@@ -22,6 +22,7 @@ const config: Config = {
       'blue-1': 'var(--blue-color-1)',
       black: 'var(--black-color)',
       white: 'var(--white-color)',
+      'white-1': 'var(--white-color-1)',
     },
     extend: {
       backgroundImage: {

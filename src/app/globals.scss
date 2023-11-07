@@ -9,6 +9,7 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --white-color: #ffffff;
+  --white-color-1: #F9F8F4;
   --black-color: #000000;
   --primary-color: #d6f318;
   --primary-color-light-1: #E3F37A;
@@ -54,6 +55,15 @@ html {
 
 body {
   font-family: var(--font-poppins);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
 }
 
 .gradient-bg {
