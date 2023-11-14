@@ -7,19 +7,23 @@ import Image from 'next/image';
 interface IInput {
   id: string;
   label: string;
+  name?: string;
   placeholder?: string;
   type: string;
   className?: string;
   leftIcon?: string;
+  required?: boolean;
 }
 
 const Input = ({
   id,
   label,
+  name,
   placeholder = '',
   type,
   className = '',
   leftIcon,
+  required = false,
 }: IInput) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -53,7 +57,9 @@ const Input = ({
             leftIcon ? 'pl-[60px]' : ''
           } text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 ${className}`}
           type={inputType}
+          name={name}
           placeholder={placeholder}
+          required={required}
         />
         {type == 'password' && (
           <Image

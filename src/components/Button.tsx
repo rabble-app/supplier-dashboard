@@ -2,9 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Url } from 'url';
 
 interface IButton {
-  label: string;
+  label: JSX.Element | string;
   onClick?: () => void;
   icon?: JSX.Element;
   className?: string;
