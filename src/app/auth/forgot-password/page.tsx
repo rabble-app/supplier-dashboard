@@ -1,7 +1,8 @@
 /** @format */
 
 'use client';
-import { useState } from 'react';
+import { Spin } from 'antd';
+import { useTransition } from 'react';
 import Link from 'next/link';
 
 import Button from '@/components/Button';
@@ -10,9 +11,12 @@ import LeftPanel from '@/components/auth/LeftPanel';
 import BackButton from '@/components/BackButton';
 import Alert from '@/components/Alert';
 import Header from '@/components/auth/Header';
+import usePage from './usePage';
 
 const ForgotPasswordPage = () => {
-  const [showMessage, setShowMessage] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const { isEmailLinkSent, postResetPassword } = usePage();
 
   return (
     <div className='flex'>
@@ -21,10 +25,13 @@ const ForgotPasswordPage = () => {
         <div className='flex flex-col justify-between h-full'>
           <div className='flex flex-col'>
             <BackButton />
-            <div className='flex flex-col gap-6 mt-10'>
+            <form
+              action={(e) => startTransition(() => postResetPassword(e))}
+              className='flex flex-col gap-6 mt-10'
+            >
               <Header title='Reset password?' />
 
-              {showMessage && (
+              {isEmailLinkSent && (
                 <Alert
                   message='We’ve sent you an email, check your inbox for instructions on
                 how to reset your password.'
@@ -35,13 +42,12 @@ const ForgotPasswordPage = () => {
                 id='email'
                 label='Email'
                 type='email'
+                name='email'
+                required={true}
                 placeholder='e.g. Maxwell@meatsupplier.com'
               />
-              <Button
-                label='Send Reset Link'
-                onClick={() => setShowMessage(true)}
-              />
-            </div>
+              <Button label={isPending ? <Spin /> : 'Send Reset Link'} />
+            </form>
           </div>
 
           <h4 className='text-lg text-center font-gosha'>

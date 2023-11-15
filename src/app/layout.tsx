@@ -1,5 +1,6 @@
 /** @format */
 
+import { ReduxProvider } from '@/redux/provider';
 import './globals.scss';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
@@ -43,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${goshaSans.variable} ${poppins.variable}`}>
-        {children}
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

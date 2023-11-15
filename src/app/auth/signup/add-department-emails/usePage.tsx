@@ -4,24 +4,22 @@ import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 
-import { handleSetUpSupplierAccount } from '@/actions/authActions';
-import { logIn } from '@/redux/features/authSlice';
-import { AppDispatch } from '@/redux/store';
+import { handleAddDepartmentEmails } from '@/actions/authActions';
+import { useAppSelector } from '@/redux/store';
 
 const usePage = () => {
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
+  const authUser = useAppSelector((state) => state.authReducer);
 
-  const postSetUpSupplierAccount = async (e: FormData) => {
+  const postAddDepartmentEmails = async (e: FormData) => {
+    const token = localStorage.token;
     try {
-      const result = await handleSetUpSupplierAccount(e);
+      const result = await handleAddDepartmentEmails(e, authUser.id, token);
       if (result.error) {
         throw new Error(JSON.stringify(result));
       }
-
-      localStorage.setItem('token', result.data.token);
-      dispatch(logIn(result.data));
-      router.push('/auth/signup/verify-email');
+      console.log('Server action result:', result.data);
+      router.push('/auth/signup/choose-main-category');
       message.success(result.message);
     } catch (error: any) {
       const errorObject = JSON.parse(error.message);
@@ -30,7 +28,7 @@ const usePage = () => {
     }
   };
 
-  return { postSetUpSupplierAccount };
+  return { postAddDepartmentEmails };
 };
 
 export default usePage;

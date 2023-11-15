@@ -1,14 +1,20 @@
 /** @format */
-
-import React from 'react';
+'use client';
+import { Spin } from 'antd';
+import React, { useTransition } from 'react';
 import Link from 'next/link';
 
 import Button from '../Button';
 import Input from '../Input';
 import Header from './Header';
 import LeftPanel from './LeftPanel';
+import usePage from './usePage';
 
 const LoginPage = () => {
+  const [isPending, startTransition] = useTransition();
+
+  const { postLogin } = usePage();
+
   return (
     <div className='flex'>
       <LeftPanel />
@@ -17,12 +23,17 @@ const LoginPage = () => {
           <div>
             <Header title='Log in to Rabble' />
 
-            <div className='flex flex-col gap-8 mt-14'>
+            <form
+              action={(e) => startTransition(() => postLogin(e))}
+              className='flex flex-col gap-8 mt-14'
+            >
               <Input
                 id='email'
                 label='Email'
                 type='email'
                 placeholder='e.g. Maxwell@meatsupplier.com'
+                name='email'
+                required={true}
               />
               <div>
                 <Input
@@ -30,6 +41,8 @@ const LoginPage = () => {
                   label='Password'
                   type='password'
                   placeholder='password'
+                  name='password'
+                  required={true}
                 />
                 <Link href='/auth/forgot-password' className='block w-fit'>
                   <p className='text-blue-1 text-base mt-2.5 cursor-pointer w-fit'>
@@ -37,8 +50,8 @@ const LoginPage = () => {
                   </p>
                 </Link>
               </div>
-              <Button label='Log in' to='/dashboard' />
-            </div>
+              <Button label={isPending ? <Spin /> : 'Log in'} />
+            </form>
           </div>
           <h4 className='text-lg text-center font-gosha'>
             New to RABBLE?{' '}
