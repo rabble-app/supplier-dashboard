@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Spin } from 'antd';
 
 import Button from '@/components/Button';
-import Input from '@/components/Input';
+import Input from '@/components/auth/Input';
 import LeftPanel from '@/components/auth/LeftPanel';
 import Header from '@/components/auth/Header';
 import PhoneNumberInput from '@/components/PhoneInput';

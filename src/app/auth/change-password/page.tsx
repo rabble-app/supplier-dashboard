@@ -5,7 +5,7 @@ import { Spin } from 'antd';
 
 import LeftPanel from '@/components/auth/LeftPanel';
 import Header from '@/components/auth/Header';
-import Input from '@/components/Input';
+import Input from '@/components/auth/Input';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import usePage from './usePage';

@@ -5,7 +5,7 @@ import React, { useTransition } from 'react';
 import Link from 'next/link';
 
 import Button from '../Button';
-import Input from '../Input';
+import Input from './Input';
 import Header from './Header';
 import LeftPanel from './LeftPanel';
 import usePage from './usePage';

@@ -6,7 +6,7 @@ import { useTransition } from 'react';
 import Link from 'next/link';
 
 import Button from '@/components/Button';
-import Input from '@/components/Input';
+import Input from '@/components/auth/Input';
 import LeftPanel from '@/components/auth/LeftPanel';
 import BackButton from '@/components/BackButton';
 import Alert from '@/components/Alert';

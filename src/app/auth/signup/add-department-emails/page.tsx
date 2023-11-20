@@ -5,7 +5,7 @@ import { useTransition } from 'react';
 
 import LeftPanel from '@/components/auth/LeftPanel';
 import Header from '@/components/auth/Header';
-import Input from '@/components/Input';
+import Input from '@/components/auth/Input';
 import Button from '@/components/Button';
 import BackButton from '@/components/BackButton';
 import usePage from './usePage';
