@@ -1,9 +1,57 @@
 /** @format */
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
+import { Table } from 'antd';
+
 import SearchIcon from '@/components/svgs/SearchIcon';
+import Tabs from '@/components/Tabs';
+import {
+  IPendingLateCompletedData,
+  ISubscriptionsData,
+  subscriptionColumns,
+  pendingLateCompletedColumns,
+  tabItems,
+  ITabConfig,
+  getFilteredDataByStatus,
+} from './util';
+import { pendingLateCompletedOrders, subscriptions } from './data';
+
+const subscriptionsData: ISubscriptionsData[] = subscriptions;
+const pendingLateCompletedData: IPendingLateCompletedData[] =
+  pendingLateCompletedOrders;
 
 const Orders = () => {
+  const [activeTab, setActiveTab] = useState('Subscriptions');
+
+  const handleActionClick = (id: number) => {
+    console.log(id);
+  };
+
+  const tabConfig: ITabConfig = {
+    Subscriptions: {
+      columns: subscriptionColumns(handleActionClick),
+      data: subscriptionsData,
+    },
+    'Pending orders': {
+      columns: pendingLateCompletedColumns(handleActionClick),
+      data: getFilteredDataByStatus(pendingLateCompletedData, 'Pending'),
+    },
+    Completed: {
+      columns: pendingLateCompletedColumns(handleActionClick),
+      data: getFilteredDataByStatus(pendingLateCompletedData, 'Delivered'),
+    },
+    Late: {
+      columns: pendingLateCompletedColumns(handleActionClick),
+      data: getFilteredDataByStatus(pendingLateCompletedData, 'Late'),
+    },
+  };
+
+  const activeTabConfig = tabConfig[activeTab] || {};
+
+  const { columns, data } = activeTabConfig;
+
+  // console.log(4, getAction())
+
   return (
     <div className='pt-8'>
       <div>
@@ -17,24 +65,13 @@ const Orders = () => {
           Keep track of team orders and their status.
         </p>
       </div>
-      <div className='mt-[30px] border-grey-4 border-[1px] rounded-lg py-5 px-4 bg-white '>
-        <div className='flex justify-between items-center gap-[190px]'>
-          <div className=''>
-            <ul className='flex gap-3 border-grey-4 border-[1px] rounded-lg'>
-              <li className='border-grey-4 border-r-[1px] px-4 py-3 text-grey-6 text-xs font-semibold cursor-pointer'>
-                Subscriptions
-              </li>
-              <li className='border-grey-4 border-r-[1px] px-4 py-3 text-grey-6 text-xs font-semibold cursor-pointer'>
-                Pending orders
-              </li>
-              <li className='border-grey-4 border-r-[1px] px-4 py-3 text-grey-6 text-xs font-semibold cursor-pointer'>
-                Completed
-              </li>
-              <li className='px-4 py-3 text-grey-6 text-xs font-semibold cursor-pointer'>
-                Late
-              </li>
-            </ul>
-          </div>
+      <div className='mt-[30px] border-grey-4 border-[1px] rounded-lg py-5 bg-white '>
+        <div className='flex justify-between items-center gap-[190px] px-4'>
+          <Tabs
+            items={tabItems}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
           <div className='w-1/3'>
             <div className='relative'>
               <SearchIcon className='absolute top-3 left-5' stroke='#667085' />
@@ -46,6 +83,16 @@ const Orders = () => {
             </div>
           </div>
         </div>
+
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{
+            position: ['bottomCenter'],
+            pageSize: 7,
+          }}
+          className='mt-9 custom-table'
+        />
       </div>
     </div>
   );
