@@ -6,15 +6,17 @@ import { Table } from 'antd';
 import SearchIcon from '@/components/svgs/SearchIcon';
 import Tabs from '@/components/Tabs';
 import {
-  IPendingLateCompletedData,
-  ISubscriptionsData,
   subscriptionColumns,
   pendingLateCompletedColumns,
   tabItems,
-  ITabConfig,
   getFilteredDataByStatus,
 } from './util';
 import { pendingLateCompletedOrders, subscriptions } from './data';
+import {
+  IPendingLateCompletedData,
+  ISubscriptionsData,
+  ITabConfig,
+} from './interfaces';
 
 const subscriptionsData: ISubscriptionsData[] = subscriptions;
 const pendingLateCompletedData: IPendingLateCompletedData[] =
@@ -49,8 +51,6 @@ const Orders = () => {
   const activeTabConfig = tabConfig[activeTab] || {};
 
   const { columns, data } = activeTabConfig;
-
-  // console.log(4, getAction())
 
   return (
     <div className='pt-8'>

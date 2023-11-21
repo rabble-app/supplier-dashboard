@@ -3,19 +3,11 @@
 import { Dropdown, Space } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import Image from 'next/image';
-
-export interface ITabConfig {
-  [key: string]: {
-    columns: ColumnsType<any>;
-    data: any[];
-  };
-}
-
-interface Action {
-  key: string;
-  label: React.ReactNode;
-  onClick: (id: number, onClickCallback: (id: number) => void) => void;
-}
+import {
+  IAction,
+  IPendingLateCompletedData,
+  ISubscriptionsData,
+} from './interfaces';
 
 export const getFilteredDataByStatus = (
   data: IPendingLateCompletedData[],
@@ -31,31 +23,6 @@ const getStatusClass = (status: 'Pending' | 'Late' | 'Delivered') => {
 
   return statusClasses[status] || '';
 };
-
-export interface ISubscriptionsData {
-  key: number;
-  hostName: string;
-  postcode: string;
-  subscriptionValue: number;
-  frequency: string;
-  members: string;
-  activeSince: string;
-  successfulDeliveries: string;
-  nextDelivery: string;
-}
-
-export interface IPendingLateCompletedData {
-  key: number;
-  orderId: string;
-  hostName: string;
-  producerName: string;
-  postcode: string;
-  address: string;
-  category: string;
-  orderValue: number;
-  expectedDelivery: string;
-  orderStatus: string;
-}
 
 export const tabItems = [
   {
@@ -83,7 +50,7 @@ export const handleAction = (
   onClickCallback(id);
 };
 
-const actions: Action[] = [
+const actions: IAction[] = [
   {
     key: 'view-more-details',
     label: (
