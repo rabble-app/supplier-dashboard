@@ -5,23 +5,34 @@ import { ColumnsType } from 'antd/es/table';
 import Image from 'next/image';
 import {
   IAction,
+  IInvoiceItemsData,
+  IOrderStatus,
   IPendingLateCompletedData,
   ISubscriptionsData,
 } from './interfaces';
 
 export const getFilteredDataByStatus = (
   data: IPendingLateCompletedData[],
-  status: 'Pending' | 'Late' | 'Delivered'
+  status: IOrderStatus
 ) => data.filter((item) => item.orderStatus === status);
 
-const getStatusClass = (status: 'Pending' | 'Late' | 'Delivered') => {
+export const getStatusClass = (status: IOrderStatus) => {
   const statusClasses = {
     Pending: 'bg-black text-primary',
     Delivered: 'bg-primary text-black',
     Late: 'bg-[#FFF3F5] text-[#FF1A35]',
+    Default: '',
   };
 
   return statusClasses[status] || '';
+};
+
+export const getStatusByTabName = (tab: string) => {
+  let status: IOrderStatus = 'Default';
+  if (tab === 'Pending orders') status = 'Pending';
+  else if (tab === 'Completed') status = 'Delivered';
+  else if (tab === 'Late') status = 'Late';
+  return status;
 };
 
 export const tabItems = [
@@ -235,5 +246,38 @@ export const pendingLateCompletedColumns = (
         </Dropdown>
       </Space>
     ),
+  },
+];
+
+export const invoiceItemsColumns: ColumnsType<IInvoiceItemsData> = [
+  {
+    title: 'Product code',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    render: (text) => <p>#{text}</p>,
+  },
+  {
+    title: 'Product name',
+    dataIndex: 'productName',
+    key: 'productName',
+    render: (text) => <p>{text}</p>,
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+    key: 'price',
+    render: (text) => <p>£{text}.00</p>,
+  },
+  {
+    title: 'Quantity',
+    dataIndex: 'quantity',
+    key: 'quantity',
+    render: (text) => <p>{text}</p>,
+  },
+  {
+    title: 'Total price',
+    dataIndex: 'totalPrice',
+    key: 'totalPrice',
+    render: (text) => <p>£{text}.00</p>,
   },
 ];

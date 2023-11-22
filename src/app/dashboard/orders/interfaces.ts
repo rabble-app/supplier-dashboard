@@ -27,6 +27,17 @@ export interface IPendingLateCompletedData {
   orderStatus: string;
 }
 
+export type IOrderStatus = 'Pending' | 'Late' | 'Delivered' | 'Default';
+
+export interface IInvoiceItemsData {
+  key: number;
+  productCode: string;
+  productName: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+}
+
 export interface IAction {
   key: string;
   label: React.ReactNode;

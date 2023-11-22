@@ -477,3 +477,22 @@ export const pendingLateCompletedOrders = [
     orderStatus: 'Late',
   },
 ];
+
+export const invoiceItems = [
+  {
+    key: 241,
+    productCode: '29128',
+    productName: 'AA DENAVOLO, "CATAVELA" BIANCO"',
+    price: 2,
+    quantity: 5,
+    totalPrice: 10,
+  },
+  {
+    key: 242,
+    productCode: '20932',
+    productName: 'Product name',
+    price: 2,
+    quantity: 5,
+    totalPrice: 10,
+  },
+];
