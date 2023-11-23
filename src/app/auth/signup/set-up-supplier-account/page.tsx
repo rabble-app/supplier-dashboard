@@ -1,16 +1,22 @@
 /** @format */
-
 'use client';
+import { useTransition } from 'react';
 import Link from 'next/link';
-import PhoneInput from 'react-phone-number-input';
+import { Spin } from 'antd';
 
 import Button from '@/components/Button';
-import Input from '@/components/Input';
+import Input from '@/components/auth/Input';
 import LeftPanel from '@/components/auth/LeftPanel';
 import Header from '@/components/auth/Header';
+import PhoneNumberInput from '@/components/PhoneInput';
+import usePage from './usePage';
 import 'react-phone-number-input/style.css';
 
 const SetUpSupplierAccountPage = () => {
+  const [isPending, startTransition] = useTransition();
+
+  const { postSetUpSupplierAccount } = usePage();
+
   return (
     <div className='flex'>
       <LeftPanel />
@@ -21,50 +27,55 @@ const SetUpSupplierAccountPage = () => {
             title='Set up your supplier account'
             subtitle='Enter your business details and an email address for receiving orders'
           />
-          <div className='flex flex-col gap-4 mt-6'>
-            <Input
-              id='bus_name'
-              label='Business Name'
-              type='text'
-              placeholder='e.g. Veg Supplier'
-            />
-            <Input
-              id='bus_email'
-              label='Email'
-              type='email'
-              placeholder='e.g. Maxwell@meatsupplier.com'
-            />
-            <Input
-              id='bus_password'
-              label='Password'
-              type='password'
-              placeholder='password'
-            />
-            <Input
-              id='bus_address'
-              label='Business Address'
-              type='text'
-              placeholder='e.g. street 17, NJ98, London'
-            />
+          <form
+            action={(e) => startTransition(() => postSetUpSupplierAccount(e))}
+          >
+            <div className='flex flex-col gap-4 mt-6'>
+              <Input
+                id='bus_name'
+                label='Business Name'
+                type='text'
+                name='businessName'
+                placeholder='e.g. Veg Supplier'
+                required={true}
+              />
+              <Input
+                id='bus_email'
+                label='Email'
+                type='email'
+                name='email'
+                placeholder='e.g. Maxwell@meatsupplier.com'
+                required={true}
+              />
+              <Input
+                id='bus_password'
+                label='Password'
+                type='password'
+                name='password'
+                placeholder='password'
+                required={true}
+              />
+              <Input
+                id='bus_address'
+                label='Business Address'
+                type='text'
+                name='businessAddress'
+                placeholder='e.g. street 17, NJ98, London'
+                required={true}
+              />
 
-            <div className='flex flex-col'>
-              <label className='text-grey-2 leading-6 text-base font-medium mb-1'>
-                Business Phone Number
-              </label>
-              <PhoneInput
-                international
-                countryCallingCodeEditable={false}
-                defaultCountry='GB'
-                value=''
-                onChange={() => {}}
+              <div className='flex flex-col'>
+                <label className='text-grey-2 leading-6 text-base font-medium mb-1'>
+                  Business Phone Number
+                </label>
+                <PhoneNumberInput name='phone' required={true} />
+              </div>
+              <Button
+                className='mt-12 mb-[44px]'
+                label={isPending ? <Spin /> : 'Get Started'}
               />
             </div>
-            <Button
-              className='mt-12 mb-[44px]'
-              label='Get Started'
-              to='/auth/signup/join-rabble'
-            />
-          </div>
+          </form>
         </div>
 
         <h4 className='text-lg text-center font-gosha'>

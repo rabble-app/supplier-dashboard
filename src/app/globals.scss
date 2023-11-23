@@ -10,6 +10,7 @@
   --background-end-rgb: 255, 255, 255;
   --white-color: #ffffff;
   --white-color-1: #F9F8F4;
+  --white-color-2: #FCFCFD;
   --black-color: #000000;
   --primary-color: #d6f318;
   --primary-color-light-1: #E3F37A;
@@ -21,6 +22,7 @@
   --grey-color-5: #667085;
   --grey-color-6: #101828;
   --blue-color-1: #0053F5;
+  --green-color-1: #335B4C;
   --PhoneInputCountrySelectArrow-color: #d6f318 !important;
   --PhoneInputCountryFlag-height: 24px !important;
   --PhoneInputCountrySelectArrow-width: 8px !important;
@@ -102,4 +104,94 @@ h6 {
     width: 140px;
   }
 
+}
+
+.ant-spin-dot-item {
+  background-color: var(--black-color) !important;
+}
+
+.ant-spin {
+  line-height: 30px;
+  font-size: 20px;
+}
+
+.custom-spin {
+  .ant-spin-dot-item {
+    background-color: var(--primary-color) !important;
+  }
+}
+
+.custom-table {
+
+  &.borderless tr:first-child>* {
+    &:first-child {
+      border-start-start-radius: 0px !important;
+    }
+
+    &:last-child {
+      border-start-end-radius: 0px !important;
+    }
+  }
+
+  .ant-table {
+    thead {
+      white-space: nowrap;
+
+      &>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+        width: 0;
+      }
+
+      th {
+        padding: 13px 16px !important;
+        font-size: 12px;
+        color: var(--grey-color-5);
+        background-color: var(--white-color-2);
+        border-top: 1px solid var(--grey-color-4);
+        border-bottom: 1px solid var(--grey-color-4);
+        border-top-left-radius: 0;
+        border-right: none !important;
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          color: var(--grey-color-6);
+          font-weight: 500;
+          font-size: 14px;
+        }
+
+        &>td {
+          border-bottom: 1px solid var(--grey-color-4);
+        }
+
+        &:nth-child(even) {
+          background-color: var(--white-color-2);
+        }
+      }
+    }
+  }
+
+  ul.ant-pagination {
+
+    .ant-pagination-item-active,
+    .ant-pagination-item:hover,
+    .ant-pagination-item-link:hover {
+      border-color: transparent !important;
+      background-color: #eeeeee;
+      border-radius: 100px;
+
+      & a {
+        color: var(--grey-color-6) !important;
+      }
+
+    }
+  }
+}
+
+.custom-drawer {
+
+  .ant-drawer-body {
+    padding: 0;
+  }
 }
