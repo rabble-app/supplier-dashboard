@@ -20,6 +20,7 @@ const usePage = () => {
       }
 
       localStorage.setItem('token', result.data.token);
+      console.log(result.data);
       dispatch(logIn(result.data));
       router.push('/dashboard');
       message.success(result.message);

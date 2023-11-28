@@ -1,12 +1,20 @@
 /** @format */
+'use client';
+import { Spin } from 'antd';
+import { useTransition } from 'react';
 
 import LeftPanel from '@/components/auth/LeftPanel';
 import Header from '@/components/auth/Header';
 import Input from '@/components/auth/Input';
 import Button from '@/components/Button';
 import BackButton from '@/components/BackButton';
+import usePage from './usePage';
 
 const AddDeliveryAddress = () => {
+  const [isPending, startTransition] = useTransition();
+
+  const { postAddDeliveryAddress } = usePage();
+
   return (
     <div className='flex'>
       <LeftPanel finishMessage='Finish setting up your supplier account' />
@@ -21,31 +29,47 @@ const AddDeliveryAddress = () => {
             className='mt-6'
           />
 
-          <div className='flex flex-col justify-between h-full'>
+          <form
+            action={(e) => startTransition(() => postAddDeliveryAddress(e))}
+            className='flex flex-col justify-between h-full'
+          >
             <div className='flex flex-col gap-6 mt-10'>
               <Input
                 id='postcode'
-                label='Post Code'
+                label='Postcode'
                 type='text'
+                name='postalCode'
+                required={true}
                 placeholder='e.g. NJU91'
                 leftIcon='/icons/search.svg'
               />
               <Input
                 id='building_number'
                 label='Building Number'
+                name='buildingNo'
+                required={true}
                 type='text'
                 placeholder='Floor/Unit#'
               />
               <Input
                 id='address_line1'
                 label='Address line 1'
+                name='address'
+                required={true}
                 type='text'
                 placeholder='e.g. Street - 14, Block west'
               />
-              <Input id='city' label='City' type='text' placeholder='London' />
+              <Input
+                id='city'
+                label='City'
+                type='text'
+                required={true}
+                name='city'
+                placeholder='London'
+              />
             </div>
-            <Button label='Continue' to='/' />
-          </div>
+            <Button label={isPending ? <Spin /> : 'Continue'} />
+          </form>
         </div>
       </div>
     </div>

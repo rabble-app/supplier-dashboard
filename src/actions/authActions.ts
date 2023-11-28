@@ -163,3 +163,79 @@ export const handleAddDepartmentEmails = async (
     return error?.response?.data;
   }
 };
+
+export const handleGetProducerCategories = async (token: string) => {
+  try {
+    const res = await axios.get(`${API_ENDPOINT}/users/producers/categories`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
+
+export const handleAddProducerCategories = async (
+  preparedData: any,
+  token: string
+) => {
+  const data = {
+    content: preparedData,
+  };
+  try {
+    const res = await axios.patch(
+      `${API_ENDPOINT}/users/producer/category/add`,
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
+
+export const handleAddDeliveryAddress = async (
+  e: FormData,
+  userId: string,
+  token: string
+) => {
+  const buildingNo = e.get('buildingNo')?.toString();
+  const address = e.get('address')?.toString();
+  const city = e.get('city')?.toString();
+  const postalCode = e.get('postalCode')?.toString();
+
+  const deliveryAddress = {
+    userId,
+    buildingNo,
+    address,
+    city,
+    postalCode,
+  };
+
+  try {
+    const res = await axios.post(
+      `${API_ENDPOINT}/users/delivery-address`,
+      deliveryAddress,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
