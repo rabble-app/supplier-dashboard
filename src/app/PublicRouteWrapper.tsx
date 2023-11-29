@@ -29,8 +29,6 @@ const PublicRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  console.log(45, window.location.host);
-
   return <>{children}</>;
 };
 
