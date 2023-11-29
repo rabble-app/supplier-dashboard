@@ -8,6 +8,7 @@ export interface AuthState {
   id: string;
   businessName: string;
   businessEmail: string;
+  isVerified: boolean;
 }
 
 const initialState: AuthState = {
@@ -15,6 +16,7 @@ const initialState: AuthState = {
   id: '',
   businessName: '',
   businessEmail: '',
+  isVerified: false,
 };
 
 export const auth = createSlice({
@@ -30,6 +32,7 @@ export const auth = createSlice({
         id: action.payload.id,
         businessName: action.payload.businessName,
         businessEmail: action.payload.businessEmail,
+        isVerified: action.payload.isVerified,
       };
     },
   },

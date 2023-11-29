@@ -18,7 +18,7 @@ const usePage = () => {
         throw new Error(JSON.stringify(result));
       }
       console.log('Server action result:', result.data);
-      router.push('/dashboard');
+      router.push('/');
       message.success(result.message);
     } catch (error: any) {
       const errorObject = JSON.parse(error.message);
