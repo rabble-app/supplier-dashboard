@@ -38,12 +38,6 @@ const Orders = () => {
   const [open, setOpen] = useState(false);
 
   const onClose = () => {
-    const drawerContent = document.querySelector(
-      '.ant-drawer-content.custom-drawer'
-    );
-    if (drawerContent) {
-      drawerContent.scrollTo(0, 0);
-    }
     setOpen(false);
   };
 
