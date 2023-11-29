@@ -8,7 +8,7 @@ const OrderDetailsHeader = () => {
     <div className='bg-black p-6 rounded-t-lg flex justify-between items-center'>
       <div>
         <Image
-          src='/icons/rabble.svg'
+          src='/images/icons/rabble.svg'
           width={108}
           height={24}
           alt='arrow-left-icon'

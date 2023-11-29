@@ -63,7 +63,7 @@ const Input = ({
         />
         {type == 'password' && (
           <Image
-            src='/icons/eye.svg'
+            src='/images/icons/eye.svg'
             width={24}
             height={24}
             alt='eye-icon'

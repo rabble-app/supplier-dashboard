@@ -66,7 +66,7 @@ const actions: IAction[] = [
     key: 'view-more-details',
     label: (
       <p className='py-3.5 text-base font-medium flex gap-2'>
-        <Image src='/icons/note.svg' width={24} height={24} alt='note' />
+        <Image src='/images/icons/note.svg' width={24} height={24} alt='note' />
         View more details
       </p>
     ),
@@ -149,7 +149,13 @@ export const subscriptionColumns = (
             items: getActions(record.key, handleActionClick),
           }}
         >
-          <Image src='/icons/more.svg' width={24} height={24} alt='more-icon' />
+          <Image
+            src='/images/icons/more.svg'
+            width={24}
+            height={24}
+            alt='more-icon'
+            className='pointer-events-none'
+          />
         </Dropdown>
       </Space>
     ),
@@ -242,7 +248,12 @@ export const pendingLateCompletedColumns = (
             items: getActions(record.key, handleActionClick),
           }}
         >
-          <Image src='/icons/more.svg' width={24} height={24} alt='more-icon' />
+          <Image
+            src='/images/icons/more.svg'
+            width={24}
+            height={24}
+            alt='more-icon'
+          />
         </Dropdown>
       </Space>
     ),

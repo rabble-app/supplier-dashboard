@@ -4,10 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import routes from './routes';
+import routes from '../navigation/routes';
+import { useAppSelector } from '@/redux/store';
 
 const Navbar = () => {
   const pathname = usePathname();
+  const authUser = useAppSelector((state) => state.authReducer);
 
   return (
     <nav className='flex justify-between items-center bg-black text-grey-4 h-[77px]'>
@@ -27,15 +29,15 @@ const Navbar = () => {
       <div className='flex justify-between items-center gap-4 pr-5'>
         <div className='flex flex-col'>
           <h2 className='text-primary font-gosha text-xl leading-6'>
-            Farm2Door
+            {authUser?.businessName}
           </h2>
           <p className='text-primary-light-2 text-sm leading-6'>
-            Maxwell@meatsupplier.com
+            {authUser?.businessEmail}
           </p>
         </div>
         <div className='rounded-[100px] w-16 h-12 bg-primary flex justify-center items-center cursor-pointer'>
           <Image
-            src='/icons/arrow-down.svg'
+            src='/images/icons/arrow-down.svg'
             width={32}
             height={32}
             alt='arrow-down-icon'

@@ -41,7 +41,7 @@ const AddDeliveryAddress = () => {
                 name='postalCode'
                 required={true}
                 placeholder='e.g. NJU91'
-                leftIcon='/icons/search.svg'
+                leftIcon='/images/icons/search.svg'
               />
               <Input
                 id='building_number'

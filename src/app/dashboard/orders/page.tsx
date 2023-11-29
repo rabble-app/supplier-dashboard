@@ -26,6 +26,7 @@ import CloseButton from '@/components/CloseButton';
 import OrderDetailsHeader from './components/OrderDetailsHeader';
 import OrderDetailsActions from './components/OrderDetailsActions';
 import OrderDetailsBody from './components/OrderDetailsBody';
+import { randomUUID } from 'crypto';
 
 const subscriptionsData: ISubscriptionsData[] = subscriptions;
 const pendingLateCompletedData: IPendingLateCompletedData[] =
@@ -37,12 +38,20 @@ const Orders = () => {
   const [open, setOpen] = useState(false);
 
   const onClose = () => {
+    const drawerContent = document.querySelector(
+      '.ant-drawer-content.custom-drawer'
+    );
+    if (drawerContent) {
+      drawerContent.scrollTo(0, 0);
+    }
     setOpen(false);
   };
 
   const handleActionClick = (id: number) => {
     console.log(id);
-    if (activeTab !== 'Subscriptions') setOpen(true);
+    if (activeTab !== 'Subscriptions') {
+      setOpen(true);
+    }
   };
 
   const tabConfig: ITabConfig = {
@@ -122,6 +131,7 @@ const Orders = () => {
         placement='right'
         onClose={onClose}
         open={open}
+        key={crypto.randomUUID()}
         width={650}
         className='relative px-5 pt-14 custom-drawer'
       >

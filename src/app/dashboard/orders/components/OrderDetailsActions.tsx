@@ -8,8 +8,9 @@ interface IOrderDetailsActions {
 }
 
 const OrderDetailsActions = ({ activeTab }: IOrderDetailsActions) => {
+  console.log(activeTab);
   return (
-    <div className='flex justify-between absolute bottom-8 left-5 right-5'>
+    <div className='flex justify-between items-center mt-10 mb-5'>
       <Button
         label='Download Receipt'
         className='!leading-5 !py-5 px-[70px] text-base bg-white-1 border-black border-[1.5px]'
@@ -19,7 +20,7 @@ const OrderDetailsActions = ({ activeTab }: IOrderDetailsActions) => {
           activeTab === 'Completed' ? 'Order Completed' : 'Mark as Completed'
         }
         className={`!leading-5 !py-5 px-[70px] text-base ${
-          activeTab === 'Completed' ? 'bg-grey-4 text-grey-5' : ''
+          activeTab === 'Completed' ? '!bg-grey-4 text-grey-5' : ''
         }`}
       />
     </div>

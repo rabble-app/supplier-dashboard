@@ -1,7 +1,5 @@
 /** @format */
 
-import React from 'react';
-
 const Dashboard = () => {
   return (
     <div className='pt-10 flex justify-center'>
