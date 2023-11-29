@@ -68,7 +68,10 @@ const AddDeliveryAddress = () => {
                 placeholder='London'
               />
             </div>
-            <Button label={isPending ? <Spin /> : 'Continue'} />
+            <Button
+              className='mt-6'
+              label={isPending ? <Spin /> : 'Continue'}
+            />
           </form>
         </div>
       </div>
