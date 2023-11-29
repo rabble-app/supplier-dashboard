@@ -1,9 +1,9 @@
 /** @format */
 
 const routes = [
-  { title: 'rabble', path: '/dashboard', authRoute: true },
-  { title: 'catalogue', path: '/dashboard/catalogue', authRoute: true },
-  { title: 'orders', path: '/dashboard/orders', authRoute: true },
+  { title: 'rabble', path: '/dashboard' },
+  { title: 'catalogue', path: '/dashboard/catalogue' },
+  { title: 'orders', path: '/dashboard/orders' },
 ];
 
 export default routes;
