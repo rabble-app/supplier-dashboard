@@ -2,8 +2,9 @@
 
 'use server';
 import axios, { AxiosError } from 'axios';
+import { cookies } from 'next/headers';
 
-const API_ENDPOINT = process.env.API_ENDPOINT;
+import { API_ENDPOINT, setHeaders } from './config';
 
 export const handleSetUpSupplierAccount = async (e: FormData) => {
   const businessName = e.get('businessName')?.toString();
@@ -22,9 +23,7 @@ export const handleSetUpSupplierAccount = async (e: FormData) => {
 
   try {
     const res = await axios.post(`${API_ENDPOINT}/auth/register`, newUser, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: setHeaders(),
     });
     return res.data;
   } catch (e) {
@@ -44,10 +43,9 @@ export const handleLogin = async (e: FormData) => {
 
   try {
     const res = await axios.post(`${API_ENDPOINT}/auth/login`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: setHeaders(),
     });
+    cookies().set('token', res.data.data.token);
     return res.data;
   } catch (e) {
     const error = e as AxiosError;
@@ -61,9 +59,7 @@ export const handleVerifyEmail = async (token: string) => {
       `${API_ENDPOINT}/auth/email-verification`,
       { token },
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: setHeaders(),
       }
     );
     return res.data;
@@ -79,9 +75,7 @@ export const handleResendEmailVerification = async (email: string) => {
       `${API_ENDPOINT}/auth/resend-email-verification`,
       { email },
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: setHeaders(),
       }
     );
     return res.data;
@@ -99,9 +93,7 @@ export const handleResetPassword = async (e: FormData) => {
       `${API_ENDPOINT}/auth/send-reset-password-link`,
       { email },
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: setHeaders(),
       }
     );
     return res.data;
@@ -121,10 +113,7 @@ export const handleChangePassword = async (e: FormData, token: string) => {
 
   try {
     const res = await axios.post(`${API_ENDPOINT}/auth/change-password`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: setHeaders(token),
     });
     return res.data;
   } catch (e) {
@@ -151,10 +140,7 @@ export const handleAddDepartmentEmails = async (
       `${API_ENDPOINT}/users/producer/${id}`,
       updateUser,
       {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: setHeaders(token),
       }
     );
     return res.data;
@@ -167,10 +153,7 @@ export const handleAddDepartmentEmails = async (
 export const handleGetProducerCategories = async (token: string) => {
   try {
     const res = await axios.get(`${API_ENDPOINT}/users/producers/categories`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: setHeaders(token),
     });
     return res.data;
   } catch (e) {
@@ -191,10 +174,7 @@ export const handleAddProducerCategories = async (
       `${API_ENDPOINT}/users/producer/category/add`,
       data,
       {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: setHeaders(token),
       }
     );
     return res.data;
@@ -227,10 +207,7 @@ export const handleAddDeliveryAddress = async (
       `${API_ENDPOINT}/users/delivery-address`,
       deliveryAddress,
       {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: setHeaders(token),
       }
     );
     return res.data;

@@ -14,6 +14,11 @@ export interface ISubscriptionsData {
   nextDelivery: string;
 }
 
+export interface ISubscriptionAPIData {
+  total: number;
+  data: any[];
+}
+
 export interface IPendingLateCompletedData {
   key: number;
   orderId: string;
@@ -48,5 +53,11 @@ export interface ITabConfig {
   [key: string]: {
     columns: ColumnsType<any>;
     data: any[];
+    total: number;
   };
+}
+
+export interface IItem {
+  name: string;
+  quantity: number;
 }

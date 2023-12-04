@@ -1,7 +1,4 @@
 /** @format */
-'use client';
-import React, { useState } from 'react';
-import { Table, Drawer } from 'antd';
 
 import SearchIcon from '@/components/svgs/SearchIcon';
 import Tabs from '@/components/Tabs';
@@ -10,66 +7,53 @@ import {
   pendingLateCompletedColumns,
   invoiceItemsColumns,
   tabItems,
-  getFilteredDataByStatus,
 } from './util';
-import {
-  pendingLateCompletedOrders,
-  subscriptions,
-  invoiceItems,
-} from './data';
-import {
-  IPendingLateCompletedData,
-  ISubscriptionsData,
-  ITabConfig,
-} from './interfaces';
-import CloseButton from '@/components/CloseButton';
-import OrderDetailsHeader from './components/OrderDetailsHeader';
-import OrderDetailsActions from './components/OrderDetailsActions';
-import OrderDetailsBody from './components/OrderDetailsBody';
-import { randomUUID } from 'crypto';
-
-const subscriptionsData: ISubscriptionsData[] = subscriptions;
-const pendingLateCompletedData: IPendingLateCompletedData[] =
-  pendingLateCompletedOrders;
+import { invoiceItems } from './data';
+import { ITabConfig } from './interfaces';
+import OrdersTable from './components/OrdersTable';
+import OrdersDrawer from './components/OrdersDrawer';
+import { handleGetSubscriptions } from '../ordersActions';
 
 // TODO: REFACTOR
-const Orders = () => {
-  const [activeTab, setActiveTab] = useState('Subscriptions');
-  const [open, setOpen] = useState(false);
-
-  const onClose = () => {
-    setOpen(false);
+const Orders = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    tab?: string;
+    page?: string;
   };
+}) => {
+  const activeTab = searchParams?.tab || 'subscriptions';
+  const currentPage = Number(searchParams?.page) || 1;
 
-  const handleActionClick = (id: number) => {
-    console.log(id);
-    if (activeTab !== 'Subscriptions') {
-      setOpen(true);
-    }
-  };
+  const subscriptions = await handleGetSubscriptions(currentPage);
 
   const tabConfig: ITabConfig = {
     Subscriptions: {
-      columns: subscriptionColumns(handleActionClick),
-      data: subscriptionsData,
+      columns: subscriptionColumns,
+      data: subscriptions.data[1],
+      total: subscriptions.data[0],
     },
     'Pending orders': {
-      columns: pendingLateCompletedColumns(handleActionClick),
-      data: getFilteredDataByStatus(pendingLateCompletedData, 'Pending'),
+      columns: pendingLateCompletedColumns,
+      data: subscriptions.data[1],
+      total: subscriptions.data[0],
     },
     Completed: {
-      columns: pendingLateCompletedColumns(handleActionClick),
-      data: getFilteredDataByStatus(pendingLateCompletedData, 'Delivered'),
+      columns: pendingLateCompletedColumns,
+      data: subscriptions.data[1],
+      total: subscriptions.data[0],
     },
     Late: {
-      columns: pendingLateCompletedColumns(handleActionClick),
-      data: getFilteredDataByStatus(pendingLateCompletedData, 'Late'),
+      columns: pendingLateCompletedColumns,
+      data: subscriptions.data[1],
+      total: subscriptions.data[0],
     },
   };
 
-  const activeTabConfig = tabConfig[activeTab] || {};
+  const activeTabConfig = tabConfig['Subscriptions'] || {};
 
-  const { columns, data } = activeTabConfig;
+  const { columns, data, total } = activeTabConfig;
 
   return (
     <>
@@ -80,7 +64,7 @@ const Orders = () => {
               Orders
             </h1>
             <span className='bg-blue-1 text-xs font-medium text-white px-2 py-0.5 rounded-[100px]'>
-              240 Teams
+              {total} Teams
             </span>
           </div>
           <p className='text-grey-2 text-sm'>
@@ -89,11 +73,7 @@ const Orders = () => {
         </div>
         <div className='mt-[30px] border-grey-4 border-[1px] rounded-lg py-5 bg-white '>
           <div className='flex justify-between items-center gap-[190px] px-4'>
-            <Tabs
-              items={tabItems}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
+            <Tabs items={tabItems} activeTab={activeTab} />
             <div className='w-1/3'>
               <div className='relative'>
                 <SearchIcon
@@ -109,48 +89,18 @@ const Orders = () => {
             </div>
           </div>
 
-          <Table
+          <OrdersTable
             columns={columns}
-            dataSource={data}
-            pagination={{
-              position: ['bottomCenter'],
-              pageSize: 7,
-            }}
-            className='mt-9 custom-table borderless'
+            data={data}
+            pageSize={7}
+            total={total}
           />
         </div>
       </div>
-      <Drawer
-        closeIcon={<CloseButton className='absolute right-5 top-5' />}
-        placement='right'
-        onClose={onClose}
-        open={open}
-        key={crypto.randomUUID()}
-        width={650}
-        className='relative px-5 pt-14 custom-drawer'
-      >
-        <OrderDetailsHeader />
-        <OrderDetailsBody activeTab={activeTab}>
-          <h2 className='text-grey-6 font-gosha text-lg font-bold py-4'>
-            Invoice items
-          </h2>
-          <div className='border-x-[1px] border-b-[1px] rounded-lg border-grey-4'>
-            <Table
-              columns={invoiceItemsColumns}
-              dataSource={invoiceItems}
-              pagination={false}
-              className='custom-table'
-            />
-            <div className='bg-white flex flex-col items-end pr-6 gap-1 py-2.5 rounded-b-lg'>
-              <p className='text-xs text-grey-5 font-medium'>
-                Total order amount
-              </p>
-              <h2 className='text-grey-2 text-2xl font-gosha'>£240.00</h2>
-            </div>
-          </div>
-        </OrderDetailsBody>
-        <OrderDetailsActions activeTab={activeTab} />
-      </Drawer>
+      <OrdersDrawer
+        invoiceItems={invoiceItems}
+        invoiceItemsColumns={invoiceItemsColumns}
+      />
     </>
   );
 };

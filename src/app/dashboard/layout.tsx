@@ -10,7 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <ProtectedRouteWrapper>
-      <div className='bg-white-1 h-screen'>
+      <div className='bg-white-1 overflow-hidden'>
         <Navbar />
         <div className='px-5'>{children}</div>
       </div>
