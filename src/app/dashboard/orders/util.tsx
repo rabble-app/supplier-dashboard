@@ -6,52 +6,43 @@ import {
   IAction,
   IInvoiceItemsData,
   IOrderStatus,
-  IPendingLateCompletedData,
+  IOrdersData,
   ISubscriptionsData,
+  StatusClasses,
 } from './interfaces';
+import { capitalizeFirstLetter } from '@/utils';
 
 export const getFilteredDataByStatus = (
-  data: IPendingLateCompletedData[],
+  data: IOrdersData[],
   status: IOrderStatus
 ) => data.filter((item) => item.orderStatus === status);
 
-export const getStatusClass = (status: IOrderStatus) => {
-  const statusClasses = {
+export const getStatusClass = (status: IOrderStatus | string): string => {
+  const statusClasses: StatusClasses = {
     Pending: 'bg-black text-primary',
-    Delivered: 'bg-primary text-black',
-    Late: 'bg-[#FFF3F5] text-[#FF1A35]',
+    Successful: 'bg-primary text-black',
+    Failed: 'bg-[#FFF3F5] text-[#FF1A35]',
     Default: '',
   };
 
-  return statusClasses[status] || '';
+  const statusKey =
+    typeof status === 'string'
+      ? (status as IOrderStatus)
+      : IOrderStatus.Default;
+
+  return statusClasses[statusKey] || '';
 };
 
 export const getStatusByTabName = (tab: string) => {
-  let status: IOrderStatus = 'Default';
-  if (tab === 'Pending orders') status = 'Pending';
-  else if (tab === 'Completed') status = 'Delivered';
-  else if (tab === 'Late') status = 'Late';
+  let status: IOrderStatus = IOrderStatus.Default;
+
+  if (tab === 'pending-orders') status = IOrderStatus.Pending;
+  else if (tab === 'pending-delivery') status = IOrderStatus.Pending;
+  else if (tab === 'successful') status = IOrderStatus.Successful;
+  else if (tab === 'failed') status = IOrderStatus.Failed;
+
   return status;
 };
-
-export const tabItems = [
-  {
-    name: 'subscriptions',
-    quantity: 0,
-  },
-  {
-    name: 'pending-orders',
-    quantity: 32,
-  },
-  {
-    name: 'completed',
-    quantity: 32,
-  },
-  {
-    name: 'late',
-    quantity: 0,
-  },
-];
 
 export const handleAction = (
   id: number,
@@ -78,19 +69,6 @@ export const getActions = (id: number, onClickCallback: (id: number) => void) =>
     ...action,
     onClick: () => action.onClick(id, onClickCallback),
   }));
-
-export const handleActionClick = () => {
-  // console.log(id);
-  return 'Newton';
-  // if (activeTab !== 'Subscriptions') {
-  //   setOpen(true);
-  // }
-};
-
-const items = [
-  { key: '1', label: 'Action 1', onClick: (a: any) => console.log(a) },
-  { key: '2', label: 'Action 2', onClick: () => console.log(4) },
-];
 
 export const subscriptionColumns: ColumnsType<ISubscriptionsData> = [
   {
@@ -151,147 +129,87 @@ export const subscriptionColumns: ColumnsType<ISubscriptionsData> = [
     key: 'nextDelivery',
     render: (text) => <p>{text || 'N/A'}</p>,
   },
-  // {
-  //   title: ' ',
-  //   key: '',
-  //   render: (_, record) => (
-  //     <Space size='middle' onClick={(e) => e.stopPropagation()}>
-  //       <Dropdown
-  //         menu={{
-  //           items: [
-  //             {
-  //               key: record.key,
-  //               label: (
-  //                 <p className='py-3.5 text-base font-medium flex gap-2'>
-  //                   <Image
-  //                     src='/images/icons/note.svg'
-  //                     width={24}
-  //                     height={24}
-  //                     alt='note'
-  //                   />
-  //                   View more details
-  //                 </p>
-  //               ),
-  //             },
-  //           ],
-  //         }}
-  //       >
-  //         <Image
-  //           src='/images/icons/more.svg'
-  //           width={24}
-  //           height={24}
-  //           alt='more-icon'
-  //           //className='pointer-events-none'
-  //         />
-  //       </Dropdown>
-  //     </Space>
-  //   ),
-  // },
 ];
 
-export const pendingLateCompletedColumns: ColumnsType<IPendingLateCompletedData> =
-  [
-    {
-      title: 'Order id',
-      dataIndex: 'orderId',
-      key: 'orderId',
-    },
-    {
-      title: 'Producer name',
-      dataIndex: 'producerName',
-      key: 'producerName',
-    },
-    {
-      title: 'Host name',
-      dataIndex: 'hostName',
-      key: 'hostName',
-    },
-    {
-      title: 'Postcode',
-      dataIndex: 'postcode',
-      key: 'postcode',
-      render: (text) => (
-        <span className='bg-[#00FF0A1A] text-green-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
-          {text}
-        </span>
-      ),
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'category',
-      render: (text) => (
-        <span className='bg-[#EEF4FF] text-blue-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
-          {text}
-        </span>
-      ),
-    },
-    {
-      title: 'Order value',
-      dataIndex: 'orderValue',
-      key: 'orderValue',
-      render: (text) => (
-        <span className='bg-[#00FF0A1A] text-green-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
-          £{text}.00
-        </span>
-      ),
-    },
-    {
-      title: 'Expected delivery',
-      dataIndex: 'expectedDelivery',
-      key: 'expectedDelivery',
-    },
-    {
-      title: 'Order Status',
-      dataIndex: 'orderStatus',
-      key: 'orderStatus',
-      render: (text) => (
-        <span
-          className={`${getStatusClass(
-            text
-          )} leading-[18px] text-xs py-1 px-2 rounded-[100px]`}
-        >
-          {text}
-        </span>
-      ),
-    },
-    // {
-    //   title: ' ',
-    //   key: '',
-    //   render: (_, record) => (
-    //     <Space
-    //       className='cursor-pointer'
-    //       size='middle'
-    //       onClick={(e) => e.stopPropagation()}
-    //     >
-    //       <Dropdown
-    //         menu={{
-    //           items: getActions(record.key, handleActionClick),
-    //         }}
-    //       >
-    //         <Image
-    //           src='/images/icons/more.svg'
-    //           width={24}
-    //           height={24}
-    //           alt='more-icon'
-    //         />
-    //       </Dropdown>
-    //     </Space>
-    //   ),
-    // },
-  ];
+export const ordersColumns: ColumnsType<IOrdersData> = [
+  {
+    title: 'Order id',
+    dataIndex: 'orderId',
+    key: 'orderId',
+  },
+  {
+    title: 'Producer name',
+    dataIndex: 'producerName',
+    key: 'producerName',
+  },
+  {
+    title: 'Host name',
+    dataIndex: 'hostName',
+    key: 'hostName',
+  },
+  {
+    title: 'Postcode',
+    dataIndex: 'postcode',
+    key: 'postcode',
+    render: (text) => (
+      <span className='bg-[#00FF0A1A] text-green-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
+        {text}
+      </span>
+    ),
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    key: 'address',
+  },
+  {
+    title: 'Category',
+    dataIndex: 'category',
+    key: 'category',
+    render: (text) => (
+      <span className='bg-[#EEF4FF] text-blue-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
+        {text}
+      </span>
+    ),
+  },
+  {
+    title: 'Order value',
+    dataIndex: 'orderValue',
+    key: 'orderValue',
+    render: (text) => (
+      <span className='bg-[#00FF0A1A] text-green-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
+        £{text}.00
+      </span>
+    ),
+  },
+  {
+    title: 'Expected delivery',
+    dataIndex: 'expectedDelivery',
+    key: 'expectedDelivery',
+    render: (text) => <span>{text || 'N/A'}</span>,
+  },
+  {
+    title: 'Order Status',
+    dataIndex: 'orderStatus',
+    key: 'orderStatus',
+    render: (text) => (
+      <span
+        className={`${getStatusClass(
+          capitalizeFirstLetter(text.toLowerCase())
+        )} leading-[18px] text-xs py-1 px-2 rounded-[100px] capitalize`}
+      >
+        {text.toLowerCase()}
+      </span>
+    ),
+  },
+];
 
 export const invoiceItemsColumns: ColumnsType<IInvoiceItemsData> = [
   {
-    title: 'Product code',
-    dataIndex: 'productCode',
-    key: 'productCode',
-    render: (text) => <p>#{text}</p>,
+    title: 'SKU code',
+    dataIndex: 'skuCode',
+    key: 'skuCode',
+    render: (text) => <p>{text}</p>,
   },
   {
     title: 'Product name',
@@ -300,21 +218,33 @@ export const invoiceItemsColumns: ColumnsType<IInvoiceItemsData> = [
     render: (text) => <p>{text}</p>,
   },
   {
-    title: 'Price',
-    dataIndex: 'price',
-    key: 'price',
-    render: (text) => <p>£{text}.00</p>,
+    title: 'Measure',
+    dataIndex: 'measure',
+    key: 'measure',
+    render: (text) => <p>{text}</p>,
+  },
+  {
+    title: 'Unit Cost',
+    dataIndex: 'unitCost',
+    key: 'unitCost',
+    render: (text) => <p className='text-right'>£{text}.00</p>,
   },
   {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
-    render: (text) => <p>{text}</p>,
+    render: (text) => <p className='text-right'>X{text}</p>,
   },
   {
-    title: 'Total price',
-    dataIndex: 'totalPrice',
-    key: 'totalPrice',
-    render: (text) => <p>£{text}.00</p>,
+    title: 'Total Ex VAT',
+    dataIndex: 'totalExVat',
+    key: 'totalExVat',
+    render: (text) => <p className='text-right'>£{text}.00</p>,
+  },
+  {
+    title: 'Total Inc VAT',
+    dataIndex: 'totalIncVat',
+    key: 'totalIncVat',
+    render: (text) => <p className='text-right'>£{text}.00</p>,
   },
 ];

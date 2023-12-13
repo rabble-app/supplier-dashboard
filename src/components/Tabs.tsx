@@ -21,8 +21,9 @@ const Tabs = ({ activeTab, items }: ITabs) => {
 
     if (tabNames.includes(tab)) {
       params.set('tab', tab);
-      params.delete('page');
+      params.set('page', '1');
       params.delete('selected-row');
+      params.delete('query');
     }
 
     replace(`${pathname}?${params.toString()}`);
@@ -44,7 +45,7 @@ const Tabs = ({ activeTab, items }: ITabs) => {
             } capitalize`}
           >
             {item.name?.replace('-', ' ')}
-            {item.quantity > 0 && (
+            {activeTab !== 'subscriptions' && activeTab === item.name && (
               <span className='text-primary bg-black rounded-[100px] py-0.5 px-2 text-[10px] ml-2.5'>
                 {item.quantity}
               </span>

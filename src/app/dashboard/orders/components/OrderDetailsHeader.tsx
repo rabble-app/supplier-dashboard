@@ -1,11 +1,22 @@
 /** @format */
 
 import Image from 'next/image';
-import React from 'react';
 
-const OrderDetailsHeader = () => {
+import { getStatusByTabName, getStatusClass } from '../util';
+
+interface IOrderDetailsHeader {
+  activeTab: string;
+  orderNo: string;
+  deliveryDate: string;
+}
+
+const OrderDetailsHeader = ({
+  activeTab,
+  orderNo,
+  deliveryDate,
+}: IOrderDetailsHeader) => {
   return (
-    <div className='bg-black p-6 rounded-t-lg flex justify-between items-center'>
+    <div className='bg-black py-4 pl-[18px] pr-[50px] rounded-t-lg flex justify-between items-center'>
       <div>
         <Image
           src='/images/icons/rabble.svg'
@@ -13,15 +24,33 @@ const OrderDetailsHeader = () => {
           height={24}
           alt='arrow-left-icon'
         />
-        <p className='text-primary text-[10px] font-semibold mt-1 leading-4'>
+        <p className='text-primary text-[10px] font-semibold mt-2 leading-4'>
           The Team Buying Platform
         </p>
       </div>
-      <p className='text-grey-4 text-xs font-semibold leading-[18px]'>
-        EC1V 2NX, 128 City Road
-        <br />
-        London, United Kingdom{' '}
-      </p>
+      <div className='flex items-center gap-4'>
+        {!activeTab.includes('pending') && (
+          <div
+            className={`${getStatusClass(
+              getStatusByTabName(activeTab)
+            )} text-xs py-2 px-3 rounded-[100px] capitalize`}
+          >
+            {getStatusByTabName(activeTab)}
+          </div>
+        )}
+        <div>
+          <p className='text-[10px] font-normal text-white-3 mb-1'>
+            Order No:{' '}
+            <span className='font-medium text-primary-light-2'>{orderNo}</span>
+          </p>
+          <p className='text-[10px] font-normal text-white-3'>
+            Delivery Date:{' '}
+            <span className='font-medium text-primary-light-2'>
+              {deliveryDate || 'N/A'}
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

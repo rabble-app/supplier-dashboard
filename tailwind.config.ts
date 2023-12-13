@@ -20,12 +20,14 @@ const config: Config = {
       'grey-4': 'var(--grey-color-4)',
       'grey-5': 'var(--grey-color-5)',
       'grey-6': 'var(--grey-color-6)',
+      'grey-7': 'var(--grey-color-7)',
       'blue-1': 'var(--blue-color-1)',
       'green-1': 'var(--green-color-1)',
       black: 'var(--black-color)',
       white: 'var(--white-color)',
       'white-1': 'var(--white-color-1)',
       'white-2': 'var(--white-color-2)',
+      'white-3': 'var(--white-color-3)',
     },
     extend: {
       backgroundImage: {

@@ -19,7 +19,7 @@ export interface ISubscriptionAPIData {
   data: any[];
 }
 
-export interface IPendingLateCompletedData {
+export interface IOrdersData {
   key: number;
   orderId: string;
   hostName: string;
@@ -32,15 +32,34 @@ export interface IPendingLateCompletedData {
   orderStatus: string;
 }
 
-export type IOrderStatus = 'Pending' | 'Late' | 'Delivered' | 'Default';
+export type StatusClasses = {
+  [key in IOrderStatus]: string;
+};
+
+export enum IOrderStatus {
+  Pending = 'Pending',
+  Successful = 'Successful',
+  Failed = 'Failed',
+  Default = 'Default',
+}
+
+export enum IOrderStatusText {
+  PENDING = 'PENDING',
+  PENDING_DELIVERY = 'PENDING_DELIVERY',
+  SUCCESSFUL = 'SUCCESSFUL',
+  FAILED = 'FAILED',
+  DEFAULT = 'DEFAULT',
+}
 
 export interface IInvoiceItemsData {
   key: number;
-  productCode: string;
+  skuCode: string;
   productName: string;
-  price: number;
+  measure: string;
+  unitCost: number;
   quantity: number;
-  totalPrice: number;
+  totalExVat: number;
+  totalIncVat: number;
 }
 
 export interface IAction {
