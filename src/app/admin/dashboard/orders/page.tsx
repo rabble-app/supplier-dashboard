@@ -1,5 +1,5 @@
 /** @format */
-
+'use server';
 import { invoiceItemsColumns } from './util';
 import OrdersDrawer from './components/OrdersDrawer';
 import {
