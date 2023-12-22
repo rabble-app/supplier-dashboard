@@ -9,6 +9,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": "20.9.0"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
     "@types/node": "20.8.3",
