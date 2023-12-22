@@ -9,6 +9,7 @@ export interface AuthState {
   businessName: string;
   businessEmail: string;
   isVerified: boolean;
+  role: string;
 }
 
 const initialState: AuthState = {
@@ -17,6 +18,7 @@ const initialState: AuthState = {
   businessName: '',
   businessEmail: '',
   isVerified: false,
+  role: '',
 };
 
 export const auth = createSlice({
@@ -33,6 +35,7 @@ export const auth = createSlice({
         businessName: action.payload.businessName,
         businessEmail: action.payload.businessEmail,
         isVerified: action.payload.isVerified,
+        role: action.payload.role,
       };
     },
   },

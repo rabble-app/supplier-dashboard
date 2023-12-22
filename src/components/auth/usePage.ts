@@ -3,6 +3,7 @@
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 
 import { handleLogin } from '@/actions/authActions';
 import { logIn } from '@/redux/features/authSlice';
@@ -19,10 +20,13 @@ const usePage = () => {
         throw new Error(JSON.stringify(result));
       }
 
+      const decoded: any = jwtDecode(result.data.token);
+      const url = decoded.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
+
       localStorage.setItem('token', result.data.token);
       console.log(result.data);
-      dispatch(logIn(result.data));
-      router.push('/dashboard');
+      dispatch(logIn({ ...result.data, role: decoded.role }));
+      router.push(url);
       message.success(result.message);
     } catch (error: any) {
       const errorObject = JSON.parse(error.message);
