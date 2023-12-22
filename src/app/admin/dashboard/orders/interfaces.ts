@@ -38,6 +38,7 @@ export type StatusClasses = {
 
 export enum IOrderStatus {
   Pending = 'Pending',
+  'Pending Delivery' = 'Pending Delivery',
   Successful = 'Successful',
   Failed = 'Failed',
   Default = 'Default',

@@ -117,6 +117,7 @@ export const handleGetOrders = async (
                 ? `${address.buildingNo} ${address.address} ${address.city}`
                 : null,
               category: categories?.[0].category.name,
+              minimumTreshold: item?.minimumTreshold,
               orderValue: item?.accumulatedAmount,
               expectedDelivery: item.deliveryDate
                 ? formatDate(item.deliveryDate)
@@ -153,8 +154,29 @@ export const handleGetOrderStatusCount = async () => {
     } else {
       throw new Error(JSON.stringify(data));
     }
+  } catch (error: any) {
+    const errorObject = JSON.parse(error.message);
+    console.log(errorObject);
+    return errorObject;
+  }
+};
 
-    return data;
+export const handlePostMarkOrderAsComplete = async (id: string) => {
+  let url = `${API_ENDPOINT}/team/orders/${id}`;
+
+  console.log(url);
+  try {
+    let res = await fetch(url, {
+      headers: setHeaders(token),
+      method: 'POST',
+    });
+
+    let data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(JSON.stringify(data));
+    }
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
     console.log(errorObject);

@@ -24,7 +24,7 @@ const usePage = () => {
       const url = decoded.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
 
       localStorage.setItem('token', result.data.token);
-      console.log(result.data);
+
       dispatch(logIn({ ...result.data, role: decoded.role }));
       router.push(`${url}/orders`);
       message.success(result.message);

@@ -11,20 +11,32 @@ const Navbar = () => {
   const pathname = usePathname();
   const authUser = useAppSelector((state) => state.authReducer);
 
+  const url = authUser.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
+
+  console.log(4, pathname);
+
   return (
     <nav className='flex justify-between items-center bg-black text-grey-4 h-[77px]'>
       <ul className='flex font-gosha text-2xl leading-7'>
-        {routes.map((link) => (
-          <Link key={link.path} href={link.path}>
-            <li
-              className={`${
-                link.path === pathname ? 'bg-white-1 text-black font-bold' : ''
-              } px-10 py-[25px] border-0 border-r-[1px] border-grey-5 cursor-pointer capitalize`}
+        {routes.map((link) => {
+          return (
+            <Link
+              key={link.path}
+              href={`${url}${link.path}`}
+              onClick={() => console.log(3, url + link.path)}
             >
-              {link.title}
-            </li>
-          </Link>
-        ))}
+              <li
+                className={`${
+                  url + link.path === pathname
+                    ? 'bg-white-1 text-black font-bold'
+                    : ''
+                } px-10 py-[25px] border-0 border-r-[1px] border-grey-5 cursor-pointer capitalize`}
+              >
+                {link.title}
+              </li>
+            </Link>
+          );
+        })}
       </ul>
       <div className='flex justify-between items-center gap-4 pr-5'>
         <div className='flex flex-col'>

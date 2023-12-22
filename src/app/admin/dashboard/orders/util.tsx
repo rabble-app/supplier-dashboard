@@ -20,6 +20,7 @@ export const getFilteredDataByStatus = (
 export const getStatusClass = (status: IOrderStatus | string): string => {
   const statusClasses: StatusClasses = {
     Pending: 'bg-black text-primary',
+    'Pending Delivery': 'bg-black text-primary',
     Successful: 'bg-primary text-black',
     Failed: 'bg-[#FFF3F5] text-[#FF1A35]',
     Default: '',
@@ -146,6 +147,7 @@ export const ordersColumns: ColumnsType<IOrdersData> = [
     title: 'Host name',
     dataIndex: 'hostName',
     key: 'hostName',
+    render: (text) => <p>{text || 'N/A'}</p>,
   },
   {
     title: 'Postcode',
@@ -174,6 +176,16 @@ export const ordersColumns: ColumnsType<IOrdersData> = [
     ),
   },
   {
+    title: 'Minimum Order value',
+    dataIndex: 'minimumTreshold',
+    key: 'minimumTreshold',
+    render: (text) => (
+      <span className='bg-[#00FF0A1A] text-green-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]'>
+        £{text}.00
+      </span>
+    ),
+  },
+  {
     title: 'Order value',
     dataIndex: 'orderValue',
     key: 'orderValue',
@@ -193,15 +205,21 @@ export const ordersColumns: ColumnsType<IOrdersData> = [
     title: 'Order Status',
     dataIndex: 'orderStatus',
     key: 'orderStatus',
-    render: (text) => (
-      <span
-        className={`${getStatusClass(
-          capitalizeFirstLetter(text.toLowerCase())
-        )} leading-[18px] text-xs py-1 px-2 rounded-[100px] capitalize`}
-      >
-        {text.toLowerCase()}
-      </span>
-    ),
+    render: (text) => {
+      let displayText = text.toLowerCase();
+      if (displayText === 'pending_delivery') {
+        displayText = 'pending Delivery';
+      }
+      return (
+        <span
+          className={`${getStatusClass(
+            capitalizeFirstLetter(displayText)
+          )} leading-[18px] text-xs py-1 px-2 rounded-[100px] capitalize`}
+        >
+          {displayText}
+        </span>
+      );
+    },
   },
 ];
 

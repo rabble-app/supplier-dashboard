@@ -1,6 +1,6 @@
 /** @format */
 'use client';
-import { Drawer, Spin, Table } from 'antd';
+import { Drawer, Spin, Table, message } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -10,7 +10,7 @@ import OrderDetailsHeader from './OrderDetailsHeader';
 import OrderDetailsBody from './OrderDetailsBody';
 import OrderDetailsActions from './OrderDetailsActions';
 import { IInvoiceItemsData } from '../interfaces';
-import { handleGetOrderInfo } from '../api';
+import { handleGetOrderInfo, handlePostMarkOrderAsComplete } from '../api';
 
 interface IOrdersDrawer {
   invoiceItemsColumns: ColumnsType<IInvoiceItemsData>;
@@ -19,6 +19,7 @@ interface IOrdersDrawer {
 const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState<any>({});
 
   const searchParams = useSearchParams();
@@ -51,10 +52,30 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   };
 
   const onClose = () => {
-    setOpen(false);
     params.delete('selected-row');
+    setOpen(false);
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const markOrderAsComplete = async () => {
+    setIsActionLoading(true);
+
+    if (selectedRow)
+      try {
+        const orderStatus = await handlePostMarkOrderAsComplete(selectedRow);
+        if (orderStatus.message.includes('error')) {
+          return message.error(orderStatus.message);
+        }
+
+        message.success(orderStatus.message);
+        replace(`${pathname}?tab=successful`);
+        setOpen(false);
+      } catch (error) {
+        console.log(122, error);
+      } finally {
+        setIsActionLoading(false);
+      }
   };
 
   const sums = orderInfo.basket?.reduce(
@@ -73,7 +94,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
       onClose={onClose}
       open={open}
       key={selectedRow}
-      width={700}
+      width={710}
       className='relative px-5 pt-14 custom-drawer'
     >
       {isLoading ? (
@@ -163,7 +184,11 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
               </div>
             </div>
           </OrderDetailsBody>
-          <OrderDetailsActions activeTab={activeTab} />
+          <OrderDetailsActions
+            activeTab={activeTab}
+            isActionLoading={isActionLoading}
+            onMarkOrderAsComplete={markOrderAsComplete}
+          />
         </>
       )}
     </Drawer>
