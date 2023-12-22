@@ -1,15 +1,16 @@
 /** @format */
 
 'use client';
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 
 interface ISelect {
   id: string;
   label: string;
   placeholder?: string;
   className?: string;
-  options?: { id: number; value: string }[];
+  options?: { id: number; name: string }[];
+  onChange?: (x: string) => void;
+  required?: boolean;
 }
 
 const Select = ({
@@ -18,6 +19,8 @@ const Select = ({
   placeholder = '',
   className = '',
   options,
+  onChange,
+  required = false,
 }: ISelect) => {
   return (
     <div className='flex flex-col'>
@@ -32,12 +35,16 @@ const Select = ({
           id={id}
           className={`bg-grey-1 rounded-lg text-grey-6 leading-[30px] p-[25px] text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 ${className}`}
           defaultValue=''
+          onChange={(e) => onChange?.(e.target.value)}
+          required={required}
         >
           <option disabled value=''>
             {placeholder}
           </option>
           {options?.map((option) => (
-            <option key={option.id}>{option.value}</option>
+            <option key={option.id} value={option.id}>
+              {option.name}
+            </option>
           ))}
         </select>
       </div>

@@ -2,7 +2,6 @@
 
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
 
 import { handleAddDepartmentEmails } from '@/actions/authActions';
 import { useAppSelector } from '@/redux/store';
@@ -14,7 +13,7 @@ const usePage = () => {
   const postAddDepartmentEmails = async (e: FormData) => {
     const token = localStorage.token;
     try {
-      const result = await handleAddDepartmentEmails(e, authUser.id, token);
+      const result = await handleAddDepartmentEmails(e, authUser?.id, token);
       if (result.error) {
         throw new Error(JSON.stringify(result));
       }

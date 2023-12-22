@@ -14,7 +14,12 @@ export interface ISubscriptionsData {
   nextDelivery: string;
 }
 
-export interface IPendingLateCompletedData {
+export interface ISubscriptionAPIData {
+  total: number;
+  data: any[];
+}
+
+export interface IOrdersData {
   key: number;
   orderId: string;
   hostName: string;
@@ -27,15 +32,34 @@ export interface IPendingLateCompletedData {
   orderStatus: string;
 }
 
-export type IOrderStatus = 'Pending' | 'Late' | 'Delivered' | 'Default';
+export type StatusClasses = {
+  [key in IOrderStatus]: string;
+};
+
+export enum IOrderStatus {
+  Pending = 'Pending',
+  Successful = 'Successful',
+  Failed = 'Failed',
+  Default = 'Default',
+}
+
+export enum IOrderStatusText {
+  PENDING = 'PENDING',
+  PENDING_DELIVERY = 'PENDING_DELIVERY',
+  SUCCESSFUL = 'SUCCESSFUL',
+  FAILED = 'FAILED',
+  DEFAULT = 'DEFAULT',
+}
 
 export interface IInvoiceItemsData {
   key: number;
-  productCode: string;
+  skuCode: string;
   productName: string;
-  price: number;
+  measure: string;
+  unitCost: number;
   quantity: number;
-  totalPrice: number;
+  totalExVat: number;
+  totalIncVat: number;
 }
 
 export interface IAction {
@@ -48,5 +72,11 @@ export interface ITabConfig {
   [key: string]: {
     columns: ColumnsType<any>;
     data: any[];
+    total: number;
   };
+}
+
+export interface IItem {
+  name: string;
+  quantity: number;
 }

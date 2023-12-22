@@ -4,15 +4,21 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface AuthState {
+  userId: string;
   id: string;
   businessName: string;
   businessEmail: string;
+  isVerified: boolean;
+  role: string;
 }
 
 const initialState: AuthState = {
+  userId: '',
   id: '',
   businessName: '',
   businessEmail: '',
+  isVerified: false,
+  role: '',
 };
 
 export const auth = createSlice({
@@ -24,9 +30,12 @@ export const auth = createSlice({
     },
     logIn: (state, action: PayloadAction<AuthState>) => {
       return {
+        userId: action.payload.userId,
         id: action.payload.id,
         businessName: action.payload.businessName,
         businessEmail: action.payload.businessEmail,
+        isVerified: action.payload.isVerified,
+        role: action.payload.role,
       };
     },
   },

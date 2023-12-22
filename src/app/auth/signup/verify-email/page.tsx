@@ -89,7 +89,7 @@ const JoinRabblePage = () => {
                         </div>
                         <div className='rounded-[50%] bg-black w-5 h-5 flex justify-center items-center'>
                           <Image
-                            src='/icons/check.svg'
+                            src='/images/icons/check.svg'
                             width={8.5}
                             height={5.6}
                             alt='check-icon'
@@ -124,10 +124,12 @@ const JoinRabblePage = () => {
                     </div>
                   </div>
                 </div>
-                <Button
-                  label='Continue'
-                  to='/auth/signup/add-department-emails'
-                />
+                {isEmailVerified && (
+                  <Button
+                    label='Continue'
+                    to='/auth/signup/add-department-emails'
+                  />
+                )}
               </div>
             </div>
           </div>

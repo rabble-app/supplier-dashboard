@@ -11,6 +11,7 @@
   --white-color: #ffffff;
   --white-color-1: #F9F8F4;
   --white-color-2: #FCFCFD;
+  --white-color-3: #F2F4F7;
   --black-color: #000000;
   --primary-color: #d6f318;
   --primary-color-light-1: #E3F37A;
@@ -21,6 +22,7 @@
   --grey-color-4: #D0D5DD;
   --grey-color-5: #667085;
   --grey-color-6: #101828;
+  --grey-color-7: #111118;
   --blue-color-1: #0053F5;
   --green-color-1: #335B4C;
   --PhoneInputCountrySelectArrow-color: #d6f318 !important;
@@ -53,10 +55,12 @@
 
 html {
   scroll-behavior: smooth;
+  height: 100%
 }
 
 body {
   font-family: var(--font-poppins);
+  height: 100%
 }
 
 h1,
@@ -122,6 +126,64 @@ h6 {
 }
 
 .custom-table {
+  &-invoice {
+    &.borderless tr:first-child>* {
+      &:first-child {
+        border-start-start-radius: 0px !important;
+      }
+
+      &:last-child {
+        border-start-end-radius: 0px !important;
+      }
+    }
+
+    .ant-table-tbody>tr.ant-table-row:hover>td {
+      background-color: var(--white-color-1);
+    }
+
+    .ant-table {
+      thead {
+        white-space: nowrap;
+
+        &>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+          width: 0;
+        }
+
+        th {
+          background-color: var(--white-color-3);
+          padding: 16px 15px !important;
+          font-family: var(--font-gosha);
+          border-top: 1.5px solid var(--grey-color-4);
+          border-bottom: 1.5px solid var(--grey-color-4);
+          border-top-left-radius: 0 !important;
+          border-right: none !important;
+          font-size: 10px;
+          line-height: 12px;
+          color: var(--grey-color-7);
+        }
+      }
+
+      tbody {
+        background-color: var(--white-color-1);
+        white-space: nowrap;
+
+        tr {
+          td {
+            color: var(--grey-color-5);
+            font-weight: 500;
+            font-size: 9px;
+            line-height: 12px;
+            padding-bottom: 16px;
+          }
+
+          &>td {
+            border-bottom: none
+          }
+
+        }
+      }
+    }
+  }
 
   &.borderless tr:first-child>* {
     &:first-child {

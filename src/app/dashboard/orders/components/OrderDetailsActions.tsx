@@ -9,19 +9,19 @@ interface IOrderDetailsActions {
 
 const OrderDetailsActions = ({ activeTab }: IOrderDetailsActions) => {
   return (
-    <div className='flex justify-between absolute bottom-8 left-5 right-5'>
+    <div className='mt-10 mb-5'>
       <Button
-        label='Download Receipt'
-        className='!leading-5 !py-5 px-[70px] text-base bg-white-1 border-black border-[1.5px]'
+        label='Download Invoice'
+        className='!leading-5 !py-5 px-[70px] text-base bg-white-1 border-black border-[1.5px] w-full'
       />
-      <Button
+      {/* <Button
         label={
-          activeTab === 'Completed' ? 'Order Completed' : 'Mark as Completed'
+          activeTab === 'successful' ? 'Order Completed' : 'Mark as Completed'
         }
         className={`!leading-5 !py-5 px-[70px] text-base ${
-          activeTab === 'Completed' ? 'bg-grey-4 text-grey-5' : ''
+          activeTab === 'successful' ? '!bg-grey-4 text-grey-5' : ''
         }`}
-      />
+      /> */}
     </div>
   );
 };

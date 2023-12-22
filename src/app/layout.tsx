@@ -1,14 +1,15 @@
 /** @format */
 
 import { ReduxProvider } from '@/redux/provider';
-import './globals.scss';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import './globals.scss';
+import PublicRouteWrapper from './PublicRouteWrapper';
 
 const goshaSans = localFont({
   src: [
-    { path: '../fonts/PPGoshaSans-Bold.otf', weight: '700' },
-    { path: '../fonts/PPGoshaSans-Regular.otf', weight: '400' },
+    { path: '../../public/fonts/PPGoshaSans-Bold.otf', weight: '700' },
+    { path: '../../public/fonts/PPGoshaSans-Regular.otf', weight: '400' },
   ],
   variable: '--font-gosha',
 });
@@ -16,15 +17,15 @@ const goshaSans = localFont({
 const poppins = localFont({
   src: [
     {
-      path: '../fonts/Poppins-Light.ttf',
+      path: '../../public/fonts/Poppins-Light.ttf',
       weight: '300',
     },
     {
-      path: '../fonts/Poppins-Regular.ttf',
+      path: '../../public/fonts/Poppins-Regular.ttf',
       weight: '400',
     },
     {
-      path: '../fonts/Poppins-Bold.ttf',
+      path: '../../public/fonts/Poppins-Bold.ttf',
       weight: '700',
     },
   ],
@@ -44,7 +45,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${goshaSans.variable} ${poppins.variable}`}>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <PublicRouteWrapper>{children}</PublicRouteWrapper>{' '}
+        </ReduxProvider>
       </body>
     </html>
   );

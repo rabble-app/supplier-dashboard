@@ -15,7 +15,7 @@ const CloseButton = ({ className = '', onClick }: ICloseButton) => {
       onClick={onClick}
     >
       <Image
-        src='/icons/close.svg'
+        src='/images/icons/close.svg'
         width={32}
         height={32}
         alt='arrow-left-icon'

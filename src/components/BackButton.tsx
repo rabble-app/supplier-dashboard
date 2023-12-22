@@ -13,7 +13,7 @@ const BackButton = () => {
       onClick={() => router.back()}
     >
       <Image
-        src='/icons/arrow-left.svg'
+        src='/images/icons/arrow-left.svg'
         width={32}
         height={32}
         alt='arrow-left-icon'
