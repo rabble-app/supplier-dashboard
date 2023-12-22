@@ -26,7 +26,7 @@ const usePage = () => {
       localStorage.setItem('token', result.data.token);
       console.log(result.data);
       dispatch(logIn({ ...result.data, role: decoded.role }));
-      router.push(url);
+      router.push(`${url}/orders`);
       message.success(result.message);
     } catch (error: any) {
       const errorObject = JSON.parse(error.message);

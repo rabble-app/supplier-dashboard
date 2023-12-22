@@ -132,7 +132,30 @@ export const handleGetOrders = async (
 
     return data;
   } catch (error: any) {
-    console.log(3, error);
+    const errorObject = JSON.parse(error.message);
+    console.log(errorObject);
+    return errorObject;
+  }
+};
+
+export const handleGetOrderStatusCount = async () => {
+  let url = `${API_ENDPOINT}/team/orders/status/count`;
+
+  console.log(url);
+  try {
+    let res = await fetch(url, {
+      headers: setHeaders(token),
+    });
+
+    let data = await res.json();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(JSON.stringify(data));
+    }
+
+    return data;
+  } catch (error: any) {
     const errorObject = JSON.parse(error.message);
     console.log(errorObject);
     return errorObject;

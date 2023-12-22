@@ -2,7 +2,11 @@
 
 import { invoiceItemsColumns } from './util';
 import OrdersDrawer from './components/OrdersDrawer';
-import { handleGetOrders, handleGetSubscriptions } from './api';
+import {
+  handleGetOrderStatusCount,
+  handleGetOrders,
+  handleGetSubscriptions,
+} from './api';
 import OrdersOverview from './components/OrdersOverview';
 
 const Orders = async ({
@@ -20,6 +24,7 @@ const Orders = async ({
   const query = searchParams?.query || '';
 
   const orders = await handleGetOrders(currentPage, activeTab, query);
+  const ordersStatusCount = await handleGetOrderStatusCount();
   const subscriptions = await handleGetSubscriptions(currentPage, query);
 
   return (
@@ -29,6 +34,7 @@ const Orders = async ({
         pageSize={7}
         subscriptions={subscriptions}
         orders={orders}
+        ordersStatusCount={ordersStatusCount}
       />
 
       <OrdersDrawer invoiceItemsColumns={invoiceItemsColumns} />

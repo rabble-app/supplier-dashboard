@@ -45,7 +45,8 @@ const Tabs = ({ activeTab, items }: ITabs) => {
             } capitalize`}
           >
             {item.name?.replace('-', ' ')}
-            {activeTab !== 'subscriptions' && activeTab === item.name && (
+
+            {item.quantity !== null && (
               <span className='text-primary bg-black rounded-[100px] py-0.5 px-2 text-[10px] ml-2.5'>
                 {item.quantity}
               </span>

@@ -13,6 +13,7 @@ interface IOrdersOverview {
   activeTab: string;
   pageSize: number;
   orders: any;
+  ordersStatusCount: any;
   subscriptions: any;
 }
 
@@ -20,6 +21,7 @@ const OrdersOverview = ({
   activeTab,
   pageSize,
   orders,
+  ordersStatusCount,
   subscriptions,
 }: IOrdersOverview) => {
   const {
@@ -32,6 +34,11 @@ const OrdersOverview = ({
     error: ordersError,
     message: ordersMessage,
   } = orders;
+  const {
+    data: ordersStatusCountData,
+    error: ordersStatusCountError,
+    message: ordersStatusCountMessage,
+  } = ordersStatusCount;
 
   if (activeTab === 'subscriptions' && subscriptionsError) {
     message.error(subscriptionsMessage);
@@ -39,11 +46,14 @@ const OrdersOverview = ({
   if (activeTab !== 'subscriptions' && ordersError) {
     message.error(ordersMessage);
   }
+  if (activeTab !== 'subscriptions' && ordersStatusCountError) {
+    message.error(ordersStatusCountMessage);
+  }
 
-  const getOrdersTabConfig = () => ({
+  const getOrdersTabConfig = (count: number) => ({
     columns: ordersColumns,
     data: ordersData?.[1],
-    total: ordersData?.[0],
+    total: count,
   });
 
   const tabConfig: ITabConfig = {
@@ -52,10 +62,10 @@ const OrdersOverview = ({
       data: subscriptionsData?.[1],
       total: subscriptionsData?.[0],
     },
-    'pending-orders': getOrdersTabConfig(),
-    'pending-delivery': getOrdersTabConfig(),
-    successful: getOrdersTabConfig(),
-    failed: getOrdersTabConfig(),
+    'pending-orders': getOrdersTabConfig(ordersStatusCountData[0]),
+    'pending-delivery': getOrdersTabConfig(ordersStatusCountData[1]),
+    successful: getOrdersTabConfig(ordersStatusCountData[2]),
+    failed: getOrdersTabConfig(ordersStatusCountData[3]),
   };
 
   const tabItems = [
@@ -64,9 +74,10 @@ const OrdersOverview = ({
     'pending-delivery',
     'successful',
     'failed',
-  ].map((name) => ({
+  ].map((name, i) => ({
     name,
-    quantity: name === 'subscriptions' ? 0 : ordersData?.[0] || 0,
+    quantity:
+      name === 'subscriptions' ? null : ordersStatusCountData[i - 1] || 0,
   }));
 
   const activeTabConfig = tabConfig[activeTab] || {};
