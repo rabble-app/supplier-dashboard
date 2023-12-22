@@ -7,10 +7,10 @@ import { formatDate, formatRelativeTime, padWithZero } from '@/utils';
 import { IOrderStatusText } from './interfaces';
 import dayjs from 'dayjs';
 
-const cookieStore = cookies();
-const token = cookieStore.get('token')?.value;
-
 export const handleGetSubscriptions = async (page: number, query: string) => {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
+
   const offset = (page - 1) * 7;
   const url = `${API_ENDPOINT}/team/subscriptions${
     !query ? `?offset=${offset}` : `/search/${query}`
@@ -67,6 +67,9 @@ export const handleGetOrders = async (
   tab: string,
   query: string
 ) => {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
+
   const offset = (page - 1) * 7;
   let url = `${API_ENDPOINT}/team/orders${
     !query ? `?offset=${offset}` : `/search/${query}`
@@ -132,6 +135,9 @@ export const handleGetOrders = async (
 };
 
 export const handleGetOrderInfo = async (id: string) => {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
+
   try {
     let res = await fetch(`${API_ENDPOINT}/team/orders/${id}`, {
       headers: setHeaders(token),
