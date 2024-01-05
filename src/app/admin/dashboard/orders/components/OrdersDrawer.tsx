@@ -26,7 +26,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(`${searchParams}`);
   const selectedRow = params.get('selected-row');
   const activeTab = params.get('tab') ?? 'subscriptions';
 

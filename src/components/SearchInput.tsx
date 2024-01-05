@@ -15,7 +15,7 @@ const SearchInput = ({ placeholder }: ISearchInput) => {
   const { replace } = useRouter();
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(`${searchParams}`);
     params.set('page', '1');
     if (term) {
       params.set('query', term);
