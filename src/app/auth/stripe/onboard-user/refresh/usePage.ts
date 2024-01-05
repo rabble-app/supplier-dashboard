@@ -1,4 +1,5 @@
 /** @format */
+"use client"
 
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
