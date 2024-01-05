@@ -20,7 +20,7 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(`${searchParams}`);
 
   const handlePaginationChange = (page: number) => {
     params.set('page', page.toString());
