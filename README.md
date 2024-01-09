@@ -1,1 +1,1 @@
-Rabble Supplier Dashboard
+Rabble Supplier Dashboard Frontend
