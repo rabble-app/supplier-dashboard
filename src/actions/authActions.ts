@@ -216,3 +216,53 @@ export const handleAddDeliveryAddress = async (
     return error?.response?.data;
   }
 };
+
+export const handleStripeOnboarding = async () => {
+  try {
+    const res = await axios.post(`${API_ENDPOINT}/auth-ext/stripe-onboarding`,{}, {
+      headers: setHeaders(),
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
+
+export const handleStripeOnboardingRefresh = async (accountId: string) => {
+  try {
+    const res = await axios.get(`${API_ENDPOINT}/auth-ext/stripe-onboarding?accountId=${accountId}`, {
+      headers: setHeaders(),
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
+
+export const handleProducerRecordUpdate = async (producerId: string, accountId: string) => {
+  try {
+    const res = await axios.patch(`${API_ENDPOINT}/users/producer/${producerId}`, {
+      stripeConnectId: accountId
+    }, {
+      headers: setHeaders(),
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
+
+export const handleGetStripeConnectAccountInfo = async (accountId: string) => {
+  try {
+    const res = await axios.get(`${API_ENDPOINT}/users/stripe-profile?accountId=${accountId}`, {
+      headers: setHeaders(),
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};

@@ -16,7 +16,7 @@ const Tabs = ({ activeTab, items }: ITabs) => {
   const { replace } = useRouter();
 
   const handleTabChange = (tab: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(`${searchParams}`);
     const tabNames = items.map((item) => item.name);
 
     if (tabNames.includes(tab)) {
