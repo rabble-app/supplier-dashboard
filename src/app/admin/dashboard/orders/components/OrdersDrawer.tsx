@@ -1,16 +1,17 @@
 /** @format */
-'use client';
-import { Drawer, Spin, Table, message } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import React, { useEffect, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+"use client";
+import { Drawer, Spin, Table, message } from "antd";
+import { ColumnsType } from "antd/es/table";
+import React, { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useAppSelector } from "@/redux/store";
 
-import CloseButton from '@/components/CloseButton';
-import OrderDetailsHeader from './OrderDetailsHeader';
-import OrderDetailsBody from './OrderDetailsBody';
-import OrderDetailsActions from './OrderDetailsActions';
-import { IInvoiceItemsData } from '../interfaces';
-import { handleGetOrderInfo, handlePostMarkOrderAsComplete } from '../api';
+import CloseButton from "@/components/CloseButton";
+import OrderDetailsHeader from "./OrderDetailsHeader";
+import OrderDetailsBody from "./OrderDetailsBody";
+import OrderDetailsActions from "./OrderDetailsActions";
+import { IInvoiceItemsData } from "../interfaces";
+import { handleGetOrderInfo, handlePostMarkOrderAsComplete } from "../api";
 
 interface IOrdersDrawer {
   invoiceItemsColumns: ColumnsType<IInvoiceItemsData>;
@@ -22,13 +23,15 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState<any>({});
 
+  const authUser = useAppSelector((state) => state.authReducer);
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
   const params = new URLSearchParams(searchParams);
-  const selectedRow = params.get('selected-row');
-  const activeTab = params.get('tab') ?? 'subscriptions';
+  const selectedRow = params.get("selected-row");
+  const activeTab = params.get("tab") ?? "subscriptions";
 
   useEffect(() => {
     if (selectedRow) {
@@ -42,7 +45,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const getOrderInfo = async (id: string) => {
     setIsLoading(true);
     try {
-      const orderInfo = await handleGetOrderInfo(id);
+      const orderInfo = await handleGetOrderInfo(id, authUser.id);
       setOrderInfo(orderInfo.data);
     } catch (error) {
       console.log(122, error);
@@ -52,7 +55,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   };
 
   const onClose = () => {
-    params.delete('selected-row');
+    params.delete("selected-row");
     setOpen(false);
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });
@@ -64,7 +67,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
     if (selectedRow)
       try {
         const orderStatus = await handlePostMarkOrderAsComplete(selectedRow);
-        if (orderStatus.message.includes('error')) {
+        if (orderStatus.message.includes("error")) {
           return message.error(orderStatus.message);
         }
 
@@ -78,7 +81,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
       }
   };
 
-  const sums = orderInfo.basket?.reduce(
+  const sums = orderInfo?.productLog?.reduce(
     (acc: any, item: any) => {
       acc.totalExVatSum += item.totalExVat;
       acc.vatSum += item.vat;
@@ -89,17 +92,17 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
 
   return (
     <Drawer
-      closeIcon={<CloseButton className='absolute right-5 top-5' />}
-      placement='right'
+      closeIcon={<CloseButton className="absolute right-5 top-5" />}
+      placement="right"
       onClose={onClose}
       open={open}
       key={selectedRow}
       width={710}
-      className='relative px-5 pt-14 custom-drawer'
+      className="relative px-5 pt-14 custom-drawer"
     >
       {isLoading ? (
-        <div className='flex justify-center items-center h-[90vh] pb-20'>
-          <Spin size='large' className='custom-spin' />
+        <div className="flex justify-center items-center h-[90vh] pb-20">
+          <Spin size="large" className="custom-spin" />
         </div>
       ) : (
         <>
@@ -119,53 +122,53 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
             hostName={orderInfo.hostName}
             hostAddress={orderInfo.hostAddress}
           >
-            <div className='mt-6'>
+            <div className="mt-6">
               <Table
                 columns={invoiceItemsColumns}
-                dataSource={orderInfo.basket}
+                dataSource={orderInfo.productLog}
                 pagination={false}
-                className='custom-table-invoice borderless bg-white-1'
+                className="custom-table-invoice borderless bg-white-1"
               />
-              {orderInfo.basket?.length > 0 && (
-                <div className='flex flex-col mt-8 ml-auto w-[185px] -mr-2.5'>
-                  <div className='flex justify-between items-center w-full'>
-                    <p className='text-[10px] text-grey-5 font-semibold leading-[15px]'>
+              {orderInfo.productLog?.length > 0 && (
+                <div className="flex flex-col mt-8 ml-auto w-[185px] -mr-2.5">
+                  <div className="flex justify-between items-center w-full">
+                    <p className="text-[10px] text-grey-5 font-semibold leading-[15px]">
                       Subtotal
                     </p>
-                    <h2 className='text-grey-2 text-xs font-bold font-gosha leading-[15px]'>
+                    <h2 className="text-grey-2 text-xs font-bold font-gosha leading-[15px]">
                       £{sums?.totalExVatSum}.00
                     </h2>
                   </div>
-                  <hr className='border-0 border-t-[1px] border-grey-4 mt-2 mb-2.5' />
-                  <div className='flex justify-between items-center w-full'>
-                    <p className='text-[10px] text-grey-5 font-semibold leading-[15px]'>
+                  <hr className="border-0 border-t-[1px] border-grey-4 mt-2 mb-2.5" />
+                  <div className="flex justify-between items-center w-full">
+                    <p className="text-[10px] text-grey-5 font-semibold leading-[15px]">
                       VAT
                     </p>
-                    <h2 className='text-grey-2 text-xs font-bold font-gosha leading-[15px]'>
+                    <h2 className="text-grey-2 text-xs font-bold font-gosha leading-[15px]">
                       £{sums?.vatSum}.00
                     </h2>
                   </div>
-                  <hr className='border-0 border-t-[1px] border-grey-4 mt-2' />
-                  <div className='flex justify-between items-center w-full mt-6'>
-                    <p className='text-sm text-grey-5 font-semibold leading-5'>
+                  <hr className="border-0 border-t-[1px] border-grey-4 mt-2" />
+                  <div className="flex justify-between items-center w-full mt-6">
+                    <p className="text-sm text-grey-5 font-semibold leading-5">
                       Total
                     </p>
-                    <h2 className='text-grey-6 text-xl font-bold font-gosha leading-[15px]'>
+                    <h2 className="text-grey-6 text-xl font-bold font-gosha leading-[15px]">
                       £{sums?.totalExVatSum + sums?.vatSum}.00
                     </h2>
                   </div>
-                  <hr className='border-0 border-t-[1px] border-grey-4 mt-2 mb-1' />
-                  <hr className='border-0 border-t-[1px] border-grey-4' />
+                  <hr className="border-0 border-t-[1px] border-grey-4 mt-2 mb-1" />
+                  <hr className="border-0 border-t-[1px] border-grey-4" />
                 </div>
               )}
-              <div className='mt-5'>
-                <p className='text-[9px] font-semibold leading-[9px]e text-grey-6'>
+              <div className="mt-5">
+                <p className="text-[9px] font-semibold leading-[9px]e text-grey-6">
                   Postcode Collective LTD (Trading as Rabble)
                 </p>
-                <p className='text-[9px] font-semibold leading-[9px] text-grey-6'>
+                <p className="text-[9px] font-semibold leading-[9px] text-grey-6">
                   Company number: 14712713
                 </p>
-                <p className='text-[9px] text-grey-5 leading-[12px] mt-0.5'>
+                <p className="text-[9px] text-grey-5 leading-[12px] mt-0.5">
                   By accepting and fulfilling this order, you, the
                   &apos;Supplier,&apos; hereby agree to adhere to and are bound
                   by the delivery terms, payment terms, and product costs as

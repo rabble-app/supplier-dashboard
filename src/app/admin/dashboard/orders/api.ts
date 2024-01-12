@@ -1,15 +1,15 @@
 /** @format */
 
-'use server';
-import { cookies } from 'next/headers';
-import { API_ENDPOINT, setHeaders } from '../../../../actions/config';
-import { formatDate, formatRelativeTime, padWithZero } from '@/utils';
-import { IOrderStatusText } from './interfaces';
-import dayjs from 'dayjs';
+"use server";
+import { cookies } from "next/headers";
+import { API_ENDPOINT, setHeaders } from "../../../../actions/config";
+import { formatDate, formatRelativeTime, padWithZero } from "@/utils";
+import { IOrderStatusText } from "./interfaces";
+import dayjs from "dayjs";
 
 export const handleGetSubscriptions = async (page: number, query: string) => {
   const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get("token")?.value;
 
   const offset = (page - 1) * 7;
   const url = `${API_ENDPOINT}/team/subscriptions${
@@ -31,7 +31,7 @@ export const handleGetSubscriptions = async (page: number, query: string) => {
           ...(!query ? [data.data[0]] : [subscriptions.length]),
           subscriptions.map((item: any) => {
             const successfulDeliveries = item.orders?.filter(
-              (order: any) => order?.status === 'SUCCESSFUL'
+              (order: any) => order?.status === "SUCCESSFUL"
             );
             const host = item.host.firstName && item.host.lastName && item.host;
             return {
@@ -69,7 +69,7 @@ export const handleGetOrders = async (
   query: string
 ) => {
   const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get("token")?.value;
 
   const offset = (page - 1) * 7;
   let url = `${API_ENDPOINT}/team/orders${
@@ -78,15 +78,15 @@ export const handleGetOrders = async (
 
   let status: IOrderStatusText = IOrderStatusText.DEFAULT;
 
-  if (tab === 'subscriptions') status = IOrderStatusText.DEFAULT;
-  else if (tab === 'pending-orders') status = IOrderStatusText.PENDING;
-  else if (tab === 'pending-delivery')
+  if (tab === "subscriptions") status = IOrderStatusText.DEFAULT;
+  else if (tab === "pending-orders") status = IOrderStatusText.PENDING;
+  else if (tab === "pending-delivery")
     status = IOrderStatusText.PENDING_DELIVERY;
-  else if (tab === 'successful') status = IOrderStatusText.SUCCESSFUL;
-  else if (tab === 'failed') status = IOrderStatusText.FAILED;
+  else if (tab === "successful") status = IOrderStatusText.SUCCESSFUL;
+  else if (tab === "failed") status = IOrderStatusText.FAILED;
 
   if (![IOrderStatusText.DEFAULT].includes(status)) {
-    url += `${query ? '?' : '&'}status=${status}`;
+    url += `${query ? "?" : "&"}status=${status}`;
   }
 
   console.log(url);
@@ -112,7 +112,7 @@ export const handleGetOrders = async (
             const categories = orderItem.producer.categories;
             return {
               key: item.id,
-              orderId: `ORD-${item.id.split('-')[0]}`,
+              orderId: `ORD-${item.id.split("-")[0]}`,
               hostName: host ? `${host.firstName} ${host.lastName}` : null,
               producerName: orderItem.producer.businessName,
               postcode: orderItem.postalCode,
@@ -144,7 +144,7 @@ export const handleGetOrders = async (
 
 export const handleGetOrderStatusCount = async () => {
   const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get("token")?.value;
 
   let url = `${API_ENDPOINT}/team/orders/status/count`;
 
@@ -169,7 +169,7 @@ export const handleGetOrderStatusCount = async () => {
 
 export const handlePostMarkOrderAsComplete = async (id: string) => {
   const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get("token")?.value;
 
   let url = `${API_ENDPOINT}/team/orders/${id}`;
 
@@ -177,7 +177,7 @@ export const handlePostMarkOrderAsComplete = async (id: string) => {
   try {
     let res = await fetch(url, {
       headers: setHeaders(token),
-      method: 'POST',
+      method: "POST",
     });
 
     let data = await res.json();
@@ -193,9 +193,9 @@ export const handlePostMarkOrderAsComplete = async (id: string) => {
   }
 };
 
-export const handleGetOrderInfo = async (id: string) => {
+export const handleGetOrderInfoS = async (id: string) => {
   const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  const token = cookieStore.get("token")?.value;
 
   try {
     let res = await fetch(`${API_ENDPOINT}/team/orders/${id}`, {
@@ -207,7 +207,7 @@ export const handleGetOrderInfo = async (id: string) => {
     if (res.ok) {
       const items = data.data;
       const host = items?.team.host;
-      const hostName = `${host.firstName || 'N/A'} ${host.lastName || 'N/A'}`;
+      const hostName = `${host.firstName || "N/A"} ${host.lastName || "N/A"}`;
       const hostShipping = host.shipping;
       const hostPostalCode = host.postalCode;
       const hostAddress = hostShipping
@@ -219,8 +219,8 @@ export const handleGetOrderInfo = async (id: string) => {
       const producerVat = producer.vat;
       const producerPaymentTerm = producer.paymentTerm;
       const producerPaymentDue = formatDate(
-        dayjs(items.deadline.split('T')[0]).add(30, 'day').toString(),
-        'DD/MM/YYYY'
+        dayjs(items.deadline.split("T")[0]).add(30, "day").toString(),
+        "DD/MM/YYYY"
       );
       const producerAddress = producerShipping
         ? `${producerShipping.buildingNo} ${producerShipping.address}, ${producerShipping.city}, ${producerPostalCode}`
@@ -228,12 +228,12 @@ export const handleGetOrderInfo = async (id: string) => {
       data = {
         ...data,
         data: {
-          key: items?.id.split('-')[0],
-          createdAt: formatDate(items?.createdAt, 'DD/MM/YYYY'),
+          key: items?.id.split("-")[0],
+          createdAt: formatDate(items?.createdAt, "DD/MM/YYYY"),
           status: items?.status,
           deadline: formatDate(items.deadline),
           deliveryDate:
-            items.deliveryDate && formatDate(items.deliveryDate, 'DD/MM/YYYY'),
+            items.deliveryDate && formatDate(items.deliveryDate, "DD/MM/YYYY"),
           producerName: items?.team.producer.businessName,
           producerAddress,
           producerVat,
@@ -246,7 +246,7 @@ export const handleGetOrderInfo = async (id: string) => {
             ? items.basket.map((item: any) => {
                 return {
                   key: item.product.id,
-                  skuCode: item.product.id.split('-')[0],
+                  skuCode: item.product.id.split("-")[0],
                   productName: item.product.name,
                   measure: `${item.product.quantityOfSubUnitPerOrder} x ${
                     item.product.measuresPerSubUnit
@@ -257,6 +257,88 @@ export const handleGetOrderInfo = async (id: string) => {
                   totalIncVat:
                     item.price * item.quantity + item.product.vat || 0,
                   vat: item.product.vat || 0,
+                };
+              })
+            : [],
+        },
+      };
+    } else {
+      throw new Error(JSON.stringify(data));
+    }
+
+    return data;
+  } catch (error: any) {
+    const errorObject = JSON.parse(error.message);
+    console.log(errorObject);
+    return errorObject;
+  }
+};
+
+export const handleGetOrderInfo = async (id: string, producerId: string) => {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token")?.value;
+
+  try {
+    let res = await fetch(`${API_ENDPOINT}/team/orders/${id}/${producerId}`, {
+      headers: setHeaders(token),
+    });
+
+    let data = await res.json();
+
+    if (res.ok) {
+      console.log(223, data.data);
+
+      const items = data.data;
+      const host = items?.team.host;
+      const hostName = `${host.firstName || "N/A"} ${host.lastName || "N/A"}`;
+      const hostShipping = host.shipping;
+      const hostPostalCode = host.postalCode;
+      const hostAddress = hostShipping
+        ? `${hostShipping.buildingNo} ${hostShipping.address}, ${hostShipping.city}, ${hostPostalCode}`
+        : null;
+      const producer = items?.team.producer;
+      const producerShipping = producer.user.shipping;
+      const producerPostalCode = producer.user.postalCode;
+      const producerVat = producer.vat;
+      const producerPaymentTerm = producer.paymentTerm;
+      const producerPaymentDue = formatDate(
+        dayjs(items.deadline.split("T")[0]).add(30, "day").toString(),
+        "DD/MM/YYYY"
+      );
+      // const producerAddress = producerShipping
+      //   ? `${producerShipping.buildingNo} ${producerShipping.address}, ${producerShipping.city}, ${producerPostalCode}`
+      //   : null;
+      data = {
+        ...data,
+        data: {
+          key: items?.id.split("-")[0],
+          createdAt: formatDate(items?.createdAt, "DD/MM/YYYY"),
+          status: items?.status,
+          deadline: formatDate(items.deadline),
+          deliveryDate:
+            items.deliveryDate && formatDate(items.deliveryDate, "DD/MM/YYYY"),
+          producerName: items?.team.producer.businessName,
+          producerAddress: `${items?.team.producer.businessAddress}, ${producerPostalCode}`,
+          producerVat,
+          producerPaymentTerm,
+          producerPaymentDue,
+          hostName,
+          hostAddress,
+          totalPrice: items?.accumulatedAmount,
+          productLog: items?.productLog.length
+            ? items.productLog.map((item: any) => {
+                return {
+                  key: item.productSku,
+                  skuCode: item.productSku.split("-")[0],
+                  productName: item.name,
+                  measure: `${item.quantityOfSubUnitPerOrder} x ${
+                    item.measuresPerSubUnit
+                  }${item.unitsOfMeasurePerSubUnit.toUpperCase()}`,
+                  unitCost: item.cost,
+                  quantity: item.quantity,
+                  totalExVat: item.cost * item.quantity,
+                  totalIncVat: item.cost * item.quantity + item.vat || 0,
+                  vat: item.vat || 0,
                 };
               })
             : [],
