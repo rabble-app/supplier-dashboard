@@ -1,13 +1,13 @@
 /** @format */
 
-'use client';
-import { useState } from 'react';
-import { Dropdown, Space, Table } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import Image from 'next/image';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+"use client";
+import { useState } from "react";
+import { Dropdown, Space, Table } from "antd";
+import { ColumnsType } from "antd/es/table";
+import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { ISubscriptionsData } from '../interfaces';
+import { ISubscriptionsData } from "../interfaces";
 
 interface IOrdersTable {
   pageSize: number;
@@ -23,14 +23,14 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
   const params = new URLSearchParams(searchParams);
 
   const handlePaginationChange = (page: number) => {
-    params.set('page', page.toString());
-    params.get('selected-row') && params.delete('selected-row');
+    params.set("page", page.toString());
+    params.get("selected-row") && params.delete("selected-row");
 
     replace(`${pathname}?${params.toString()}`);
   };
 
   const handleViewMoreClick = async (id: number) => {
-    params.set('selected-row', id.toString());
+    params.set("selected-row", id.toString());
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -38,22 +38,22 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
   const updatedColumns: ColumnsType<ISubscriptionsData> = [
     ...columns,
     {
-      title: ' ',
-      key: '',
+      title: " ",
+      key: "",
       render: (_, record) => (
-        <Space size='middle' onClick={(e) => e.stopPropagation()}>
+        <Space size="middle" onClick={(e) => e.stopPropagation()}>
           <Dropdown
             menu={{
               items: [
                 {
                   key: record.key,
                   label: (
-                    <p className='py-3.5 text-base font-medium flex gap-2'>
+                    <p className="py-3.5 text-base font-medium flex gap-2">
                       <Image
-                        src='/images/icons/note.svg'
+                        src="/images/icons/note.svg"
                         width={24}
                         height={24}
-                        alt='note'
+                        alt="note"
                       />
                       View more details
                     </p>
@@ -64,14 +64,14 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
             }}
           >
             <Image
-              src='/images/icons/more.svg'
+              src="/images/icons/more.svg"
               width={24}
               height={24}
-              alt='more-icon'
+              alt="more-icon"
               className={
-                ['subscriptions', ''].includes(params.get('tab') || '')
-                  ? 'pointer-events-none'
-                  : ''
+                ["subscriptions", ""].includes(params.get("tab") || "")
+                  ? "pointer-events-none"
+                  : ""
               }
             />
           </Dropdown>
@@ -85,13 +85,13 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
       columns={updatedColumns}
       dataSource={data}
       pagination={{
-        position: ['bottomCenter'],
+        position: ["bottomCenter"],
         pageSize,
         total,
         onChange: handlePaginationChange,
-        current: Number(params.get('page')) || 1,
+        current: Number(params.get("page")) || 1,
       }}
-      className='mt-9 custom-table borderless overflow-scroll'
+      className="mt-9 custom-table borderless overflow-scroll"
     />
   );
 };

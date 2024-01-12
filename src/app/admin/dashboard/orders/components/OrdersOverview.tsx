@@ -101,14 +101,12 @@ const OrdersOverview = ({
             <SearchInput key={activeTab} placeholder="Search" />
           </div>
         </div>
-        <Suspense fallback={<p>Loading...</p>}>
-          <OrdersTable
-            pageSize={pageSize}
-            columns={columns}
-            data={data}
-            total={total}
-          />
-        </Suspense>
+        <OrdersTable
+          pageSize={pageSize}
+          columns={columns}
+          data={data}
+          total={total}
+        />
       </PageWrapper>
     </div>
   );
