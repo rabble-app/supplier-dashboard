@@ -48,8 +48,7 @@ const OrdersOverview = ({
   if (activeTab !== "subscriptions" && ordersError) {
     message.error(ordersMessage);
   }
-  if (activeTab !== "subscriptions" && ordersStatusCountError) {
-    console.log(235, 123);
+  if (ordersStatusCountError) {
     message.error(ordersStatusCountMessage);
   }
 

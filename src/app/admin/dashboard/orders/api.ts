@@ -279,9 +279,12 @@ export const handleGetOrderInfo = async (id: string, producerId: string) => {
   const token = cookieStore.get("token")?.value;
 
   try {
-    let res = await fetch(`${API_ENDPOINT}/team/orders/${id}/${producerId}`, {
-      headers: setHeaders(token),
-    });
+    let res = await fetch(
+      `${API_ENDPOINT}/team/admin/orders/${id}/${producerId}`,
+      {
+        headers: setHeaders(token),
+      }
+    );
 
     let data = await res.json();
 

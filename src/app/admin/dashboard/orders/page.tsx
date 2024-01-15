@@ -24,8 +24,8 @@ const Orders = async ({
   const query = searchParams?.query || "";
 
   const orders = await handleGetOrders(currentPage, activeTab, query);
-  const ordersStatusCount = await handleGetOrderStatusCount();
   const subscriptions = await handleGetSubscriptions(currentPage, query);
+  const ordersStatusCount = await handleGetOrderStatusCount();
 
   return (
     <>
