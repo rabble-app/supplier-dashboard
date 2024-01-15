@@ -7,57 +7,24 @@ import { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ICatalogue } from "../interfaces";
+import { truncateText } from "../util";
 
 interface ICatalogueTable {
   pageSize: number;
+  activeTab: string;
   columns?: ColumnsType<any>;
   data?: any;
   total: number;
+  selectedRowKeys: React.Key[];
   setRowsCount: (count: number) => void;
+  setSelectedRowKeys: (ids: React.Key[]) => void;
 }
-
-const data = [
-  {
-    key: 1,
-    skuCode: "16821",
-    imgSrc: "/images/image 33.png",
-    title: "Espresso Blend Whole Bean",
-    description: "1KG Ground for Filter",
-    stock: 100,
-    category: "Tea & Coffee",
-    subCategory: "Coffee",
-    sharedProducts: false,
-    units: 1,
-    wholesalePrice: 17.5,
-    retailPrice: 30,
-    vat: 0,
-    unitOfMeasure: "KG",
-    pricePerMeasure: 20,
-  },
-  {
-    key: 2,
-    skuCode: "29631",
-    imgSrc: "/images/image 34.png",
-    title: "6 Cacklebean Eggs",
-    description: "Arlington White Cacklebean eggs.",
-    stock: 100,
-    category: "Farm & Dairy",
-    subCategory: "Eggs",
-    sharedProducts: true,
-    units: 20,
-    wholesalePrice: 1.75,
-    retailPrice: 4,
-    vat: 0,
-    unitOfMeasure: "Case",
-    pricePerMeasure: 2,
-  },
-];
 
 const columns: ColumnsType<ICatalogue> = [
   {
     title: "Product image",
-    dataIndex: "imgSrc",
-    key: "imgSrc",
+    dataIndex: "imageUrl",
+    key: "imageUrl",
     render: (imgSrc) => (
       <Image src={imgSrc} width={64} height={64} alt="product-img" />
     ),
@@ -69,13 +36,22 @@ const columns: ColumnsType<ICatalogue> = [
   },
   {
     title: "Title",
-    dataIndex: "title",
-    key: "title",
+    dataIndex: "supplierName",
+    key: "supplierName",
   },
   {
     title: "Description",
     dataIndex: "description",
     key: "description",
+    render: (text) => (
+      <p style={{ width: 250 }}>
+        {text
+          ? text?.length > 50
+            ? `${truncateText(text, 10)}...`
+            : text
+          : "N/A"}
+      </p>
+    ),
   },
   {
     title: "Stock",
@@ -88,7 +64,7 @@ const columns: ColumnsType<ICatalogue> = [
     key: "category",
     render: (text) => (
       <span className="bg-primary text-black leading-[18px] text-xs py-1 px-2 rounded-[100px] whitespace-nowrap">
-        {text}
+        {text || "N/A"}
       </span>
     ),
   },
@@ -98,7 +74,7 @@ const columns: ColumnsType<ICatalogue> = [
     key: "subCategory",
     render: (text) => (
       <span className="bg-primary text-black leading-[18px] text-xs py-1 px-2 rounded-[100px]">
-        {text}
+        {text || "N/A"}
       </span>
     ),
   },
@@ -117,11 +93,13 @@ const columns: ColumnsType<ICatalogue> = [
     title: "Wholesale price",
     dataIndex: "wholesalePrice",
     key: "wholesalePrice",
+    render: (text) => <p>£{text}</p>,
   },
   {
     title: "Retail price",
     dataIndex: "retailPrice",
     key: "retailPrice",
+    render: (text) => <p>£{text}</p>,
   },
   {
     title: "VAT",
@@ -140,13 +118,19 @@ const columns: ColumnsType<ICatalogue> = [
   },
 ];
 
-const CatalogueTable = ({ pageSize, total, setRowsCount }: ICatalogueTable) => {
+const CatalogueTable = ({
+  pageSize,
+  activeTab,
+  total,
+  setRowsCount,
+  selectedRowKeys,
+  setSelectedRowKeys,
+  data,
+}: ICatalogueTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
   const params = new URLSearchParams(searchParams);
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const handlePaginationChange = (page: number) => {
     params.set("page", page.toString());
@@ -165,19 +149,19 @@ const CatalogueTable = ({ pageSize, total, setRowsCount }: ICatalogueTable) => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  const hasSelected = selectedRowKeys.length > 0;
 
   return (
     <Table
       columns={columns}
       dataSource={data}
-      rowSelection={rowSelection}
+      rowSelection={activeTab === "pending-approval" ? rowSelection : undefined}
       pagination={{
         position: ["bottomCenter"],
         pageSize,
         total,
         onChange: handlePaginationChange,
         current: Number(params.get("page")) || 1,
+        showSizeChanger: false,
       }}
       className="mt-9 custom-table borderless overflow-scroll"
     />

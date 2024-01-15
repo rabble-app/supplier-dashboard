@@ -16,3 +16,9 @@ export interface ICatalogue {
   unitOfMeasure: string;
   pricePerMeasure: number;
 }
+
+export enum ICatalogueStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}
