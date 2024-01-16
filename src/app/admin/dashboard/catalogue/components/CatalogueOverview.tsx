@@ -53,6 +53,10 @@ const CatalogueOverview = ({
       name: "approved-products",
       quantity: 0,
     },
+    {
+      name: "rejected-products",
+      quantity: 0,
+    },
   ];
 
   const handleActionClicked = (action: "APPROVED" | "REJECTED") => {
@@ -91,7 +95,7 @@ const CatalogueOverview = ({
       if (action === "APPROVED") {
         replace(`${pathname}?tab=approved-products`);
       } else {
-        replace(`${pathname}?tab=pending-approval`);
+        replace(`${pathname}?tab=rejected-products`);
       }
       setSelectedRowKeys([]);
     } catch (error) {
@@ -111,7 +115,11 @@ const CatalogueOverview = ({
       />
       <PageWrapper>
         <div className="flex justify-between items-center px-4 relative">
-          <Tabs items={tabItems} activeTab={activeTab} />
+          <Tabs
+            items={tabItems}
+            activeTab={activeTab}
+            displayQuantity={false}
+          />
 
           {rowsCount ? (
             <div className="absolute right-1/3 flex mr-5 gap-5">
@@ -126,18 +134,20 @@ const CatalogueOverview = ({
                 size="md"
                 onClick={() => handleActionClicked("APPROVED")}
               />
-              <Button
-                label={
-                  isClickedButton("REJECTED") ? (
-                    <Spin />
-                  ) : (
-                    `Reject Product${rowsCount > 1 ? "s" : ""}`
-                  )
-                }
-                size="md"
-                variant="danger"
-                onClick={() => handleActionClicked("REJECTED")}
-              />
+              {activeTab === "pending-approval" && (
+                <Button
+                  label={
+                    isClickedButton("REJECTED") ? (
+                      <Spin />
+                    ) : (
+                      `Reject Product${rowsCount > 1 ? "s" : ""}`
+                    )
+                  }
+                  size="md"
+                  variant="danger"
+                  onClick={() => handleActionClicked("REJECTED")}
+                />
+              )}
             </div>
           ) : null}
           <div className="w-1/3">

@@ -154,7 +154,9 @@ const CatalogueTable = ({
     <Table
       columns={columns}
       dataSource={data}
-      rowSelection={activeTab === "pending-approval" ? rowSelection : undefined}
+      rowSelection={
+        activeTab !== "approved-products" ? rowSelection : undefined
+      }
       pagination={{
         position: ["bottomCenter"],
         pageSize,

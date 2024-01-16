@@ -113,6 +113,7 @@ export const handleGetOrders = async (
             return {
               key: item.id,
               orderId: `ORD-${item.id.split("-")[0]}`,
+              producerId: orderItem.producer.id,
               hostName: host ? `${host.firstName} ${host.lastName}` : null,
               producerName: orderItem.producer.businessName,
               postcode: orderItem.postalCode,
@@ -130,12 +131,15 @@ export const handleGetOrders = async (
           }),
         ],
       };
+
+      // console.log(34, data.data);
     } else {
       throw new Error(JSON.stringify(data));
     }
 
     return data;
   } catch (error: any) {
+    console.log(34, error);
     const errorObject = JSON.parse(error.message);
     console.log(errorObject);
     return errorObject;
@@ -274,17 +278,21 @@ export const handleGetOrderInfoS = async (id: string) => {
   }
 };
 
-export const handleGetOrderInfo = async (id: string, producerId: string) => {
+export const handleGetOrderInfo = async (
+  id: string,
+  producerId: string | null
+) => {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
 
+  const url = `${API_ENDPOINT}/team/admin/orders/${id}/${producerId}`;
+
+  console.log(url);
+
   try {
-    let res = await fetch(
-      `${API_ENDPOINT}/team/admin/orders/${id}/${producerId}`,
-      {
-        headers: setHeaders(token),
-      }
-    );
+    let res = await fetch(url, {
+      headers: setHeaders(token),
+    });
 
     let data = await res.json();
 

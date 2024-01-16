@@ -44,7 +44,7 @@ export const handleGetCatalogue = async (
               stock: item.stock,
               category: item.producer?.categories?.[0]?.category?.name,
               subCategory: item.category?.name,
-              sharedProduct: true,
+              sharedProduct: item.type === "SINGLE" ? false : true,
               units: item.quantityOfSubUnitPerOrder,
               wholesalePrice: item.wholesalePrice || 0,
               retailPrice: item.price || 0,
@@ -58,7 +58,7 @@ export const handleGetCatalogue = async (
     } else {
       throw new Error(JSON.stringify(data));
     }
-    console.log(8, data);
+
     return data;
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);

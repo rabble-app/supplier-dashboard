@@ -29,8 +29,9 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
     replace(`${pathname}?${params.toString()}`);
   };
 
-  const handleViewMoreClick = async (id: number) => {
-    params.set("selected-row", id.toString());
+  const handleViewMoreClick = async (id: string, producerId: string) => {
+    params.set("selected-row", id);
+    params.set("producer-id", producerId);
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -58,7 +59,8 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
                       View more details
                     </p>
                   ),
-                  onClick: () => handleViewMoreClick(record.key),
+                  onClick: () =>
+                    handleViewMoreClick(record.key, record.producerId),
                 },
               ],
             }}

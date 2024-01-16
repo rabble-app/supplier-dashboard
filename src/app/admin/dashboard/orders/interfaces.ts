@@ -1,9 +1,10 @@
 /** @format */
 
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType } from "antd/es/table";
 
 export interface ISubscriptionsData {
-  key: number;
+  key: string;
+  producerId: string;
   hostName: string;
   postcode: string;
   subscriptionValue: number;
@@ -37,19 +38,19 @@ export type StatusClasses = {
 };
 
 export enum IOrderStatus {
-  Pending = 'Pending',
-  'Pending Delivery' = 'Pending Delivery',
-  Successful = 'Successful',
-  Failed = 'Failed',
-  Default = 'Default',
+  Pending = "Pending",
+  "Pending Delivery" = "Pending Delivery",
+  Successful = "Successful",
+  Failed = "Failed",
+  Default = "Default",
 }
 
 export enum IOrderStatusText {
-  PENDING = 'PENDING',
-  PENDING_DELIVERY = 'PENDING_DELIVERY',
-  SUCCESSFUL = 'SUCCESSFUL',
-  FAILED = 'FAILED',
-  DEFAULT = 'DEFAULT',
+  PENDING = "PENDING",
+  PENDING_DELIVERY = "PENDING_DELIVERY",
+  SUCCESSFUL = "SUCCESSFUL",
+  FAILED = "FAILED",
+  DEFAULT = "DEFAULT",
 }
 
 export interface IInvoiceItemsData {

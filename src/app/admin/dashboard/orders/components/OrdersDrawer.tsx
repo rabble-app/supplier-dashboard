@@ -4,7 +4,6 @@ import { Drawer, Spin, Table, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useAppSelector } from "@/redux/store";
 
 import CloseButton from "@/components/CloseButton";
 import OrderDetailsHeader from "./OrderDetailsHeader";
@@ -23,14 +22,13 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState<any>({});
 
-  const authUser = useAppSelector((state) => state.authReducer);
-
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
   const params = new URLSearchParams(searchParams);
   const selectedRow = params.get("selected-row");
+  const producerId = params.get("producer-id");
   const activeTab = params.get("tab") ?? "subscriptions";
 
   useEffect(() => {
@@ -45,7 +43,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const getOrderInfo = async (id: string) => {
     setIsLoading(true);
     try {
-      const orderInfo = await handleGetOrderInfo(id, authUser.id);
+      const orderInfo = await handleGetOrderInfo(id, producerId);
       setOrderInfo(orderInfo.data);
     } catch (error) {
       console.log(122, error);
