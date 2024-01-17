@@ -4,6 +4,7 @@
 import { cookies } from "next/headers";
 import { API_ENDPOINT, setHeaders } from "../../../../actions/config";
 import { ICatalogueStatus } from "./interfaces";
+import { formatAmount } from "@/utils";
 
 export const handleGetCatalogue = async (
   page: number,
@@ -50,7 +51,9 @@ export const handleGetCatalogue = async (
               retailPrice: item.price || 0,
               vat: item.vat || 0,
               unitOfMeasure: item.unitsOfMeasurePerSubUnit,
-              pricePerMeasure: `£${item.price}/${item.unitsOfMeasurePerSubUnit}`,
+              pricePerMeasure: `${formatAmount(item.price)}/${
+                item.unitsOfMeasurePerSubUnit
+              }`,
             };
           }),
         ],

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ICatalogue } from "../interfaces";
 import { truncateText } from "../util";
+import { formatAmount } from "@/utils";
 
 interface ICatalogueTable {
   pageSize: number;
@@ -93,13 +94,13 @@ const columns: ColumnsType<ICatalogue> = [
     title: "Wholesale price",
     dataIndex: "wholesalePrice",
     key: "wholesalePrice",
-    render: (text) => <p>£{text}</p>,
+    render: (text) => <p>{formatAmount(text)}</p>,
   },
   {
     title: "Retail price",
     dataIndex: "retailPrice",
     key: "retailPrice",
-    render: (text) => <p>£{text}</p>,
+    render: (text) => <p>{formatAmount(text)}</p>,
   },
   {
     title: "VAT",

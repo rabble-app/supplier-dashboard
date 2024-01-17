@@ -316,9 +316,7 @@ export const handleGetOrderInfo = async (
         dayjs(items.deadline.split("T")[0]).add(30, "day").toString(),
         "DD/MM/YYYY"
       );
-      // const producerAddress = producerShipping
-      //   ? `${producerShipping.buildingNo} ${producerShipping.address}, ${producerShipping.city}, ${producerPostalCode}`
-      //   : null;
+
       data = {
         ...data,
         data: {

@@ -11,6 +11,7 @@ import OrderDetailsBody from "./OrderDetailsBody";
 import OrderDetailsActions from "./OrderDetailsActions";
 import { IInvoiceItemsData } from "../interfaces";
 import { handleGetOrderInfo, handlePostMarkOrderAsComplete } from "../api";
+import { formatAmount } from "@/utils";
 
 interface IOrdersDrawer {
   invoiceItemsColumns: ColumnsType<IInvoiceItemsData>;
@@ -134,7 +135,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
                       Subtotal
                     </p>
                     <h2 className="text-grey-2 text-xs font-bold font-gosha leading-[15px]">
-                      £{sums?.totalExVatSum}.00
+                      {formatAmount(sums?.totalExVatSum)}
                     </h2>
                   </div>
                   <hr className="border-0 border-t-[1px] border-grey-4 mt-2 mb-2.5" />
@@ -143,7 +144,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
                       VAT
                     </p>
                     <h2 className="text-grey-2 text-xs font-bold font-gosha leading-[15px]">
-                      £{sums?.vatSum}.00
+                      {formatAmount(sums?.vatSum)}
                     </h2>
                   </div>
                   <hr className="border-0 border-t-[1px] border-grey-4 mt-2" />
@@ -152,7 +153,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
                       Total
                     </p>
                     <h2 className="text-grey-6 text-xl font-bold font-gosha leading-[15px]">
-                      £{sums?.totalExVatSum + sums?.vatSum}.00
+                      {formatAmount(sums?.totalExVatSum + sums?.vatSum)}
                     </h2>
                   </div>
                   <hr className="border-0 border-t-[1px] border-grey-4 mt-2 mb-1" />
