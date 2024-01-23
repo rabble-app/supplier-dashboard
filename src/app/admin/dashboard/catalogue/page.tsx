@@ -1,12 +1,33 @@
 /** @format */
+"use server";
 
-import React from 'react';
+import { handleGetCatalogue } from "./api";
+import CatalogueOverview from "./components/CatalogueOverview";
+import { getStatusByTab } from "./util";
 
-const Catalogue = () => {
+const Catalogue = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    tab?: string;
+    page?: string;
+    query?: string;
+  };
+}) => {
+  const activeTab = searchParams?.tab || "pending-approval";
+  const currentPage = Number(searchParams?.page) || 1;
+  const query = searchParams?.query || "";
+
+  const status = getStatusByTab(activeTab);
+
+  const catalogues = await handleGetCatalogue(currentPage, query, status);
+
   return (
-    <div className='pt-10 flex justify-center'>
-      <h1 className='text-4xl font-gosha'>Catalogue</h1>
-    </div>
+    <CatalogueOverview
+      activeTab={activeTab}
+      pageSize={7}
+      catalogues={catalogues}
+    />
   );
 };
 

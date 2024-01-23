@@ -16,6 +16,8 @@
   --primary-color: #d6f318;
   --primary-color-light-1: #E3F37A;
   --primary-color-light-2: #EDF3C2;
+  --danger-color: #FF1A35;
+  --danger-color-light-1: #FFF3F5;
   --grey-color-1: #e8e8e8;
   --grey-color-2: #334054;
   --grey-color-3: #959595;
@@ -126,6 +128,34 @@ h6 {
 }
 
 .custom-table {
+  &.ant-table-wrapper .ant-table-tbody .ant-table-row.ant-table-row-selected>.ant-table-cell {
+    background: transparent !important;
+  }
+
+  .ant-checkbox .ant-checkbox-inner {
+    border: 1px solid var(--grey-color-4) !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .ant-checkbox .ant-checkbox-inner:after {
+    inset-inline-start: 30%;
+    border: 2px solid var(--primary-color) !important;
+    border-top: 0 !important;
+    border-inline-start: 0 !important;
+  }
+
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--black-color) !important;
+    border-color: var(--black-color) !important;
+  }
+
+  .ant-checkbox-indeterminate .ant-checkbox-inner:after {
+    background-color: var(--black-color) !important;
+    inset-inline-start: 50% !important;
+    border: 2px solid var(--black-color) !important;
+  }
+
   &-invoice {
     &.borderless tr:first-child>* {
       &:first-child {
