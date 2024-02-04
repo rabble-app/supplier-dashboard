@@ -13,8 +13,6 @@ const Navbar = () => {
 
   const url = authUser.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
 
-  console.log(4, pathname);
-
   return (
     <nav className='flex justify-between items-center bg-black text-grey-4 h-[77px]'>
       <ul className='flex font-gosha text-2xl leading-7'>

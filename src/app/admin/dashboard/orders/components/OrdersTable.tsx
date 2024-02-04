@@ -1,7 +1,6 @@
 /** @format */
 
 "use client";
-import { useState } from "react";
 import { Dropdown, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Image from "next/image";
@@ -14,9 +13,18 @@ interface IOrdersTable {
   columns: ColumnsType<any>;
   data: any;
   total: number;
+  loadingOrders?: boolean;
+  loadingSubscriptions?: boolean;
 }
 
-const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
+const OrdersTable = ({
+  pageSize,
+  columns,
+  data,
+  total,
+  loadingOrders,
+  loadingSubscriptions,
+}: IOrdersTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -86,6 +94,7 @@ const OrdersTable = ({ pageSize, columns, data, total }: IOrdersTable) => {
     <Table
       columns={updatedColumns}
       dataSource={data}
+      loading={loadingOrders || loadingSubscriptions}
       pagination={{
         position: ["bottomCenter"],
         pageSize,

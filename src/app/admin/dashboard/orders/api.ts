@@ -1,22 +1,22 @@
 /** @format */
+import dayjs from "dayjs";
+import { message } from "antd";
 
-"use server";
-import { cookies } from "next/headers";
 import { API_ENDPOINT, setHeaders } from "../../../../actions/config";
 import { formatDate, formatRelativeTime, padWithZero } from "@/utils";
 import { IOrderStatusText } from "./interfaces";
-import dayjs from "dayjs";
+
 
 export const handleGetSubscriptions = async (page: number, query: string) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   const offset = (page - 1) * 7;
   const url = `${API_ENDPOINT}/team/subscriptions${
     !query ? `?offset=${offset}` : `/search/${query}`
   }`;
-  console.log(url);
+
   try {
+    console.log("FETCHING SUBSCRIPTIONS...");
     let res = await fetch(url, {
       headers: setHeaders(token),
     });
@@ -58,6 +58,7 @@ export const handleGetSubscriptions = async (page: number, query: string) => {
     return data;
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
@@ -68,8 +69,7 @@ export const handleGetOrders = async (
   tab: string,
   query: string
 ) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   const offset = (page - 1) * 7;
   let url = `${API_ENDPOINT}/team/orders${
@@ -89,8 +89,8 @@ export const handleGetOrders = async (
     url += `${query ? "?" : "&"}status=${status}`;
   }
 
-  console.log(url);
   try {
+    console.log("FETCHING ORDERS...", tab);
     let res = await fetch(url, {
       headers: setHeaders(token),
     });
@@ -120,7 +120,7 @@ export const handleGetOrders = async (
               address: address
                 ? `${address.buildingNo} ${address.address} ${address.city}`
                 : null,
-              category: categories?.[0].category.name,
+              category: categories?.[0]?.category?.name,
               minimumTreshold: item?.minimumTreshold,
               orderValue: item?.accumulatedAmount,
               expectedDelivery: item.deliveryDate
@@ -132,28 +132,26 @@ export const handleGetOrders = async (
         ],
       };
 
-      // console.log(34, data.data);
     } else {
       throw new Error(JSON.stringify(data));
     }
 
     return data;
   } catch (error: any) {
-    console.log(34, error);
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
 };
 
 export const handleGetOrderStatusCount = async () => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   let url = `${API_ENDPOINT}/team/orders/status/count`;
 
-  console.log(url);
   try {
+    console.log("FETCHING ORDERS STATUS COUNT...");
     let res = await fetch(url, {
       headers: setHeaders(token),
     });
@@ -172,8 +170,7 @@ export const handleGetOrderStatusCount = async () => {
 };
 
 export const handlePostMarkOrderAsComplete = async (id: string) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   let url = `${API_ENDPOINT}/team/orders/${id}`;
 
@@ -192,14 +189,14 @@ export const handlePostMarkOrderAsComplete = async (id: string) => {
     }
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
 };
 
 export const handleGetOrderInfoS = async (id: string) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   try {
     let res = await fetch(`${API_ENDPOINT}/team/orders/${id}`, {
@@ -273,6 +270,7 @@ export const handleGetOrderInfoS = async (id: string) => {
     return data;
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
@@ -282,12 +280,9 @@ export const handleGetOrderInfo = async (
   id: string,
   producerId: string | null
 ) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   const url = `${API_ENDPOINT}/team/admin/orders/${id}/${producerId}`;
-
-  console.log(url);
 
   try {
     let res = await fetch(url, {
@@ -297,8 +292,6 @@ export const handleGetOrderInfo = async (
     let data = await res.json();
 
     if (res.ok) {
-      console.log(223, data.data);
-
       const items = data.data;
       const host = items?.team.host;
       const hostName = `${host.firstName || "N/A"} ${host.lastName || "N/A"}`;

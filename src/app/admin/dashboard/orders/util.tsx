@@ -171,7 +171,7 @@ export const ordersColumns: ColumnsType<IOrdersData> = [
     key: "category",
     render: (text) => (
       <span className="bg-[#EEF4FF] text-blue-1 leading-[18px] text-xs py-1 px-2 rounded-[100px]">
-        {text}
+        {text|| "N/A"}
       </span>
     ),
   },

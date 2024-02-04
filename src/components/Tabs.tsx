@@ -16,7 +16,7 @@ const Tabs = ({ activeTab, items, displayQuantity = true }: ITabs) => {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = async(tab: string) => {
     const params = new URLSearchParams(`${searchParams}`);
     const tabNames = items.map((item) => item.name);
 
