@@ -55,6 +55,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
 
   const onClose = () => {
     params.delete("selected-row");
+    params.delete("producer-id");
     setOpen(false);
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });

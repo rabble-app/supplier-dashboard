@@ -40,8 +40,8 @@ const OrdersOverview = ({ activeTab, pageSize }: IOrdersOverview) => {
   });
 
   const { data: ordersStatusCountData } = useQuery({
-    queryKey: ["ordersStatusCount"],
-    queryFn: () => handleGetOrderStatusCount(),
+    queryKey: ["ordersStatusCount", activeTab],
+    queryFn: handleGetOrderStatusCount,
   });
 
   const getOrdersTabConfig = (count: number) => ({
