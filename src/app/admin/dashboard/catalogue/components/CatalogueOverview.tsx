@@ -25,7 +25,7 @@ const columns: ColumnsType<ICatalogue> = [
     dataIndex: "imageUrl",
     key: "imageUrl",
     render: (imgSrc) => (
-      <Image src={imgSrc} width={64} height={64} alt="product-img" />
+      <Image src={imgSrc} width={64} height={64} alt="product-img" className="rounded-lg" />
     ),
   },
   {

@@ -14,6 +14,7 @@ export interface ICatalogue {
   retailPrice: number;
   vat: number;
   unitOfMeasure: string;
+  subUnitOfMeasure: string;
   pricePerMeasure: number;
 }
 
