@@ -1,73 +1,61 @@
 /** @format */
 "use client";
-import { message } from "antd";
-
 import { ordersColumns, subscriptionColumns } from "../util";
 import { ITabConfig } from "../interfaces";
 import Tabs from "@/components/Tabs";
 import SearchInput from "@/components/SearchInput";
 import OrdersTable from "./OrdersTable";
-import { Suspense } from "react";
 import PageHeader from "@/components/PageHeader";
 import PageWrapper from "@/components/PageWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import {
+  handleGetOrderStatusCount,
+  handleGetOrders,
+  handleGetSubscriptions,
+} from "../api";
 
-interface IOrdersOverview {
-  activeTab: string;
-  pageSize: number;
-  orders: any;
-  ordersStatusCount: any;
-  subscriptions: any;
-}
+const OrdersOverview = () => {
+  const searchParams = useSearchParams();
 
-const OrdersOverview = ({
-  activeTab,
-  pageSize,
-  orders,
-  ordersStatusCount,
-  subscriptions,
-}: IOrdersOverview) => {
-  const {
-    data: subscriptionsData,
-    error: subscriptionsError,
-    message: subscriptionsMessage,
-  } = subscriptions;
-  const {
-    data: ordersData,
-    error: ordersError,
-    message: ordersMessage,
-  } = orders;
-  const {
-    data: ordersStatusCountData,
-    error: ordersStatusCountError,
-    message: ordersStatusCountMessage,
-  } = ordersStatusCount;
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const query = searchParams.get("query") || "";
+  const activeTab = searchParams.get("tab") || "subscriptions";
 
-  if (activeTab === "subscriptions" && subscriptionsError) {
-    message.error(subscriptionsMessage);
-  }
-  if (activeTab !== "subscriptions" && ordersError) {
-    message.error(ordersMessage);
-  }
-  if (ordersStatusCountError) {
-    message.error(ordersStatusCountMessage);
-  }
+  const { data: subscriptionsData, isFetching: isFetchingSubscriptions } =
+    useQuery({
+      queryKey: ["subscriptions", currentPage, query],
+      queryFn: () => handleGetSubscriptions(currentPage, query),
+      enabled: activeTab === "subscriptions",
+    });
+
+  const { data: ordersData, isFetching:isFetchingOrders } = useQuery({
+    queryKey: ["orders", currentPage, activeTab, query],
+    queryFn: () =>  handleGetOrders(currentPage, activeTab, query),
+    enabled: activeTab !== "subscriptions",
+  });
+
+  const { data: ordersStatusCountData } = useQuery({
+    queryKey: ["ordersStatusCount", activeTab],
+    queryFn: handleGetOrderStatusCount,
+  });
 
   const getOrdersTabConfig = (count: number) => ({
     columns: ordersColumns,
-    data: ordersData?.[1],
+    data: ordersData?.data?.[1],
     total: count,
   });
 
   const tabConfig: ITabConfig = {
     subscriptions: {
       columns: subscriptionColumns,
-      data: subscriptionsData?.[1],
-      total: subscriptionsData?.[0],
+      data: subscriptionsData?.data?.[1],
+      total: subscriptionsData?.data?.[0],
     },
-    "pending-orders": getOrdersTabConfig(ordersStatusCountData[0]),
-    "pending-delivery": getOrdersTabConfig(ordersStatusCountData[1]),
-    successful: getOrdersTabConfig(ordersStatusCountData[2]),
-    failed: getOrdersTabConfig(ordersStatusCountData[3]),
+    "pending-orders": getOrdersTabConfig(ordersStatusCountData?.data?.[0]),
+    "pending-delivery": getOrdersTabConfig(ordersStatusCountData?.data?.[1]),
+    successful: getOrdersTabConfig(ordersStatusCountData?.data?.[2]),
+    failed: getOrdersTabConfig(ordersStatusCountData?.data?.[3]),
   };
 
   const tabItems = [
@@ -79,7 +67,7 @@ const OrdersOverview = ({
   ].map((name, i) => ({
     name,
     quantity:
-      name === "subscriptions" ? null : ordersStatusCountData[i - 1] || 0,
+      name === "subscriptions" ? null : ordersStatusCountData?.data[i - 1] || 0,
   }));
 
   const activeTabConfig = tabConfig[activeTab] || {};
@@ -91,7 +79,7 @@ const OrdersOverview = ({
       <PageHeader
         title="Orders"
         subtitle="Keep track of team orders and their status."
-        count={subscriptionsData?.[0] || 0}
+        count={subscriptionsData?.data?.[0] || 0}
         label="orders"
       />
       <PageWrapper>
@@ -101,11 +89,14 @@ const OrdersOverview = ({
             <SearchInput key={activeTab} placeholder="Search" />
           </div>
         </div>
+
         <OrdersTable
-          pageSize={pageSize}
+          pageSize={7}
           columns={columns}
           data={data}
           total={total}
+          loadingOrders={isFetchingOrders}
+          loadingSubscriptions={isFetchingSubscriptions}
         />
       </PageWrapper>
     </div>
