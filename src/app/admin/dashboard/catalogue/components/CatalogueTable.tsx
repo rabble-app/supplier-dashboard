@@ -75,7 +75,7 @@ const CatalogueTable = ({
         current: Number(params.get("page")) || 1,
         showSizeChanger: false,
       }}
-      className="mt-9 custom-table borderless overflow-scroll"
+      className="mt-9 custom-table borderless overflow-x-scroll"
     />
   );
 };

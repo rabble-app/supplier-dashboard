@@ -5,15 +5,17 @@ import React from 'react';
 const SearchIcon = ({
   stroke,
   className = '',
+  size="md"
 }: {
   stroke?: string;
   className?: string;
+  size?: 'sm' | 'md';
 }) => {
   return (
     <svg
-      width='24'
-      height='24'
-      viewBox='0 0 24 24'
+      width={size==='sm'?'14':'24'}
+      height={size==='sm'?'14':'24'}
+      viewBox={`0 0 24 24`}
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
       className={className}
