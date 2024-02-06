@@ -17,6 +17,7 @@ import { formatAmount } from "@/utils";
 import { truncateText } from "@/app/admin/dashboard/catalogue/util";
 import { ICatalogue } from "@/app/admin/dashboard/catalogue/interfaces";
 import Button from "@/components/Button";
+import CatalogueDrawer from "./CatalogueDrawer";
 
 const catalogueData = [
   {
@@ -77,6 +78,7 @@ const tabItems = [
 const CatalogueOverview = () => {
   const [rowsCount, setRowsCount] = useState(0);
   const [isClicked, setIsClicked] = useState("");
+  const [open, setOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchParams = useSearchParams();
 
@@ -124,7 +126,7 @@ const CatalogueOverview = () => {
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
     },
-    className: "upload-img"
+    className: "upload-img",
   };
 
   const handleFilter = (term: string) => {
@@ -144,21 +146,21 @@ const CatalogueOverview = () => {
                 <div className="w-[400px] h-[240px] border-[1px] border-grey-4 rounded-lg bg-white-1 p-2 mt-1.5 cursor-pointer">
                   <Dragger {...props}>
                     <div className="flex flex-col justify-center items-center pt-[50px]">
-                    <Image
-                      src="/images/icons/picture.svg"
-                      width={24}
-                      height={24}
-                      alt="picture-img"
-                    />
-                    <div className="mt-4">
-                      <p className="text-sm font-medium leading-5 text-black font-poppins">
-                        <span className="text-blue-1">Click to upload</span> or
-                        drag and drop image
-                      </p>
-                      <p className="text-grey-5 text-xs leading-4 font-poppins text-center mt-1">
-                        800*800 required
-                      </p>
-                    </div>
+                      <Image
+                        src="/images/icons/picture.svg"
+                        width={24}
+                        height={24}
+                        alt="picture-img"
+                      />
+                      <div className="mt-4">
+                        <p className="text-sm font-medium leading-5 text-black font-poppins">
+                          <span className="text-blue-1">Click to upload</span>{" "}
+                          or drag and drop image
+                        </p>
+                        <p className="text-grey-5 text-xs leading-4 font-poppins text-center mt-1">
+                          800*800 required
+                        </p>
+                      </div>
                     </div>
                   </Dragger>
                 </div>
@@ -407,22 +409,25 @@ const CatalogueOverview = () => {
       render: (text) => {
         return (
           <>
-         {activeTab==="draft"? <div className="relative catalogue-input w-[155px] border-[1px] rounded-[4px] border-grey-4 bg-white overflow-hidden">
-            <i className="absolute left-2 top-1">£</i>
-            <input
-              className="border-l-0 h-[30px] w-[60px] pl-5 focus:outline-none placeholder:font-normal"
-              type="number"
-              placeholder="Price"
-            />
-            <div className="absolute right-2 top-1 bg-white">
-              <i>/</i>
-              <span className="text-[12px] font-poppins font-medium">
-                &nbsp;Selected UOM
-              </span>
-            </div>
-          </div>: text}
+            {activeTab === "draft" ? (
+              <div className="relative catalogue-input w-[155px] border-[1px] rounded-[4px] border-grey-4 bg-white overflow-hidden">
+                <i className="absolute left-2 top-1">£</i>
+                <input
+                  className="border-l-0 h-[30px] w-[60px] pl-5 focus:outline-none placeholder:font-normal"
+                  type="number"
+                  placeholder="Price"
+                />
+                <div className="absolute right-2 top-1 bg-white">
+                  <i>/</i>
+                  <span className="text-[12px] font-poppins font-medium">
+                    &nbsp;Selected UOM
+                  </span>
+                </div>
+              </div>
+            ) : (
+              text
+            )}
           </>
-
         );
       },
     },
@@ -464,59 +469,63 @@ const CatalogueOverview = () => {
   }
 
   return (
-    <div className="pt-8 relative">
-      <PageHeader
-        title="Products catalogue"
-        subtitle="Keep track of products and their status."
-        count={0}
-        label="products"
-      />
-      <button className="bg-primary font-gosha absolute flex items-center gap-2.5 h-[60px] top-8 right-0 py-5 px-[14px] font-bold text-base text-center rounded-full cursor-pointer">
-        <Image
-          src="/images/icons/add-circle.svg"
-          width={32}
-          height={32}
-          alt="Add a New Product"
-        />{" "}
-        Add a New Product
-      </button>
-      <PageWrapper>
-        <div className="flex justify-between items-center px-4 relative">
-          <Tabs
-            items={tabItems}
-            activeTab={activeTab}
-            displayQuantity={false}
-          />
-          {rowsCount ? 
-            <div className="absolute right-1/3 flex mr-5 gap-5">
-              <Button
-                label="Send for Approval"          
-                size="md"
-                onClick={() => handleActionClicked("APPROVED")}
-              />
-              </div>
-              :null
-              }
-          <div className="w-1/3">
-            <SearchInput key={activeTab} placeholder="Search" />
-          </div>
-        </div>
-
-        <CatalogueTable
-          pageSize={7}
-          activeTab={activeTab}
-          total={0}
-          data={data}
-          columns={columns}
-          setRowsCount={setRowsCount}
-          selectedRowKeys={selectedRowKeys}
-          setSelectedRowKeys={setSelectedRowKeys}
-          rowSelectionTabs={["draft"]}
-          loading={false}
-          locale={locale}
+    <>
+      <div className="pt-8 relative">
+        <PageHeader
+          title="Products catalogue"
+          subtitle="Keep track of products and their status."
+          count={0}
+          label="products"
         />
-      </PageWrapper>
-    </div>
+        <button 
+        onClick={() => setOpen(true)}
+        className="bg-primary font-gosha absolute flex items-center gap-2.5 h-[60px] top-8 right-0 py-5 px-[14px] font-bold text-base text-center rounded-full cursor-pointer">
+          <Image
+            src="/images/icons/add-circle.svg"
+            width={32}
+            height={32}
+            alt="Add a New Product"
+          />{" "}
+          Add a New Product
+        </button>
+        <PageWrapper>
+          <div className="flex justify-between items-center px-4 relative">
+            <Tabs
+              items={tabItems}
+              activeTab={activeTab}
+              displayQuantity={false}
+            />
+            {rowsCount ? (
+              <div className="absolute right-1/3 flex mr-5 gap-5">
+                <Button
+                  label="Send for Approval"
+                  size="md"
+                  onClick={() => handleActionClicked("APPROVED")}
+                />
+              </div>
+            ) : null}
+            <div className="w-1/3">
+              <SearchInput key={activeTab} placeholder="Search" />
+            </div>
+          </div>
+
+          <CatalogueTable
+            pageSize={7}
+            activeTab={activeTab}
+            total={0}
+            data={data}
+            columns={columns}
+            setRowsCount={setRowsCount}
+            selectedRowKeys={selectedRowKeys}
+            setSelectedRowKeys={setSelectedRowKeys}
+            rowSelectionTabs={["draft"]}
+            loading={false}
+            locale={locale}
+          />
+        </PageWrapper>
+      </div>
+      <CatalogueDrawer open={open} setOpen={setOpen} />
+    </>
   );
 };
 
