@@ -1,7 +1,6 @@
 /** @format */
 
-"use server";
-import { cookies } from "next/headers";
+import { message } from "antd";
 import { API_ENDPOINT, setHeaders } from "../../../../actions/config";
 import { ICatalogueStatus } from "./interfaces";
 import { formatAmount } from "@/utils";
@@ -11,8 +10,7 @@ export const handleGetCatalogue = async (
   query: string,
   status: ICatalogueStatus = ICatalogueStatus.APPROVED
 ) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   const offset = (page - 1) * 7;
   const char = query ? "?" : "&";
@@ -65,6 +63,7 @@ export const handleGetCatalogue = async (
     return data;
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
@@ -74,8 +73,7 @@ export const handleApproveOrRejectCatalogue = async (
   ids: React.Key[],
   action: "APPROVED" | "REJECTED"
 ) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = localStorage.token;
 
   let url = `${API_ENDPOINT}/products/admin/update`;
 
@@ -98,6 +96,7 @@ export const handleApproveOrRejectCatalogue = async (
     }
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }

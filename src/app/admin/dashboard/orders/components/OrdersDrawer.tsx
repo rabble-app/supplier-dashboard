@@ -1,7 +1,6 @@
 /** @format */
 "use client";
 import { Drawer, Spin, Table, message } from "antd";
-import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -9,15 +8,12 @@ import CloseButton from "@/components/CloseButton";
 import OrderDetailsHeader from "./OrderDetailsHeader";
 import OrderDetailsBody from "./OrderDetailsBody";
 import OrderDetailsActions from "./OrderDetailsActions";
-import { IInvoiceItemsData } from "../interfaces";
+import { invoiceItemsColumns } from "../util";
 import { handleGetOrderInfo, handlePostMarkOrderAsComplete } from "../api";
 import { formatAmount } from "@/utils";
 
-interface IOrdersDrawer {
-  invoiceItemsColumns: ColumnsType<IInvoiceItemsData>;
-}
 
-const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
+const OrdersDrawer = () => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -27,7 +23,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(`${searchParams}`);
   const selectedRow = params.get("selected-row");
   const producerId = params.get("producer-id");
   const activeTab = params.get("tab") ?? "subscriptions";
@@ -39,6 +35,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
     } else {
       setOrderInfo({});
     }
+    // eslint-disable-next-line
   }, [selectedRow, activeTab]);
 
   const getOrderInfo = async (id: string) => {

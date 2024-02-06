@@ -8,23 +8,19 @@ import OrdersTable from "./OrdersTable";
 import PageHeader from "@/components/PageHeader";
 import PageWrapper from "@/components/PageWrapper";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import {
   handleGetOrderStatusCount,
   handleGetOrders,
   handleGetSubscriptions,
 } from "../api";
-import { useSearchParams } from "next/navigation";
 
-interface IOrdersOverview {
-  activeTab: string;
-  pageSize: number;
-}
-
-const OrdersOverview = ({ activeTab, pageSize }: IOrdersOverview) => {
+const OrdersOverview = () => {
   const searchParams = useSearchParams();
 
   const currentPage = Number(searchParams.get("page")) || 1;
   const query = searchParams.get("query") || "";
+  const activeTab = searchParams.get("tab") || "subscriptions";
 
   const { data: subscriptionsData, isFetching: isFetchingSubscriptions } =
     useQuery({
@@ -95,7 +91,7 @@ const OrdersOverview = ({ activeTab, pageSize }: IOrdersOverview) => {
         </div>
 
         <OrdersTable
-          pageSize={pageSize}
+          pageSize={7}
           columns={columns}
           data={data}
           total={total}

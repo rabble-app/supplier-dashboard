@@ -1,7 +1,9 @@
 /** @format */
 "use client";
-import { Spin, message } from "antd";
 import { useState } from "react";
+import { Spin, message } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import PageHeader from "@/components/PageHeader";
 import PageWrapper from "@/components/PageWrapper";
@@ -9,20 +11,10 @@ import SearchInput from "@/components/SearchInput";
 import Tabs from "@/components/Tabs";
 import CatalogueTable from "./CatalogueTable";
 import Button from "@/components/Button";
-import { handleApproveOrRejectCatalogue } from "../api";
-import { usePathname, useRouter } from "next/navigation";
+import { handleApproveOrRejectCatalogue, handleGetCatalogue } from "../api";
+import { getStatusByTab } from "../util";
 
-interface ICatalogueOverview {
-  activeTab: string;
-  pageSize: number;
-  catalogues: any;
-}
-
-const CatalogueOverview = ({
-  activeTab,
-  pageSize,
-  catalogues,
-}: ICatalogueOverview) => {
+const CatalogueOverview = () => {
   const [rowsCount, setRowsCount] = useState(0);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -30,19 +22,21 @@ const CatalogueOverview = ({
 
   const pathname = usePathname();
   const { replace } = useRouter();
+  const searchParams = useSearchParams();
+
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const query = searchParams.get("query") || "";
+  const activeTab = searchParams.get("tab") || "pending-approval";
 
   const isClickedButton = (action: string) =>
     isActionLoading && isClicked === action;
 
-  const {
-    data: cataloguesData,
-    error: cataloguesError,
-    message: cataloguesMessage,
-  } = catalogues;
+  const status = getStatusByTab(activeTab);
 
-  if (activeTab === "pending-approval" && cataloguesError) {
-    message.error(cataloguesMessage);
-  }
+  const { data: cataloguesData, isFetching } = useQuery({
+    queryKey: ["catalogues", currentPage, query, status],
+    queryFn: () => handleGetCatalogue(currentPage, query, status)
+  });
 
   const tabItems = [
     {
@@ -81,7 +75,6 @@ const CatalogueOverview = ({
 
     try {
       const catalogueStatus = await handleApproveOrRejectCatalogue(ids, action);
-      console.log(5, catalogueStatus);
       if (catalogueStatus.message.includes("error")) {
         return message.error(catalogueStatus.message);
       }
@@ -110,7 +103,7 @@ const CatalogueOverview = ({
       <PageHeader
         title="Products catalogue"
         subtitle="Keep track of products and their status."
-        count={cataloguesData?.[0]}
+        count={cataloguesData?.data?.[0]}
         label="products"
       />
       <PageWrapper>
@@ -156,13 +149,14 @@ const CatalogueOverview = ({
         </div>
 
         <CatalogueTable
-          pageSize={pageSize}
+          pageSize={7}
           activeTab={activeTab}
-          total={cataloguesData?.[0]}
-          data={cataloguesData?.[1]}
+          total={cataloguesData?.data?.[0]}
+          data={cataloguesData?.data?.[1]}
           setRowsCount={setRowsCount}
           selectedRowKeys={selectedRowKeys}
           setSelectedRowKeys={setSelectedRowKeys}
+          loading={isFetching}
         />
       </PageWrapper>
     </div>

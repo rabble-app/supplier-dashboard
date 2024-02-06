@@ -19,6 +19,7 @@ interface ICatalogueTable {
   selectedRowKeys: React.Key[];
   setRowsCount: (count: number) => void;
   setSelectedRowKeys: (ids: React.Key[]) => void;
+  loading: boolean;
 }
 
 const columns: ColumnsType<ICatalogue> = [
@@ -74,7 +75,7 @@ const columns: ColumnsType<ICatalogue> = [
     dataIndex: "subCategory",
     key: "subCategory",
     render: (text) => (
-      <span className="bg-primary text-black leading-[18px] text-xs py-1 px-2 rounded-[100px]">
+      <span className="bg-primary text-black leading-[18px] text-xs py-1 px-2 rounded-[100px] whitespace-nowrap">
         {text || "N/A"}
       </span>
     ),
@@ -127,11 +128,12 @@ const CatalogueTable = ({
   selectedRowKeys,
   setSelectedRowKeys,
   data,
+  loading
 }: ICatalogueTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(`${searchParams}`);
 
   const handlePaginationChange = (page: number) => {
     params.set("page", page.toString());
@@ -158,6 +160,7 @@ const CatalogueTable = ({
       rowSelection={
         activeTab !== "approved-products" ? rowSelection : undefined
       }
+      loading={loading}
       pagination={{
         position: ["bottomCenter"],
         pageSize,
