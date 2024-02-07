@@ -2,8 +2,10 @@
 "use client";
 import { useState } from "react";
 import { Spin, message } from "antd";
+import { ColumnsType } from "antd/es/table";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 import PageHeader from "@/components/PageHeader";
 import PageWrapper from "@/components/PageWrapper";
@@ -13,6 +15,107 @@ import CatalogueTable from "./CatalogueTable";
 import Button from "@/components/Button";
 import { handleApproveOrRejectCatalogue, handleGetCatalogue } from "../api";
 import { getStatusByTab } from "../util";
+import { ICatalogue } from "../interfaces";
+import { truncateText } from "../util";
+import { formatAmount } from "@/utils";
+
+const columns: ColumnsType<ICatalogue> = [
+  {
+    title: "Product image",
+    dataIndex: "imageUrl",
+    key: "imageUrl",
+    render: (imgSrc) => (
+      <Image src={imgSrc} width={64} height={64} alt="product-img" className="rounded-lg" />
+    ),
+  },
+  {
+    title: "SKU code",
+    dataIndex: "skuCode",
+    key: "skuCode",
+  },
+  {
+    title: "Title",
+    dataIndex: "supplierName",
+    key: "supplierName",
+  },
+  {
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
+    render: (text) => (
+      <p style={{ width: 250 }}>
+        {text
+          ? text?.length > 50
+            ? `${truncateText(text, 10)}...`
+            : text
+          : "N/A"}
+      </p>
+    ),
+  },
+  {
+    title: "Stock",
+    dataIndex: "stock",
+    key: "stock",
+  },
+  {
+    title: "Category",
+    dataIndex: "category",
+    key: "category",
+    render: (text) => (
+      <span className="bg-primary text-black leading-[18px] text-xs py-1 px-2 rounded-[100px] whitespace-nowrap">
+        {text || "N/A"}
+      </span>
+    ),
+  },
+  {
+    title: "Sub category",
+    dataIndex: "subCategory",
+    key: "subCategory",
+    render: (text) => (
+      <span className="bg-primary text-black leading-[18px] text-xs py-1 px-2 rounded-[100px] whitespace-nowrap">
+        {text || "N/A"}
+      </span>
+    ),
+  },
+  {
+    title: "Shared products",
+    dataIndex: "sharedProducts",
+    key: "sharedProducts",
+    render: (sharedProducts) => (sharedProducts ? "Yes" : "No"),
+  },
+  {
+    title: "Units",
+    dataIndex: "units",
+    key: "units",
+  },
+  {
+    title: "Wholesale price",
+    dataIndex: "wholesalePrice",
+    key: "wholesalePrice",
+    render: (text) => <p>{formatAmount(text)}</p>,
+  },
+  {
+    title: "Retail price",
+    dataIndex: "retailPrice",
+    key: "retailPrice",
+    render: (text) => <p>{formatAmount(text)}</p>,
+  },
+  {
+    title: "VAT",
+    dataIndex: "vat",
+    key: "vat",
+  },
+  {
+    title: "Unit of measure",
+    dataIndex: "unitOfMeasure",
+    key: "unitOfMeasure",
+  },
+  {
+    title: "Price/Measure",
+    dataIndex: "pricePerMeasure",
+    key: "pricePerMeasure",
+  },
+];
 
 const CatalogueOverview = () => {
   const [rowsCount, setRowsCount] = useState(0);
@@ -152,10 +255,12 @@ const CatalogueOverview = () => {
           pageSize={7}
           activeTab={activeTab}
           total={cataloguesData?.data?.[0]}
+          columns={columns}
           data={cataloguesData?.data?.[1]}
           setRowsCount={setRowsCount}
           selectedRowKeys={selectedRowKeys}
           setSelectedRowKeys={setSelectedRowKeys}
+          rowSelectionTabs={["pending-approval","rejected-products"]}
           loading={isFetching}
         />
       </PageWrapper>

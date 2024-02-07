@@ -1,13 +1,9 @@
 /** @format */
 
-import React from 'react';
+import CatalogueOverview from "./components/CatalogueOverview";
 
 const Catalogue = () => {
-  return (
-    <div className='pt-10 flex justify-center'>
-      <h1 className='text-4xl font-gosha'>Catalogue</h1>
-    </div>
-  );
+  return <CatalogueOverview />;
 };
 
 export default Catalogue;
