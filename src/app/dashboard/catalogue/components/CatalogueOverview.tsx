@@ -88,7 +88,7 @@ const CatalogueOverview = () => {
     emptyText: (
       <div className="py-[70px] text-center">
         <Image
-          src="/images/Shopping.png"
+          src="/images/Products.png"
           className="mx-auto"
           width={273}
           height={185}

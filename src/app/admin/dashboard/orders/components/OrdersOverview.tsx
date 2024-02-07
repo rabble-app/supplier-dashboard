@@ -14,6 +14,7 @@ import {
   handleGetOrders,
   handleGetSubscriptions,
 } from "../api";
+import Image from "next/image";
 
 const OrdersOverview = () => {
   const searchParams = useSearchParams();
@@ -74,6 +75,47 @@ const OrdersOverview = () => {
 
   const { columns, data, total } = activeTabConfig;
 
+  let heading;
+  let subtitle;
+
+  if(activeTab === "subscriptions") {
+    heading = "No subscriptions";
+    subtitle = "It seems that you currently don't have any subscriptions from teams.";
+  }else if(activeTab === "pending-orders") {
+    heading = "No pending orders";
+    subtitle = "It seems that you currently don't have any upcoming orders.";
+  }else if(activeTab === "successful") {
+    heading = "No completed orders";
+    subtitle = "It seems that you currently haven’t completed any order in the past";
+  }else if(activeTab === "late") {
+    heading = "No late orders";
+    subtitle = "It seems that you are doing a great job.";
+  }
+
+
+  let locale = {
+    emptyText: (
+      <div className="py-[70px] text-center">
+        <Image
+          src="/images/Orders.png"
+          className="mx-auto"
+          width={273}
+          height={185}
+          alt="no-data"
+        />
+        <div className="flex flex-col gap-2 mt-8">
+          <h2 className="font-gosha font-bold text-[32px] leading-[38px] text-grey-6">
+            {heading}
+          </h2>
+          <p className="leading-6 text-sm text-grey-5">
+            {subtitle}
+          </p>
+        </div>
+      </div>
+    ),
+  };
+
+
   return (
     <div className="pt-8">
       <PageHeader
@@ -97,6 +139,7 @@ const OrdersOverview = () => {
           total={total}
           loadingOrders={isFetchingOrders}
           loadingSubscriptions={isFetchingSubscriptions}
+          locale={locale}
         />
       </PageWrapper>
     </div>

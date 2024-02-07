@@ -15,6 +15,7 @@ interface IOrdersTable {
   total: number;
   loadingOrders?: boolean;
   loadingSubscriptions?: boolean;
+  locale?: any;
 }
 
 const OrdersTable = ({
@@ -24,6 +25,7 @@ const OrdersTable = ({
   total,
   loadingOrders,
   loadingSubscriptions,
+  locale
 }: IOrdersTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -95,6 +97,7 @@ const OrdersTable = ({
       columns={updatedColumns}
       dataSource={data}
       loading={loadingOrders || loadingSubscriptions}
+      locale={locale}
       pagination={{
         position: ["bottomCenter"],
         pageSize,

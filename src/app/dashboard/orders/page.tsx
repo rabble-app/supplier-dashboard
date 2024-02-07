@@ -1,12 +1,15 @@
 /** @format */
 
-import React from 'react';
+import OrdersDrawer from "@/app/admin/dashboard/orders/components/OrdersDrawer";
+import OrdersOverview from "@/app/admin/dashboard/orders/components/OrdersOverview";
 
+ 
 const Orders = () => {
   return (
-    <div className='pt-10 flex justify-center'>
-      <h1 className='text-4xl font-gosha'>Orders</h1>
-    </div>
+    <>
+      <OrdersOverview />
+      <OrdersDrawer />
+    </>
   );
 };
 
