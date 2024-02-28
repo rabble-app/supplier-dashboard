@@ -338,8 +338,8 @@ export const handleGetOrderInfo = async (
                   }${item.unitsOfMeasurePerSubUnit.toUpperCase()}`,
                   unitCost: item.cost,
                   quantity: item.quantity,
-                  totalExVat: item.cost * item.quantity,
-                  totalIncVat: item.cost * item.quantity + item.vat || 0,
+                  totalExVat: Number(item.cost) * Number(item.quantity),
+                  totalIncVat: Number(item.cost) * Number(item.quantity) + Number(item.vat) || 0,
                   vat: item.vat || 0,
                 };
               })

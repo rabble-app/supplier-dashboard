@@ -7,6 +7,7 @@ const nextConfig = {
   reactStrictMode: false,
   experimental: {
     serverActions: true,
+    esmExternals: 'loose',
   },
   images: {
     domains: ["rabble-dev1.s3.us-east-2.amazonaws.com"],

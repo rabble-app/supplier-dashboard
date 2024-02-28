@@ -80,8 +80,8 @@ const OrdersDrawer = () => {
 
   const sums = orderInfo?.productLog?.reduce(
     (acc: any, item: any) => {
-      acc.totalExVatSum += item.totalExVat;
-      acc.vatSum += item.vat;
+      acc.totalExVatSum += Number(item.totalExVat);
+      acc.vatSum += Number(item.vat);
       return acc;
     },
     { totalExVatSum: 0, vatSum: 0 }
