@@ -201,6 +201,30 @@ const CatalogueOverview = () => {
     }
   };
 
+  let locale = {
+    emptyText: (
+      <div className="py-[70px] text-center">
+        <Image
+          src="/images/Products.png"
+          className="mx-auto"
+          width={273}
+          height={185}
+          alt="no-data"
+        />
+        <div className="flex flex-col gap-2 mt-8">
+          <h2 className="font-gosha font-bold text-[32px] leading-[38px] text-grey-6">
+            No products
+          </h2>
+          <p className="leading-6 text-sm text-grey-5">
+            It seems that you currently don&apos;t have any product. Add product
+            so that Rabble users can buy
+          </p>
+        </div>
+      </div>
+    ),
+  };
+
+
   return (
     <div className="pt-8">
       <PageHeader
@@ -262,6 +286,7 @@ const CatalogueOverview = () => {
           setSelectedRowKeys={setSelectedRowKeys}
           rowSelectionTabs={["pending-approval","rejected-products"]}
           loading={isFetching}
+          locale={locale}
         />
       </PageWrapper>
     </div>

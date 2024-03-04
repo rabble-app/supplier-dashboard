@@ -11,12 +11,17 @@ const Navbar = () => {
   const pathname = usePathname();
   const authUser = useAppSelector((state) => state.authReducer);
 
+  const adminRoutes = ['/insights'];
+
   const url = authUser.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
 
   return (
     <nav className='flex justify-between items-center bg-black text-grey-4 h-[77px]'>
       <ul className='flex font-gosha text-2xl leading-7'>
         {routes.map((link) => {
+          if (authUser.role !== 'ADMIN' && adminRoutes.includes(link.path)) {
+            return null;
+          }
           return (
             <Link
               key={link.path}

@@ -80,8 +80,8 @@ const OrdersDrawer = () => {
 
   const sums = orderInfo?.productLog?.reduce(
     (acc: any, item: any) => {
-      acc.totalExVatSum += item.totalExVat;
-      acc.vatSum += item.vat;
+      acc.totalExVatSum += Number(item.totalExVat);
+      acc.vatSum += Number(item.vat);
       return acc;
     },
     { totalExVatSum: 0, vatSum: 0 }
@@ -164,22 +164,6 @@ const OrdersDrawer = () => {
                 </p>
                 <p className="text-[9px] font-semibold leading-[9px] text-grey-6">
                   Company number: 14712713
-                </p>
-                <p className="text-[9px] text-grey-5 leading-[12px] mt-0.5">
-                  By accepting and fulfilling this order, you, the
-                  &apos;Supplier,&apos; hereby agree to adhere to and are bound
-                  by the delivery terms, payment terms, and product costs as
-                  specified herein, in accordance with our self-billing
-                  agreement and the terms of your existing contract with
-                  Postcode Collective (trading as Rabble). Fulfillment of this
-                  order constitutes your acceptance of these terms in their
-                  entirety. Any discrepancies arising post-fulfillment regarding
-                  unit costs, delivery, or payment terms will be resolved in
-                  favor of the stipulated terms of this document and the
-                  overarching agreement with Postcode Collective. All invoices
-                  issued under this arrangement will comply with HMRC&apos;s
-                  requirements for self-billed invoices, including necessary VAT
-                  details.
                 </p>
               </div>
             </div>

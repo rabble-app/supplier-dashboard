@@ -37,6 +37,10 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      boxShadow: {
+        "custom-1": "0px 1px 2px 0px rgba(16, 24, 40, 0.06)",
+        "custom-2": "0px 32px 64px -12px rgba(16, 24, 40, 0.07)",
+      },
       fontFamily: {
         gosha: ["var(--font-gosha)"],
         poppins: ["var(--font-poppins)"],

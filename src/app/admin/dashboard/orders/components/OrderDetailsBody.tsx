@@ -47,18 +47,18 @@ const OrderDetailsBody = ({
 
         <div className='w-[160px]'>
           <div className='flex justify-between h-[15px]'>
-            <p className='text-grey-5 text-[10px] font-normal'>Invoice No:</p>
+            <p className='text-grey-5 text-[10px] font-normal'>Purchase Order No:</p>
             <span className='text-grey-6 text-[10px] font-medium'>
               {orderNo}
             </span>
           </div>
           <div className='flex justify-between h-[15px]'>
-            <p className='text-grey-5 text-[10px] font-normal'>Invoice Date:</p>
+            <p className='text-grey-5 text-[10px] font-normal'>Purchase Order Date:</p>
             <span className='text-grey-6 text-[10px] font-medium'>
               {createdAt}
             </span>
           </div>
-          <div className='flex justify-between h-[15px]'>
+          {/* <div className='flex justify-between h-[15px]'>
             <p className='text-grey-5 text-[10px] font-normal'>
               Payment Terms:
             </p>
@@ -71,7 +71,7 @@ const OrderDetailsBody = ({
             <span className='text-grey-6 text-[10px] font-medium'>
               {producerPaymentDue}
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
       <hr className='border-0 border-t-[1px] border-grey-4 mt-8 mb-1.5' />
