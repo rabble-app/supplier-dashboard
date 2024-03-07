@@ -1,26 +1,74 @@
 /** @format */
 
 "use client";
-import { useState } from "react";
-import { Drawer } from "antd";
+import { useState, useEffect } from "react";
+import { Drawer, Spin } from "antd";
+import Image from "next/image";
 
 import CloseButton from "@/components/CloseButton";
 import Button from "@/components/Button";
-import Image from "next/image";
 import Input from "@/components/auth/Input";
 import PhoneNumberInput from "@/components/PhoneInput";
-import "react-phone-number-input/style.css";
 import Select from "@/components/Select";
-import { categories } from "../data";
+import "react-phone-number-input/style.css";
 
 interface ISupplierDetailsDrawer {
   open: boolean;
   setOpen: (open: boolean) => void;
+  producerData: any;
+  categoriesData: any;
+  updateProducer: (fieldName: string, value: string | number) => void;
+  updateCategories: (categories: string[]) => void;
+  isUpdating: boolean;
 }
 
-const SupplierDetailsDrawer = ({ open, setOpen }: ISupplierDetailsDrawer) => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+const SupplierDetailsDrawer = ({
+  open,
+  setOpen,
+  producerData,
+  categoriesData: categories,
+  updateProducer,
+  updateCategories,
+  isUpdating
+}: ISupplierDetailsDrawer) => {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const [formData, setFormData] = useState({
+    businessName: "",
+    description: "",
+    businessAddress: "",
+    phone: "",
+    website: "",
+  });
+
+  useEffect(() => {
+    if (producerData) {
+      setFormData({
+        businessName: producerData.businessName || "",
+        description: producerData.description || "",
+        businessAddress: producerData.businessAddress || "",
+        phone: producerData.user?.phone || "",
+        website: producerData.website || "",
+      });
+      setSelectedCategoryId(producerData.categories?.[0]?.category?.id);
+      setSelectedCategoryIds(
+        producerData.categories
+          ?.map((cat: any) => cat.category.id)
+          .filter((catId: any) => catId !== selectedCategoryId) || []
+      );
+    }
+    // eslint-disable-next-line
+  }, [producerData]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const onClose = () => {
     setOpen(false);
@@ -67,7 +115,15 @@ const SupplierDetailsDrawer = ({ open, setOpen }: ISupplierDetailsDrawer) => {
             <p className="text-grey-2 text-sm">Upload supplier logo</p>
           </div>
 
-          <Input label="Business Name" id="bus_name" type="text" />
+          <Input
+            label="Business Name"
+            id="bus_name"
+            type="text"
+            name="businessName"
+            value={formData.businessName}
+            onChange={handleChange}
+            onBlur={() => updateProducer("businessName", formData.businessName)}
+          />
 
           <div className="flex flex-col">
             <label
@@ -78,20 +134,46 @@ const SupplierDetailsDrawer = ({ open, setOpen }: ISupplierDetailsDrawer) => {
             </label>
             <textarea
               className="bg-grey-1 rounded-lg leading-[30px] p-[25px] text-xl focus:outline-primary-light-1 text-grey-6 font-normal"
-              name="bus_desc"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              onBlur={() => updateProducer("description", formData.description)}
             />
           </div>
 
-          <Input label="Business Address" id="bus_address" type="text" />
+          <Input
+            label="Business Address"
+            id="bus_address"
+            type="text"
+            name="businessAddress"
+            value={formData.businessAddress}
+            onChange={handleChange}
+            onBlur={() =>
+              updateProducer("businessAddress", formData.businessAddress)
+            }
+          />
 
           <div className="flex flex-col">
             <label className="text-grey-2 leading-6 text-base font-medium mb-1">
               Business Phone Number
             </label>
-            <PhoneNumberInput name="phone" required={true} />
+            <PhoneNumberInput
+              name="phone"
+              required={true}
+              value={`+44${formData.phone}`}
+              disabled
+            />
           </div>
 
-          <Input label="Website" id="website" type="text" />
+          <Input
+            label="Website"
+            id="website"
+            type="text"
+            name="website"
+            value={formData?.website}
+            onChange={handleChange}
+            onBlur={() => updateProducer("website", formData.website)}
+          />
         </div>
 
         <div className="mt-[56px]">
@@ -109,6 +191,7 @@ const SupplierDetailsDrawer = ({ open, setOpen }: ISupplierDetailsDrawer) => {
               label="Main Category"
               placeholder="Select a Category"
               options={availableCategories}
+              value={selectedCategoryId}
               onChange={setSelectedCategoryId}
               required={true}
             />
@@ -118,7 +201,7 @@ const SupplierDetailsDrawer = ({ open, setOpen }: ISupplierDetailsDrawer) => {
                 Select any other categories you sell (optional)
               </label>
               <div className="mt-5 flex gap-4 flex-wrap w-[98%]">
-                {categories.length > 0 &&
+                {categories?.length > 0 &&
                   categories?.map((cat: any) => {
                     if (cat.id !== selectedCategoryId)
                       return (
@@ -142,9 +225,11 @@ const SupplierDetailsDrawer = ({ open, setOpen }: ISupplierDetailsDrawer) => {
 
         <div className="mb-10  bottom-0 left-5 right-5">
           <Button
-            label="Save Changes"
+            label={isUpdating ? <Spin /> :"Save Changes"}
             className="text-2xl w-full"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              updateCategories([selectedCategoryId, ...selectedCategoryIds]);
+            }}
           />
         </div>
       </div>

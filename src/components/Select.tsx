@@ -11,6 +11,7 @@ interface ISelect {
   options?: { id: number; name: string }[];
   onChange?: (x: string) => void;
   required?: boolean;
+  value?: string;
 }
 
 const Select = ({
@@ -21,6 +22,7 @@ const Select = ({
   options,
   onChange,
   required = false,
+  value
 }: ISelect) => {
   return (
     <div className='flex flex-col'>
@@ -34,7 +36,8 @@ const Select = ({
         <select
           id={id}
           className={`bg-grey-1 rounded-lg text-grey-6 leading-[30px] p-[25px] text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 ${className}`}
-          defaultValue=''
+          // defaultValue=''
+          defaultValue={value}
           onChange={(e) => onChange?.(e.target.value)}
           required={required}
         >

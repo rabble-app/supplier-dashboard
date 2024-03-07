@@ -30,7 +30,7 @@ const LoginPage = () => {
               <Input
                 id='email'
                 label='Email'
-                type='email'
+                type='text'
                 placeholder='e.g. Maxwell@meatsupplier.com'
                 name='email'
                 required={true}

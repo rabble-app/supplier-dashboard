@@ -16,6 +16,7 @@ interface IOrdersTable {
   total: number;
   pagination?: boolean;
   isHome?: boolean;
+  loading?: boolean;
 }
 
 const OrdersTable = ({
@@ -25,6 +26,7 @@ const OrdersTable = ({
   total,
   pagination,
   isHome = false,
+  loading,
 }: IOrdersTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -38,8 +40,9 @@ const OrdersTable = ({
     replace(`${pathname}?${params.toString()}`);
   };
 
-  const handleViewMoreClick = async (id: number) => {
+  const handleViewMoreClick = async (id: number, producerId: string) => {
     params.set("selected-row", id.toString());
+    params.set("producer-id", producerId);
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -67,7 +70,10 @@ const OrdersTable = ({
                       View more details
                     </p>
                   ),
-                  onClick: () => handleViewMoreClick(record.key),
+                  onClick: () => {
+                    handleViewMoreClick(record.key, record.producerId);
+                    console.log(record)
+                  },
                 },
               ],
             }}
@@ -77,11 +83,11 @@ const OrdersTable = ({
               width={24}
               height={24}
               alt="more-icon"
-              className={
-                ["subscriptions", ""].includes(params.get("tab") || "")
-                  ? "pointer-events-none"
-                  : ""
-              }
+              // className={
+              //   ["subscriptions", ""].includes(params.get("tab") || "")
+              //     ? "pointer-events-none"
+              //     : ""
+              // }
             />
           </Dropdown>
         </Space>
@@ -91,8 +97,9 @@ const OrdersTable = ({
 
   return (
     <Table
-      columns={isHome ? columns : updatedColumns}
+      columns={updatedColumns}
       dataSource={data}
+      loading={loading}
       pagination={
         pagination && {
           position: ["bottomCenter"],

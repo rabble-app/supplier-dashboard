@@ -13,7 +13,7 @@ import { IInvoiceItemsData } from '../interfaces';
 import { handleGetOrderInfo } from '../api';
 
 interface IOrdersDrawer {
-  invoiceItemsColumns: ColumnsType<IInvoiceItemsData>;
+  invoiceItemsColumns?: ColumnsType<IInvoiceItemsData>;
 }
 
 const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
@@ -57,7 +57,7 @@ const OrdersDrawer = ({ invoiceItemsColumns }: IOrdersDrawer) => {
     replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const sums = orderInfo.basket?.reduce(
+  const sums = orderInfo?.basket?.reduce(
     (acc: any, item: any) => {
       acc.totalExVatSum += item.totalExVat;
       acc.vatSum += item.vat;

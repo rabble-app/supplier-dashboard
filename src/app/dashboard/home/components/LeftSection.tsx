@@ -8,7 +8,7 @@ import LeftSectionDeliveryArea from "./LeftSectionDeliveryArea";
 import TeamDetailsHeading from "./TeamDetailsHeading";
 import TeamDetailsInfo from "./TeamDetailsInfo";
 
-const LeftSection = ({ onClick }: { onClick: () => void }) => {
+const LeftSection = ({ onClick, producerData }: { onClick: () => void, producerData:any }) => {
   return (
     <div className="py-10 mb-4 ">
       <div className="w-[400px] rounded-lg bg-white p-2.5 mb-2.5 shadow-custom-2">
@@ -22,8 +22,8 @@ const LeftSection = ({ onClick }: { onClick: () => void }) => {
         </div>
         <div className="my-4 flex flex-col">
           <TeamDetailsHeading
-            title="Farm2Door"
-            subtitle="Fruits and Vegetables"
+            title={producerData?.businessName}
+            subtitle={producerData?.categories?.[0]?.category?.name}
             rightIcon={
               <div
                 className="rounded-full bg-white-3 flex justify-center items-center w-12 h-12 cursor-pointer"
@@ -40,19 +40,19 @@ const LeftSection = ({ onClick }: { onClick: () => void }) => {
           />
           <TeamDetailsInfo
             title="Business description"
-            subtitle="Providing a diverse range of locally sourced, farm-fresh fruits and vegetables to fulfill all your culinary needs."
+            subtitle={producerData?.description||"N/A"}
           />
           <TeamDetailsInfo
             title="Business address"
-            subtitle="street 17, Nottingham"
+            subtitle={producerData?.businessAddress}
           />
           <TeamDetailsInfo
             title="Business phone number"
-            subtitle="+44-3012789002"
+            subtitle={`+44${producerData?.user?.phone}`||"N/A"}
           />
           <TeamDetailsInfo
             title="Business website"
-            subtitle="https://www.farm2door.com"
+            subtitle={producerData?.website||"N/A"}
           />
         </div>
       </div>

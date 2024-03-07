@@ -4,6 +4,7 @@ import { ColumnsType } from 'antd/es/table';
 
 export interface ISubscriptionsData {
   key: number;
+  producerId: string;
   hostName: string;
   postcode: string;
   subscriptionValue: number;

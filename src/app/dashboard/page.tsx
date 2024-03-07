@@ -2,10 +2,12 @@
 "use client";
 
 import { useState } from "react";
-import { Dropdown, Space } from "antd";
+import { Dropdown, Space, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 import LeftSection from "./home/components/LeftSection";
 import MainHeading from "./home/components/MainHeading";
@@ -18,8 +20,20 @@ import Stripe from "./home/components/Stripe";
 import NoData from "./home/components/NoData";
 import TeamSectionDrawer from "./home/components/TeamSectionDrawer";
 import SupplierDetailsDrawer from "./home/components/SupplierDetailsDrawer";
+import {
+  handleGetCurrentProducer,
+  handleGetRecentOrders,
+  handleUpdateProducer,
+  handleUpdateProducerCategories,
+} from "./home/api";
+import { useAppSelector } from "@/redux/store";
+import {
+  handleAddProducerCategories,
+  handleGetProducerCategories,
+} from "@/actions/authActions";
+import OrdersDrawer from "../admin/dashboard/orders/components/OrdersDrawer";
 
-interface OrdersType {
+export interface OrdersType {
   key: string;
   address: string;
   frequency: string;
@@ -72,11 +86,93 @@ const data: OrdersType[] = [
 ];
 
 const Dashboard = () => {
-  const [stripeClicked, setStripeClicked] = useState("stripe");
-  const [openTeamDrawer, setOpenTeamDrawer] = useState(false);
+  const [stripeClicked, setStripeClicked] = useState("table");
   const [openSupplierDrawer, setOpenSupplierDrawer] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const authUser = useAppSelector((state) => state.authReducer);
+  const token = localStorage.token;
+
+  const queryClient = useQueryClient();
+
+  const { data, isFetching, isError } = useQuery({
+    queryKey: ["recent-orders"],
+    queryFn: () => handleGetRecentOrders(),
+  });
+
+  const {
+    data: categoriesData,
+    isFetching: isFetchingCategories,
+    isError: isCategoriesError,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => handleGetProducerCategories(token),
+  });
+
+  const {
+    data: producerData,
+    isFetching: isFetchingProducer,
+    isError: isProducerError,
+  } = useQuery({
+    queryKey: ["current-producer"],
+    queryFn: () => handleGetCurrentProducer(authUser?.id),
+  });
+
+  const updateCategories = async (categoryIds: string[]) => {
+    const preparedData = categoryIds.map((catId) => {
+      return {
+        producerId: authUser?.id,
+        producerCategoryOptionId: catId,
+      };
+    });
+
+    console.log(22, categoryIds)
+
+    setIsUpdating(true);
+    try {
+      const result = await handleUpdateProducerCategories(preparedData);
+      if (result.error) {
+        throw new Error(JSON.stringify(result));
+      }
+
+      message.success(result.message);
+      await queryClient.refetchQueries({ queryKey: ["current-producer"] });
+    } catch (error: any) {
+      const errorObject = JSON.parse(error.message);
+      message.error(errorObject.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const updateProducer = async (fieldName: string, value: string | number) => {
+    const loadingKey = "loading";
+    message.loading({
+      content: "Updating producer...",
+      key: loadingKey,
+    });
+
+    try {
+      const data = { [fieldName]: value };
+      const res = await handleUpdateProducer(authUser?.id, data);
+
+      if (res.statusCode === 400 || res.statusCode === 500) {
+        throw new Error(JSON.stringify(res));
+      } else {
+        message.success("Producer updated successfully");
+        await queryClient.refetchQueries({ queryKey: ["current-producer"] });
+      }
+    } catch (error) {
+      message.error("Error updating producer");
+    } finally {
+      message.destroy(loadingKey);
+    }
+  };
 
   const router = useRouter();
+
+  if (isProducerError || isError || isCategoriesError)
+    return <div>Error...</div>;
 
   const columns: ColumnsType<OrdersType> = [
     {
@@ -127,59 +223,26 @@ const Dashboard = () => {
         );
       },
     },
-    {
-      title: " ",
-      key: "",
-      render: (_, record) => (
-        <Space size="middle" onClick={(e) => e.stopPropagation()}>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: record.key,
-                  label: (
-                    <p className="py-3.5 text-base font-medium flex gap-2">
-                      <Image
-                        src="/images/icons/note.svg"
-                        width={24}
-                        height={24}
-                        alt="note"
-                      />
-                      View more details
-                    </p>
-                  ),
-                  onClick: () => setOpenTeamDrawer(true),
-                },
-              ],
-            }}
-          >
-            <Image
-              src="/images/icons/more.svg"
-              width={24}
-              height={24}
-              alt="more-icon"
-            />
-          </Dropdown>
-        </Space>
-      ),
-    },
   ];
 
   return (
     <>
       <div className="flex h-screen gap-5">
-        <LeftSection onClick={() => setOpenSupplierDrawer(true)} />
+        <LeftSection
+          producerData={producerData}
+          onClick={() => setOpenSupplierDrawer(true)}
+        />
         <div className="bg-white h-full w-full py-8 px-5 relative">
           <MainHeading
-            date="Friday, 2nd June"
-            message="Hi Farm2Door, welcome back"
+            date={dayjs(new Date()).format("dddd, D MMMM")}
+            message={`Hi ${producerData?.businessName}, welcome back`}
           />
 
-          {stripeClicked === "stripe" ? (
+          {/* {stripeClicked === "stripe" ? (
             <div onClick={() => setStripeClicked("no orders")}>
               <Stripe />
             </div>
-          ) : null}
+          ) : null} */}
           {stripeClicked === "no orders" ? (
             <div onClick={() => setStripeClicked("table")}>
               <NoData />
@@ -204,6 +267,7 @@ const Dashboard = () => {
                   pageSize={7}
                   columns={columns}
                   data={data}
+                  loading={isFetching}
                   total={7}
                   pagination={false}
                   isHome={true}
@@ -213,10 +277,15 @@ const Dashboard = () => {
           ) : null}
         </div>
       </div>
-      <TeamSectionDrawer open={openTeamDrawer} setOpen={setOpenTeamDrawer} />
+      <OrdersDrawer />
       <SupplierDetailsDrawer
         open={openSupplierDrawer}
         setOpen={setOpenSupplierDrawer}
+        producerData={producerData}
+        categoriesData={categoriesData?.data}
+        updateProducer={updateProducer}
+        updateCategories={updateCategories}
+        isUpdating={isUpdating}
       />
     </>
   );

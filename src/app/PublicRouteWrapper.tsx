@@ -19,7 +19,7 @@ const PublicRouteWrapper = ({ children }: { children: React.ReactNode }) => {
     const token = localStorage.token;
     const url = authUser.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
     if (token && !pathname.startsWith(url) && authUser?.isVerified) {
-      router.push(url + '/catalogue');
+      router.push(url + '/');
       setRedirected(true);
     } else {
       setIsLoading(false);

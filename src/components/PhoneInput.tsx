@@ -6,17 +6,22 @@ const PhoneNumberInput = ({
   name,
   required,
   value,
+  disabled,
+  onChange
 }: {
   name: string;
   required?: boolean;
   value?: string;
+  disabled?: boolean;
+  onChange?: any;
 }) => {
   return (
     <PhoneInput
       defaultCountry='GB'
-      onChange={() => {}}
+      onChange={()=>{}}
       value={value}
       name={name}
+      disabled={disabled}
       required={required}
     />
   );

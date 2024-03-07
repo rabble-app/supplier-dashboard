@@ -13,6 +13,9 @@ interface IInput {
   className?: string;
   leftIcon?: string;
   required?: boolean;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 const Input = ({
@@ -24,6 +27,9 @@ const Input = ({
   className = '',
   leftIcon,
   required = false,
+  value,
+  onChange,
+  onBlur
 }: IInput) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -60,6 +66,9 @@ const Input = ({
           name={name}
           placeholder={placeholder}
           required={required}
+          defaultValue={value}
+          onChange={onChange}
+          onBlur={onBlur}
         />
         {type == 'password' && (
           <Image
