@@ -91,24 +91,23 @@ export const handleUpdateProducer = async (producerId: string, data?: any) => {
   }
 };
 
-export const handleUpdateProducerCategories = async (preparedData: any) => {
+export const handleRemoveProducerCategory = async (id?: string) => {
   const token = localStorage.token;
 
-  let url = `${API_ENDPOINT}/users/producer/category/add`;
+  let url = `${API_ENDPOINT}/users/producer/category/remove`;
 
   const data = {
-    content: preparedData,
+    producerCategoryId: id,
   };
 
   try {
     let res = await fetch(url, {
       headers: setHeaders(token),
-      method: "PATCH",
+      method: "DELETE",
       body: JSON.stringify(data),
     });
 
     let resp = await res.json();
-    console.log(2111, resp)
     if (res.ok) {
       return resp.data;
     } else {

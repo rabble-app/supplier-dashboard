@@ -15,21 +15,25 @@ import "react-phone-number-input/style.css";
 interface ISupplierDetailsDrawer {
   open: boolean;
   setOpen: (open: boolean) => void;
+  isFetchingCategories: boolean;
   producerData: any;
   categoriesData: any;
   updateProducer: (fieldName: string, value: string | number) => void;
-  updateCategories: (categories: string[]) => void;
-  isUpdating: boolean;
+  updateCategories: (
+    type: "add" | "remove",
+    categories?: string[],
+    id?: string
+  ) => void;
 }
 
 const SupplierDetailsDrawer = ({
   open,
   setOpen,
+  isFetchingCategories,
   producerData,
   categoriesData: categories,
   updateProducer,
   updateCategories,
-  isUpdating
 }: ISupplierDetailsDrawer) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
@@ -50,11 +54,14 @@ const SupplierDetailsDrawer = ({
         phone: producerData.user?.phone || "",
         website: producerData.website || "",
       });
+
       setSelectedCategoryId(producerData.categories?.[0]?.category?.id);
       setSelectedCategoryIds(
         producerData.categories
           ?.map((cat: any) => cat.category.id)
-          .filter((catId: any) => catId !== selectedCategoryId) || []
+          .filter(
+            (catId: any) => catId !== producerData.categories?.[0]?.category?.id
+          ) || []
       );
     }
     // eslint-disable-next-line
@@ -79,11 +86,20 @@ const SupplierDetailsDrawer = ({
     [];
 
   const handleCategorySelected = (id: string) => {
-    setSelectedCategoryIds((prevIds) =>
-      prevIds.includes(id)
-        ? prevIds.filter((prevId) => prevId !== id)
-        : [...prevIds, id]
-    );
+    setSelectedCategoryIds((prevIds) => {
+      let data;
+      if (prevIds.includes(id)) {
+        const _id = producerData.categories?.find(
+          (cat: any) => cat.category.id === id
+        )?.id;
+        data = prevIds.filter((prevId) => prevId !== id);
+        updateCategories("remove", undefined, _id);
+      } else {
+        data = [...prevIds, id];
+        updateCategories("add", [selectedCategoryId, ...data]);
+      }
+      return data;
+    });
   };
 
   return (
@@ -193,6 +209,22 @@ const SupplierDetailsDrawer = ({
               options={availableCategories}
               value={selectedCategoryId}
               onChange={setSelectedCategoryId}
+              onBlur={() => {
+                if (
+                  producerData.categories?.[0]?.category?.id !==
+                  selectedCategoryId
+                ) {
+                  updateCategories(
+                    "remove",
+                    undefined,
+                    producerData.categories?.[0]?.id
+                  );
+                  updateCategories("add", [
+                    selectedCategoryId,
+                    ...selectedCategoryIds,
+                  ]);
+                }
+              }}
               required={true}
             />
 
@@ -201,7 +233,13 @@ const SupplierDetailsDrawer = ({
                 Select any other categories you sell (optional)
               </label>
               <div className="mt-5 flex gap-4 flex-wrap w-[98%]">
+                {isFetchingCategories && (
+                  <span className="text-lg">
+                    <Spin className="custom-spin mr-1" /> Loading categories...
+                  </span>
+                )}
                 {categories?.length > 0 &&
+                  !isFetchingCategories &&
                   categories?.map((cat: any) => {
                     if (cat.id !== selectedCategoryId)
                       return (
@@ -225,11 +263,9 @@ const SupplierDetailsDrawer = ({
 
         <div className="mb-10  bottom-0 left-5 right-5">
           <Button
-            label={isUpdating ? <Spin /> :"Save Changes"}
+            label="Done"
             className="text-2xl w-full"
-            onClick={() => {
-              updateCategories([selectedCategoryId, ...selectedCategoryIds]);
-            }}
+            onClick={() => setOpen(false)}
           />
         </div>
       </div>

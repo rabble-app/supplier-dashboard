@@ -2,9 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import { Dropdown, Space, message } from "antd";
+import { message } from "antd";
 import { ColumnsType } from "antd/es/table";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -18,13 +17,12 @@ import { capitalizeFirstLetter, formatAmount } from "@/utils";
 import { getStatusClass } from "./orders/util";
 import Stripe from "./home/components/Stripe";
 import NoData from "./home/components/NoData";
-import TeamSectionDrawer from "./home/components/TeamSectionDrawer";
 import SupplierDetailsDrawer from "./home/components/SupplierDetailsDrawer";
 import {
   handleGetCurrentProducer,
   handleGetRecentOrders,
   handleUpdateProducer,
-  handleUpdateProducerCategories,
+  handleRemoveProducerCategory,
 } from "./home/api";
 import { useAppSelector } from "@/redux/store";
 import {
@@ -42,53 +40,9 @@ export interface OrdersType {
   orderStatus: string;
 }
 
-const data: OrdersType[] = [
-  {
-    key: "1",
-    address: "123 Elm St",
-    frequency: "Weekly",
-    orderValue: 150,
-    delivery: "22 June 2023",
-    orderStatus: "Pending",
-  },
-  {
-    key: "2",
-    address: "456 Maple Ave",
-    frequency: "Monthly",
-    orderValue: 200,
-    delivery: "22 June 2023",
-    orderStatus: "Pending",
-  },
-  {
-    key: "3",
-    address: "789 Oak Rd",
-    frequency: "Bi-Weekly",
-    orderValue: 100,
-    delivery: "22 June 2023",
-    orderStatus: "Successful",
-  },
-  {
-    key: "4",
-    address: "101 Pine St",
-    frequency: "One-Time",
-    orderValue: 250,
-    delivery: "22 June 2023",
-    orderStatus: "Pending",
-  },
-  {
-    key: "5",
-    address: "202 Birch Ln",
-    frequency: "Weekly",
-    orderValue: 175,
-    delivery: "22 June 2023",
-    orderStatus: "Successful",
-  },
-];
-
 const Dashboard = () => {
   const [stripeClicked, setStripeClicked] = useState("table");
   const [openSupplierDrawer, setOpenSupplierDrawer] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const authUser = useAppSelector((state) => state.authReducer);
   const token = localStorage.token;
@@ -111,37 +65,53 @@ const Dashboard = () => {
 
   const {
     data: producerData,
-    isFetching: isFetchingProducer,
+    isLoading: isFetchingProducer,
     isError: isProducerError,
   } = useQuery({
     queryKey: ["current-producer"],
     queryFn: () => handleGetCurrentProducer(authUser?.id),
   });
 
-  const updateCategories = async (categoryIds: string[]) => {
-    const preparedData = categoryIds.map((catId) => {
+  const updateCategories = async (
+    type: "add" | "remove",
+    categoryIds?: string[],
+    categoryId?: string
+  ) => {
+    const filteredCategoryIds = categoryIds?.filter((id) => {
+      return !producerData?.categories?.some(
+        (cat: any) => cat.category.id === id
+      );
+    });
+    const preparedData = filteredCategoryIds?.map((catId) => {
       return {
         producerId: authUser?.id,
         producerCategoryOptionId: catId,
       };
     });
 
-    console.log(22, categoryIds)
-
-    setIsUpdating(true);
+    const loadingKey = "loading";
+    message.loading({
+      content: "Updating categories...",
+      key: loadingKey,
+    });
     try {
-      const result = await handleUpdateProducerCategories(preparedData);
+      let result;
+      if (type === "add") {
+        result = await handleAddProducerCategories(preparedData, token);
+      } else {
+        result = await handleRemoveProducerCategory(categoryId);
+      }
+
       if (result.error) {
         throw new Error(JSON.stringify(result));
       }
-
-      message.success(result.message);
+      message.success("Categories updated successfully !");
       await queryClient.refetchQueries({ queryKey: ["current-producer"] });
     } catch (error: any) {
       const errorObject = JSON.parse(error.message);
       message.error(errorObject.message);
     } finally {
-      setIsUpdating(false);
+      message.destroy(loadingKey);
     }
   };
 
@@ -229,6 +199,7 @@ const Dashboard = () => {
     <>
       <div className="flex h-screen gap-5">
         <LeftSection
+          isFetchingProducer={isFetchingProducer}
           producerData={producerData}
           onClick={() => setOpenSupplierDrawer(true)}
         />
@@ -243,12 +214,11 @@ const Dashboard = () => {
               <Stripe />
             </div>
           ) : null} */}
-          {stripeClicked === "no orders" ? (
-            <div onClick={() => setStripeClicked("table")}>
+          {!data?.length && !isFetching ? (
+            <div>
               <NoData />
             </div>
-          ) : null}
-          {stripeClicked === "table" ? (
+          ) : (
             <>
               <PageWrapper>
                 <div className="flex justify-between items-center px-4">
@@ -274,18 +244,18 @@ const Dashboard = () => {
                 />
               </PageWrapper>
             </>
-          ) : null}
+          )}
         </div>
       </div>
       <OrdersDrawer />
       <SupplierDetailsDrawer
         open={openSupplierDrawer}
         setOpen={setOpenSupplierDrawer}
+        isFetchingCategories={isFetchingCategories}
         producerData={producerData}
         categoriesData={categoriesData?.data}
         updateProducer={updateProducer}
         updateCategories={updateCategories}
-        isUpdating={isUpdating}
       />
     </>
   );
