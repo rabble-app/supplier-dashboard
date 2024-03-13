@@ -1,9 +1,10 @@
 /** @format */
 
 "use client";
-import { useState, useEffect } from "react";
-import { Drawer, Spin } from "antd";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { Drawer, Spin, message } from "antd";
 import Image from "next/image";
+import { useQueryClient } from "@tanstack/react-query";
 
 import CloseButton from "@/components/CloseButton";
 import Button from "@/components/Button";
@@ -11,6 +12,8 @@ import Input from "@/components/auth/Input";
 import PhoneNumberInput from "@/components/PhoneInput";
 import Select from "@/components/Select";
 import "react-phone-number-input/style.css";
+import { handleUploadProducerImage } from "../api";
+import EditIcon from "@/components/svgs/EditIcon";
 
 interface ISupplierDetailsDrawer {
   open: boolean;
@@ -44,6 +47,58 @@ const SupplierDetailsDrawer = ({
     phone: "",
     website: "",
   });
+  const [image, setImage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const inputFile = useRef<HTMLInputElement | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const updateProducerImage = async (file: File) => {
+    const loadingKey = "uploading logo";
+    message.loading({
+      content: "Uploading producer logo...",
+      key: loadingKey,
+    });
+
+    try {
+      const res = await handleUploadProducerImage(producerData?.id, file);
+
+      if (res.statusCode === 400 || res.statusCode === 500) {
+        throw new Error(JSON.stringify(res));
+      } else {
+        console.log("res", res);
+        message.success("Producer logo updated successfully");
+        setImage(res?.Location);
+        await queryClient.refetchQueries({ queryKey: ["current-producer"] });
+      }
+    } catch (error) {
+      message.error("Error uploading producer logo");
+      setError("Error uploading producer logo !");
+    } finally {
+      message.destroy(loadingKey);
+      setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+
+    if (files && files.length) {
+      setError("");
+      setLoading(true);
+
+      await updateProducerImage(files[0]);
+    }
+  };
+
+  const onButtonClick = () => {
+    if (inputFile.current) {
+      inputFile.current.value = "";
+    }
+
+    inputFile.current?.click();
+  };
 
   useEffect(() => {
     if (producerData) {
@@ -63,6 +118,7 @@ const SupplierDetailsDrawer = ({
             (catId: any) => catId !== producerData.categories?.[0]?.category?.id
           ) || []
       );
+      setImage(producerData?.imageUrl);
     }
     // eslint-disable-next-line
   }, [producerData]);
@@ -121,15 +177,89 @@ const SupplierDetailsDrawer = ({
         </p>
 
         <div className="flex flex-col gap-4">
-          <div className="bg-grey-1 rounded-lg flex flex-col justify-center items-center cursor-pointer py-[30px]">
-            <Image
-              src="/images/icons/picture-rectangle.svg"
-              width={96}
-              height={96}
-              alt="no-image"
-            />
-            <p className="text-grey-2 text-sm">Upload supplier logo</p>
+          <div
+            className="bg-grey-1 rounded-lg flex flex-col h-[180px] w-[610px] justify-center items-center cursor-pointer py-[30px] relative group z-[1px] overflow-hidden"
+            onClick={() =>
+              !error || image || producerData?.imageUrl ? onButtonClick() : null
+            }
+          >
+            {image || producerData?.imageUrl ? (
+              <>
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 hidden group-hover:block z-10"></div>
+                <EditIcon
+                  className={`hidden group-hover:block absolute left-[48%] top-[45%] text-white z-10`}
+                  color="#ffffff"
+                  size={7}
+                />
+                <Image
+                  src={image || producerData?.imageUrl}
+                  width={610}
+                  height={180}
+                  className="absolute w-[610px] h-[180px] object-cover rounded-lg"
+                  alt="no-image"
+                />
+              </>
+            ) : (
+              <>
+                <Image
+                  src={"/images/icons/picture-rectangle.svg"}
+                  width={96}
+                  height={96}
+                  alt="no-image"
+                />
+                {!loading && (
+                  <p
+                    className={`${
+                      error ? "text-danger font-medium" : "text-grey-2"
+                    } text-sm `}
+                  >
+                    {error ? (
+                      <p>
+                        {error}
+                        <span
+                          className="text-blue-1 cursor-pointer"
+                          onClick={onButtonClick}
+                        >
+                          &nbsp;Try again
+                        </span>
+                      </p>
+                    ) : (
+                      "Upload supplier logo"
+                    )}
+                  </p>
+                )}
+                {loading && (
+                  <span className="text-lg">
+                    <Spin /> Uploading supplier logo, please wait...
+                  </span>
+                )}
+              </>
+            )}
           </div>
+          <input
+            style={{ display: "none" }}
+            accept="image/png, image/jpeg"
+            ref={inputFile}
+            onChange={handleFileUpload}
+            type="file"
+          />
+          {loading && producerData?.imageUrl && (
+            <span className="text-lg">
+              <Spin className="custom-spin" /> Updating supplier logo, please
+              wait...
+            </span>
+          )}
+          {error && producerData?.imageUrl && (
+            <span className="text-lg text-danger">
+              Error updating producer logo !
+              <span
+                className="text-blue-1 cursor-pointer"
+                onClick={onButtonClick}
+              >
+                &nbsp;Try again
+              </span>
+            </span>
+          )}
 
           <Input
             label="Business Name"

@@ -2,13 +2,18 @@
 
 export const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
-export const setHeaders = (token?: string) => {
-  const headers: any = {
-    "Content-Type": "application/json"
-  };
+export const setHeaders = (
+  token?: string,
+  contentType: string | null = "application/json"
+) => {
+  const headers: Record<string, string> = {};
+
+  if (contentType) {
+    headers["Content-Type"] = contentType;
+  }
 
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   return headers;

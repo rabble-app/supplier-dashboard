@@ -23,6 +23,7 @@ import {
   handleGetRecentOrders,
   handleUpdateProducer,
   handleRemoveProducerCategory,
+  handleUploadProducerImage,
 } from "./home/api";
 import { useAppSelector } from "@/redux/store";
 import {
@@ -138,6 +139,8 @@ const Dashboard = () => {
       message.destroy(loadingKey);
     }
   };
+
+
 
   const router = useRouter();
 

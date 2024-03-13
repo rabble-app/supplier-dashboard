@@ -33,10 +33,11 @@ const LeftSection = ({
           <>
             <div className="h-[180px] bg-grey-1 rounded-lg flex justify-center cursor-pointer">
               <Image
-                src="/images/icons/picture-rectangle.svg"
-                width={96}
-                height={96}
+                src={producerData?.imageUrl || "/images/icons/picture-rectangle.svg"}
+                width={producerData?.imageUrl?380:96}
+                height={producerData?.imageUrl?180:96}
                 alt="no-image"
+                className={`rounded-lg ${producerData?.imageUrl?'object-cover':''}`}
               />
             </div>
             <div className="my-4 flex flex-col">

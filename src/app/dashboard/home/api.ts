@@ -118,3 +118,34 @@ export const handleRemoveProducerCategory = async (id?: string) => {
     return errorObject;
   }
 };
+
+
+export const handleUploadProducerImage = async (id: string, file:File) => {
+  const token = localStorage.token;
+
+  let url = `${API_ENDPOINT}/uploads/producer-pix`;
+
+  console.log("UPLOADING PRODUCER IMAGE...");
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('producerId', id);
+
+  try {
+    let res = await fetch(url, {
+      headers: setHeaders(token, null),
+      method: "POST",
+      body: formData,
+    });
+
+    let resp = await res.json();
+    if (res.ok) {
+      return resp.data;
+    } else {
+      throw new Error(JSON.stringify(resp));
+    }
+  } catch (error: any) {
+    const errorObject = JSON.parse(error.message);
+    return errorObject;
+  }
+};
