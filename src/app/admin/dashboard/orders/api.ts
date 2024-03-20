@@ -341,7 +341,7 @@ export const handleGetOrderInfo = async (
                   unitCost: item.cost,
                   quantity: item.quantity,
                   totalIncVat: Number(item.cost) * Number(item.quantity),
-                  totalExVat: Number(item.cost) * Number(item.quantity) - (vat * Number(item.cost)),
+                  totalExVat: Number(item.cost) * Number(item.quantity) - (vat * Number(item.cost) * Number(item.quantity) ),
                   vat: item.vat || 0,
                 };
               })
