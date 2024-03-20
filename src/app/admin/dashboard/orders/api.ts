@@ -329,7 +329,8 @@ export const handleGetOrderInfo = async (
           totalPrice: items?.accumulatedAmount,
           productLog: items?.productLog.length
             ? items.productLog.map((item: any) => {
-              const vat = item.vat ? Number(item.vat)/100 : 0;
+              const vat = item.vat ? Number(item.vat/100) + 1 : 0
+              const unitCost:number = item.vat ? Number(item.cost/vat): Number(item.cost);
 
                 return {
                   key: item.productSku,
@@ -338,10 +339,10 @@ export const handleGetOrderInfo = async (
                   measure: `${item.quantityOfSubUnitPerOrder} x ${
                     item.measuresPerSubUnit
                   }${item.unitsOfMeasurePerSubUnit.toUpperCase()}`,
-                  unitCost: (Number(item.cost)- (vat *Number(item.cost))).toFixed(2),
+                  unitCost: unitCost.toFixed(2),
                   quantity: item.quantity,
                   totalIncVat: Number(item.cost) * Number(item.quantity),
-                  totalExVat: Number(item.cost) * Number(item.quantity) - (vat * Number(item.cost) * Number(item.quantity) ),
+                  totalExVat: Number(item.quantity)* Number(unitCost.toFixed(2)) ,
                   vat: item.vat || 0,
                 };
               })
