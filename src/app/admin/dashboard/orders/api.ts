@@ -338,7 +338,7 @@ export const handleGetOrderInfo = async (
                   measure: `${item.quantityOfSubUnitPerOrder} x ${
                     item.measuresPerSubUnit
                   }${item.unitsOfMeasurePerSubUnit.toUpperCase()}`,
-                  unitCost: item.cost,
+                  unitCost: (Number(item.cost)- (vat *Number(item.cost))).toFixed(2),
                   quantity: item.quantity,
                   totalIncVat: Number(item.cost) * Number(item.quantity),
                   totalExVat: Number(item.cost) * Number(item.quantity) - (vat * Number(item.cost) * Number(item.quantity) ),
