@@ -83,7 +83,7 @@ const OrdersDrawer = () => {
       const vat = item.vat ? Number(item.vat)/100 : 0;
 
       acc.totalExVatSum += Number(item.totalExVat);
-      acc.vatSum += vat*item.totalIncVat
+      acc.vatSum += item.totalExVat*vat
       return acc;
     },
     { totalExVatSum: 0, vatSum: 0 }
