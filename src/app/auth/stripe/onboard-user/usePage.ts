@@ -1,11 +1,11 @@
 /** @format */
 "use client"
 
+import { useState } from 'react';
 import { message } from 'antd';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'; 
 
 import { handleStripeOnboarding } from '@/actions/authActions';
-import { useState } from 'react';
 
 const usePage = () => {
   const { push } = useRouter();
@@ -19,10 +19,13 @@ const usePage = () => {
       if (result.error) {
         throw new Error(JSON.stringify(result));
       }
+
+      console.log(23, result)
       localStorage.setItem('aId', result.data.accountId)
       push(result.data.url)
     } catch (error: any) {
       setIsLoading(false)
+      console.log(123, error)
       const errorObject = JSON.parse(error.message);
       message.error(errorObject.message);
     }

@@ -2,8 +2,14 @@
 
 import Image from "next/image";
 import Button from "@/components/Button";
+import { Spin } from "antd";
 
-const Stripe = () => {
+interface IStripe {
+  handleStripeOnboarding: () => void;
+  isLoading: boolean;
+}
+
+const Stripe = ({ handleStripeOnboarding, isLoading }: IStripe) => {
   return (
     <div className="flex flex-col justify-center items-center pt-[12%]">
       <Image
@@ -22,8 +28,9 @@ const Stripe = () => {
         account. This secure connection ensures hassle-free payouts.
       </p>
       <Button
-        label="Connect Stripe"
+        label={isLoading ?  <Spin /> :"Connect Stripe"}
         className="w-[400px] h-[60px] !text-base"
+        onClick={handleStripeOnboarding}
       />
     </div>
   );

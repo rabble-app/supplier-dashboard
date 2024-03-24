@@ -1,7 +1,7 @@
 /** @format */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,7 @@ import {
   handleGetProducerCategories,
 } from "@/actions/authActions";
 import OrdersDrawer from "../admin/dashboard/orders/components/OrdersDrawer";
+import usePage from "../auth/stripe/onboard-user/usePage";
 
 export interface OrdersType {
   key: string;
@@ -42,8 +43,10 @@ export interface OrdersType {
 }
 
 const Dashboard = () => {
-  const [stripeClicked, setStripeClicked] = useState("table");
+  const [isStripeConnected, setIsStripeConnected] = useState(false);
   const [openSupplierDrawer, setOpenSupplierDrawer] = useState(false);
+
+  const { stripeOnboarding, isLoading } = usePage();
 
   const authUser = useAppSelector((state) => state.authReducer);
   const token = localStorage.token;
@@ -72,6 +75,14 @@ const Dashboard = () => {
     queryKey: ["current-producer"],
     queryFn: () => handleGetCurrentProducer(authUser?.id),
   });
+
+  useEffect(() => {
+    if (authUser?.stripeConnectId) {
+      setIsStripeConnected(true);
+    } else {
+      setIsStripeConnected(false);
+    }
+  }, [authUser?.stripeConnectId]);
 
   const updateCategories = async (
     type: "add" | "remove",
@@ -139,8 +150,6 @@ const Dashboard = () => {
       message.destroy(loadingKey);
     }
   };
-
-
 
   const router = useRouter();
 
@@ -212,41 +221,47 @@ const Dashboard = () => {
             message={`Hi ${producerData?.businessName}, welcome back`}
           />
 
-          {/* {stripeClicked === "stripe" ? (
-            <div onClick={() => setStripeClicked("no orders")}>
-              <Stripe />
-            </div>
-          ) : null} */}
-          {!data?.length && !isFetching ? (
-            <div>
-              <NoData />
-            </div>
+          {!isStripeConnected ? (
+            <Stripe
+              handleStripeOnboarding={stripeOnboarding}
+              isLoading={isLoading}
+            />
           ) : (
-            <>
-              <PageWrapper>
-                <div className="flex justify-between items-center px-4">
-                  <h2 className="text-grey-2 text-xl font-gosha font-bold">
-                    Recent Activity
-                  </h2>
-                  <Button
-                    label="View All Orders"
-                    size="md"
-                    className="h-10"
-                    onClick={() => router.push("/dashboard/orders")}
-                  />
-                </div>
+            isStripeConnected && (
+              <>
+                {!data?.length && !isFetching ? (
+                  <div>
+                    <NoData />
+                  </div>
+                ) : (
+                  <>
+                    <PageWrapper>
+                      <div className="flex justify-between items-center px-4">
+                        <h2 className="text-grey-2 text-xl font-gosha font-bold">
+                          Recent Activity
+                        </h2>
+                        <Button
+                          label="View All Orders"
+                          size="md"
+                          className="h-10"
+                          onClick={() => router.push("/dashboard/orders")}
+                        />
+                      </div>
 
-                <OrdersTable
-                  pageSize={7}
-                  columns={columns}
-                  data={data}
-                  loading={isFetching}
-                  total={7}
-                  pagination={false}
-                  isHome={true}
-                />
-              </PageWrapper>
-            </>
+                      <OrdersTable
+                        pageSize={7}
+                        columns={columns}
+                        data={data}
+                        loading={isFetching}
+                        total={7}
+                        pagination={false}
+                        isHome={true}
+                      />
+                    </PageWrapper>
+                  </>
+                )}
+              </>
+            )
           )}
         </div>
       </div>

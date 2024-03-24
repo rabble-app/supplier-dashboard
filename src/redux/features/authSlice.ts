@@ -10,6 +10,7 @@ export interface AuthState {
   businessEmail: string;
   isVerified: boolean;
   role: string;
+  stripeConnectId: string | null;
 }
 
 const initialState: AuthState = {
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   businessEmail: '',
   isVerified: false,
   role: '',
+  stripeConnectId: null
 };
 
 export const auth = createSlice({
@@ -36,6 +38,7 @@ export const auth = createSlice({
         businessEmail: action.payload.businessEmail,
         isVerified: action.payload.isVerified,
         role: action.payload.role,
+        stripeConnectId: action.payload.stripeConnectId,
       };
     },
   },
