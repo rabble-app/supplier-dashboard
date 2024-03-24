@@ -23,7 +23,7 @@ const Stripe = ({ handleStripeOnboarding, isLoading }: IStripe) => {
         Connect Your Stripe Account
       </h1>
       <p className="text-grey-5 text-sm w-[534px] mb-10">
-        Welcome to Rabble! To start receiving payments and unlock the full
+        Welcome to Rabble! To start receiving payments and unlock the full 
         potential of your Rabble account, you need to connect your Stripe
         account. This secure connection ensures hassle-free payouts.
       </p>

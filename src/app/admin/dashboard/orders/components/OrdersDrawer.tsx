@@ -26,17 +26,18 @@ const OrdersDrawer = () => {
   const params = new URLSearchParams(`${searchParams}`);
   const selectedRow = params.get("selected-row");
   const producerId = params.get("producer-id");
+  const orderBreakdown = params.get("order-breakdown");
   const activeTab = params.get("tab") ?? "subscriptions";
 
   useEffect(() => {
-    if (selectedRow) {
+    if (selectedRow && orderBreakdown==="false") {
       setOpen(true);
       getOrderInfo(selectedRow);
     } else {
       setOrderInfo({});
     }
     // eslint-disable-next-line
-  }, [selectedRow, activeTab]);
+  }, [selectedRow, activeTab, orderBreakdown]);
 
   const getOrderInfo = async (id: string) => {
     setIsLoading(true);
@@ -53,6 +54,7 @@ const OrdersDrawer = () => {
   const onClose = () => {
     params.delete("selected-row");
     params.delete("producer-id");
+    params.delete("order-breakdown");
     setOpen(false);
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });

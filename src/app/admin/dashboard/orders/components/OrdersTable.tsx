@@ -27,7 +27,7 @@ const OrdersTable = ({
   loadingOrders,
   loadingSubscriptions,
   locale,
-  pagination
+  pagination,
 }: IOrdersTable) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -41,9 +41,14 @@ const OrdersTable = ({
     replace(`${pathname}?${params.toString()}`);
   };
 
-  const handleViewMoreClick = async (id: string, producerId: string) => {
+  const handleClick = async (
+    id: string,
+    producerId: string,
+    orderBreakdown: boolean = false
+  ) => {
     params.set("selected-row", id);
     params.set("producer-id", producerId);
+    params.set("order-breakdown", String(orderBreakdown));
 
     replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -59,7 +64,7 @@ const OrdersTable = ({
             menu={{
               items: [
                 {
-                  key: record.key,
+                  key: "1",
                   label: (
                     <p className="py-3.5 text-base font-medium flex gap-2">
                       <Image
@@ -71,8 +76,23 @@ const OrdersTable = ({
                       View more details
                     </p>
                   ),
+                  onClick: () => handleClick(record.key, record.producerId),
+                },
+                {
+                  key: "2",
+                  label: (
+                    <p className="py-3.5 text-base font-medium flex gap-2">
+                      <Image
+                        src="/images/icons/note.svg"
+                        width={24}
+                        height={24}
+                        alt="note"
+                      />
+                      View order breakdown
+                    </p>
+                  ),
                   onClick: () =>
-                    handleViewMoreClick(record.key, record.producerId),
+                    handleClick(record.key, record.producerId, true),
                 },
               ],
             }}
@@ -100,13 +120,15 @@ const OrdersTable = ({
       dataSource={data}
       loading={loadingOrders || loadingSubscriptions}
       locale={locale}
-      pagination={pagination&&{
-        position: ["bottomCenter"],
-        pageSize,
-        total,
-        onChange: handlePaginationChange,
-        current: Number(params.get("page")) || 1,
-      }}
+      pagination={
+        pagination && {
+          position: ["bottomCenter"],
+          pageSize,
+          total,
+          onChange: handlePaginationChange,
+          current: Number(params.get("page")) || 1,
+        }
+      }
       className="mt-9 custom-table borderless overflow-scroll"
     />
   );
