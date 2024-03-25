@@ -9,14 +9,18 @@ import OrderDetailsHeader from "./OrderDetailsHeader";
 import OrderDetailsBody from "./OrderDetailsBody";
 import OrderDetailsActions from "./OrderDetailsActions";
 import { invoiceItemsColumns } from "../util";
-import { handleGetOrderInfo, handlePostMarkOrderAsComplete } from "../api";
+import {
+  handleDownloadOrderInvoice,
+  handleGetOrderInfo,
+  handlePostMarkOrderAsComplete,
+} from "../api";
 import { formatAmount } from "@/utils";
-
 
 const OrdersDrawer = () => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isDownloadLoading, setIsDownloadLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState<any>({});
 
   const searchParams = useSearchParams();
@@ -30,7 +34,7 @@ const OrdersDrawer = () => {
   const activeTab = params.get("tab") ?? "subscriptions";
 
   useEffect(() => {
-    if (selectedRow && orderBreakdown==="false") {
+    if (selectedRow && orderBreakdown === "false") {
       setOpen(true);
       getOrderInfo(selectedRow);
     } else {
@@ -77,6 +81,29 @@ const OrdersDrawer = () => {
         console.log(122, error);
       } finally {
         setIsActionLoading(false);
+      }
+  };
+
+  const downloadOrderInvoice = async () => {
+    setIsDownloadLoading(true);
+
+    if (selectedRow)
+      try {
+        const blob = await handleDownloadOrderInvoice(selectedRow, producerId);
+        console.log(3, blob);
+        const pdfUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.setAttribute('target', '_blank');
+        link.setAttribute('download', `invoice-${selectedRow}-${new Date().getTime()}.pdf`);
+    
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        console.log(122, error);
+      } finally {
+        setIsDownloadLoading(false);
       }
   };
 
@@ -174,6 +201,8 @@ const OrdersDrawer = () => {
             activeTab={activeTab}
             isActionLoading={isActionLoading}
             onMarkOrderAsComplete={markOrderAsComplete}
+            isDownloadInvoiceLoading={isDownloadLoading}
+            onDownloadInvoice={downloadOrderInvoice}
           />
         </>
       )}
