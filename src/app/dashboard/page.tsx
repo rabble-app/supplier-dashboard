@@ -23,7 +23,6 @@ import {
   handleGetRecentOrders,
   handleUpdateProducer,
   handleRemoveProducerCategory,
-  handleUploadProducerImage,
 } from "./home/api";
 import { useAppSelector } from "@/redux/store";
 import {

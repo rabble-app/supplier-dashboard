@@ -6,7 +6,6 @@ export const setHeaders = (
   token?: string,
   contentType: string | null = "application/json"
 ) => {
-  console.log(34, token)
   const headers: Record<string, string> = {};
 
   if (contentType) {

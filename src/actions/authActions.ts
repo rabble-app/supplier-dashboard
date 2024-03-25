@@ -230,6 +230,7 @@ export const handleStripeOnboarding = async () => {
 };
 
 export const handleStripeOnboardingRefresh = async (accountId: string) => {
+  console.log('first')
   try {
     const res = await axios.get(`${API_ENDPOINT}/auth-ext/stripe-onboarding?accountId=${accountId}`, {
       headers: setHeaders(),
