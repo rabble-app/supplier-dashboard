@@ -109,8 +109,10 @@ const OrdersDrawer = () => {
 
   const sums = orderInfo?.productLog?.reduce(
     (acc: any, item: any) => {
+      const vat = item.vat ? Number(item.vat)/100 : 0;
+
       acc.totalExVatSum += Number(item.totalExVat);
-      acc.vatSum += Number(item.vat);
+      acc.vatSum += item.totalExVat*vat
       return acc;
     },
     { totalExVatSum: 0, vatSum: 0 }
