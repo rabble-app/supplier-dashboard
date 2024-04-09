@@ -104,7 +104,7 @@ const OrdersTable = ({
               alt="more-icon"
               className={
                 ["subscriptions", ""].includes(params.get("tab") || "")
-                  ? "pointer-events-none"
+                  ? "pointer-events-none hidden"
                   : ""
               }
             />
