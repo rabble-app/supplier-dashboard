@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface IButton {
   label: JSX.Element | string;
-  onClick?: () => void;
+  onClick?: (e?:any) => void;
   icon?: JSX.Element;
   className?: string;
   to?: string;

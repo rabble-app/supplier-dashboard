@@ -1,7 +1,6 @@
 /** @format */
 
 'use client';
-import React from 'react';
 
 interface ISelect {
   id: string;
@@ -10,7 +9,9 @@ interface ISelect {
   className?: string;
   options?: { id: number; name: string }[];
   onChange?: (x: string) => void;
+  onBlur?: (e:any) => void;
   required?: boolean;
+  value?: string;
 }
 
 const Select = ({
@@ -20,7 +21,9 @@ const Select = ({
   className = '',
   options,
   onChange,
+  onBlur,
   required = false,
+  value
 }: ISelect) => {
   return (
     <div className='flex flex-col'>
@@ -34,8 +37,9 @@ const Select = ({
         <select
           id={id}
           className={`bg-grey-1 rounded-lg text-grey-6 leading-[30px] p-[25px] text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 ${className}`}
-          defaultValue=''
+          defaultValue={value}
           onChange={(e) => onChange?.(e.target.value)}
+          onBlur={onBlur}
           required={required}
         >
           <option disabled value=''>

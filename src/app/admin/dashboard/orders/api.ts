@@ -6,7 +6,6 @@ import { API_ENDPOINT, setHeaders } from "../../../../actions/config";
 import { formatDate, formatRelativeTime, padWithZero } from "@/utils";
 import { IOrderStatusText } from "./interfaces";
 
-
 export const handleGetSubscriptions = async (page: number, query: string) => {
   const token = localStorage.token;
 
@@ -131,7 +130,6 @@ export const handleGetOrders = async (
           }),
         ],
       };
-
     } else {
       throw new Error(JSON.stringify(data));
     }
@@ -356,6 +354,35 @@ export const handleGetOrderInfo = async (
     return data;
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    console.log(errorObject);
+    return errorObject;
+  }
+};
+
+export const handleDownloadOrderInvoice = async (
+  id: string,
+  producerId: string | null
+) => {
+  const token = localStorage.token;
+
+  let url = `${API_ENDPOINT}/invoices/${id}/${producerId}`;
+
+  console.log(url);
+  try {
+    let res = await fetch(url, {
+      headers: setHeaders(token, 'application/pdf'),
+      method: "GET",
+    });
+
+    let data = await res.blob();
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(JSON.stringify(data));
+    }
+  } catch (error: any) {
+    const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }

@@ -1,5 +1,6 @@
 /** @format */
 
+import OrderBreakdownDrawer from "./components/OrderBreakdownDrawer";
 import OrdersDrawer from "./components/OrdersDrawer";
 import OrdersOverview from "./components/OrdersOverview";
  
@@ -8,6 +9,7 @@ const Orders = () => {
     <>
       <OrdersOverview />
       <OrdersDrawer />
+      <OrderBreakdownDrawer />
     </>
   );
 };

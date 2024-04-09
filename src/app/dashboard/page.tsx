@@ -1,11 +1,12 @@
 /** @format */
 "use client";
 
-import { useState } from "react";
-import { Dropdown, Space } from "antd";
+import { useState, useEffect } from "react";
+import { message } from "antd";
 import { ColumnsType } from "antd/es/table";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 import LeftSection from "./home/components/LeftSection";
 import MainHeading from "./home/components/MainHeading";
@@ -16,10 +17,22 @@ import { capitalizeFirstLetter, formatAmount } from "@/utils";
 import { getStatusClass } from "./orders/util";
 import Stripe from "./home/components/Stripe";
 import NoData from "./home/components/NoData";
-import TeamSectionDrawer from "./home/components/TeamSectionDrawer";
 import SupplierDetailsDrawer from "./home/components/SupplierDetailsDrawer";
+import {
+  handleGetCurrentProducer,
+  handleGetRecentOrders,
+  handleUpdateProducer,
+  handleRemoveProducerCategory,
+} from "./home/api";
+import { useAppSelector } from "@/redux/store";
+import {
+  handleAddProducerCategories,
+  handleGetProducerCategories,
+} from "@/actions/authActions";
+import OrdersDrawer from "../admin/dashboard/orders/components/OrdersDrawer";
+import usePage from "../auth/stripe/onboard-user/usePage";
 
-interface OrdersType {
+export interface OrdersType {
   key: string;
   address: string;
   frequency: string;
@@ -28,55 +41,119 @@ interface OrdersType {
   orderStatus: string;
 }
 
-const data: OrdersType[] = [
-  {
-    key: "1",
-    address: "123 Elm St",
-    frequency: "Weekly",
-    orderValue: 150,
-    delivery: "22 June 2023",
-    orderStatus: "Pending",
-  },
-  {
-    key: "2",
-    address: "456 Maple Ave",
-    frequency: "Monthly",
-    orderValue: 200,
-    delivery: "22 June 2023",
-    orderStatus: "Pending",
-  },
-  {
-    key: "3",
-    address: "789 Oak Rd",
-    frequency: "Bi-Weekly",
-    orderValue: 100,
-    delivery: "22 June 2023",
-    orderStatus: "Successful",
-  },
-  {
-    key: "4",
-    address: "101 Pine St",
-    frequency: "One-Time",
-    orderValue: 250,
-    delivery: "22 June 2023",
-    orderStatus: "Pending",
-  },
-  {
-    key: "5",
-    address: "202 Birch Ln",
-    frequency: "Weekly",
-    orderValue: 175,
-    delivery: "22 June 2023",
-    orderStatus: "Successful",
-  },
-];
-
 const Dashboard = () => {
-  const [stripeClicked, setStripeClicked] = useState("stripe");
-  const [openTeamDrawer, setOpenTeamDrawer] = useState(false);
+  const [isStripeConnected, setIsStripeConnected] = useState(false);
   const [openSupplierDrawer, setOpenSupplierDrawer] = useState(false);
 
+  const { stripeOnboarding, isLoading } = usePage();
+
+  const authUser = useAppSelector((state) => state.authReducer);
+  const token = localStorage.token;
+
+  const queryClient = useQueryClient();
+
+  const { data, isFetching, isError } = useQuery({
+    queryKey: ["recent-orders"],
+    queryFn: () => handleGetRecentOrders(),
+  });
+
+  const {
+    data: categoriesData,
+    isFetching: isFetchingCategories,
+    isError: isCategoriesError,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => handleGetProducerCategories(token),
+  });
+
+  const {
+    data: producerData,
+    isLoading: isFetchingProducer,
+    isError: isProducerError,
+  } = useQuery({
+    queryKey: ["current-producer"],
+    queryFn: () => handleGetCurrentProducer(authUser?.id),
+  });
+
+  useEffect(() => {
+    if (authUser?.stripeConnectId) {
+      setIsStripeConnected(true);
+    } else {
+      setIsStripeConnected(false);
+    }
+  }, [authUser?.stripeConnectId]);
+
+  const updateCategories = async (
+    type: "add" | "remove",
+    categoryIds?: string[],
+    categoryId?: string
+  ) => {
+    const filteredCategoryIds = categoryIds?.filter((id) => {
+      return !producerData?.categories?.some(
+        (cat: any) => cat.category.id === id
+      );
+    });
+    const preparedData = filteredCategoryIds?.map((catId) => {
+      return {
+        producerId: authUser?.id,
+        producerCategoryOptionId: catId,
+      };
+    });
+
+    const loadingKey = "loading";
+    message.loading({
+      content: "Updating categories...",
+      key: loadingKey,
+    });
+    try {
+      let result;
+      if (type === "add") {
+        result = await handleAddProducerCategories(preparedData, token);
+      } else {
+        result = await handleRemoveProducerCategory(categoryId);
+      }
+
+      if (result.error) {
+        throw new Error(JSON.stringify(result));
+      }
+      message.success("Categories updated successfully !");
+      await queryClient.refetchQueries({ queryKey: ["current-producer"] });
+    } catch (error: any) {
+      const errorObject = JSON.parse(error.message);
+      message.error(errorObject.message);
+    } finally {
+      message.destroy(loadingKey);
+    }
+  };
+
+  const updateProducer = async (fieldName: string, value: string | number) => {
+    const loadingKey = "loading";
+    message.loading({
+      content: "Updating producer...",
+      key: loadingKey,
+    });
+
+    try {
+      const data = { [fieldName]: value };
+      const res = await handleUpdateProducer(authUser?.id, data);
+
+      if (res.statusCode === 400 || res.statusCode === 500) {
+        throw new Error(JSON.stringify(res));
+      } else {
+        message.success("Producer updated successfully");
+        await queryClient.refetchQueries({ queryKey: ["current-producer"] });
+      }
+    } catch (error) {
+      message.error("Error updating producer");
+    } finally {
+      message.destroy(loadingKey);
+    }
+  };
+
   const router = useRouter();
+
+  if (isProducerError || isError || isCategoriesError)
+    return <div>Error...</div>;
 
   const columns: ColumnsType<OrdersType> = [
     {
@@ -127,96 +204,75 @@ const Dashboard = () => {
         );
       },
     },
-    {
-      title: " ",
-      key: "",
-      render: (_, record) => (
-        <Space size="middle" onClick={(e) => e.stopPropagation()}>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: record.key,
-                  label: (
-                    <p className="py-3.5 text-base font-medium flex gap-2">
-                      <Image
-                        src="/images/icons/note.svg"
-                        width={24}
-                        height={24}
-                        alt="note"
-                      />
-                      View more details
-                    </p>
-                  ),
-                  onClick: () => setOpenTeamDrawer(true),
-                },
-              ],
-            }}
-          >
-            <Image
-              src="/images/icons/more.svg"
-              width={24}
-              height={24}
-              alt="more-icon"
-            />
-          </Dropdown>
-        </Space>
-      ),
-    },
   ];
 
   return (
     <>
       <div className="flex h-screen gap-5">
-        <LeftSection onClick={() => setOpenSupplierDrawer(true)} />
+        <LeftSection
+          isFetchingProducer={isFetchingProducer}
+          producerData={producerData}
+          onClick={() => setOpenSupplierDrawer(true)}
+        />
         <div className="bg-white h-full w-full py-8 px-5 relative">
           <MainHeading
-            date="Friday, 2nd June"
-            message="Hi Farm2Door, welcome back"
+            date={dayjs(new Date()).format("dddd, D MMMM")}
+            message={`Hi ${producerData?.businessName}, welcome back`}
           />
 
-          {stripeClicked === "stripe" ? (
-            <div onClick={() => setStripeClicked("no orders")}>
-              <Stripe />
-            </div>
-          ) : null}
-          {stripeClicked === "no orders" ? (
-            <div onClick={() => setStripeClicked("table")}>
-              <NoData />
-            </div>
-          ) : null}
-          {stripeClicked === "table" ? (
-            <>
-              <PageWrapper>
-                <div className="flex justify-between items-center px-4">
-                  <h2 className="text-grey-2 text-xl font-gosha font-bold">
-                    Recent Activity
-                  </h2>
-                  <Button
-                    label="View All Orders"
-                    size="md"
-                    className="h-10"
-                    onClick={() => router.push("/dashboard/orders")}
-                  />
-                </div>
+          {!isStripeConnected ? (
+            <Stripe
+              handleStripeOnboarding={stripeOnboarding}
+              isLoading={isLoading}
+            />
+          ) : (
+            isStripeConnected && (
+              <>
+                {!data?.length && !isFetching ? (
+                  <div>
+                    <NoData />
+                  </div>
+                ) : (
+                  <>
+                    <PageWrapper>
+                      <div className="flex justify-between items-center px-4">
+                        <h2 className="text-grey-2 text-xl font-gosha font-bold">
+                          Recent Activity
+                        </h2>
+                        <Button
+                          label="View All Orders"
+                          size="md"
+                          className="h-10"
+                          onClick={() => router.push("/dashboard/orders")}
+                        />
+                      </div>
 
-                <OrdersTable
-                  pageSize={7}
-                  columns={columns}
-                  data={data}
-                  total={7}
-                  pagination={false}
-                  isHome={true}
-                />
-              </PageWrapper>
-            </>
-          ) : null}
+                      <OrdersTable
+                        pageSize={7}
+                        columns={columns}
+                        data={data}
+                        loading={isFetching}
+                        total={7}
+                        pagination={false}
+                        isHome={true}
+                      />
+                    </PageWrapper>
+                  </>
+                )}
+              </>
+            )
+          )}
         </div>
       </div>
-      <TeamSectionDrawer open={openTeamDrawer} setOpen={setOpenTeamDrawer} />
+      <OrdersDrawer />
       <SupplierDetailsDrawer
         open={openSupplierDrawer}
         setOpen={setOpenSupplierDrawer}
+        isFetchingCategories={isFetchingCategories}
+        producerData={producerData}
+        categoriesData={categoriesData?.data}
+        updateProducer={updateProducer}
+        updateCategories={updateCategories}
       />
     </>
   );

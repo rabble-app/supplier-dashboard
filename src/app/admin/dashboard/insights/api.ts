@@ -20,7 +20,6 @@ export const handleGetInsights = async (
     }
   }
 
-  console.log(years);
 
   const yearsQry = years?.length ? `?years=${years.join(",")}` : "";
 

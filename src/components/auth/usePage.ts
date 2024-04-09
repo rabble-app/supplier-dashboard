@@ -25,7 +25,8 @@ const usePage = () => {
 
       localStorage.setItem('token', result.data.token);
 
-      dispatch(logIn({ ...result.data, role: decoded.role }));
+      dispatch(logIn({ ...result.data, role: decoded.role, stripeConnectId:result.data?.stripeConnectId }));
+      console.log(result.data)
       router.push(`${url}/orders`);
       message.success(result.message);
     } catch (error: any) {
