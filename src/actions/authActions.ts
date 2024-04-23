@@ -217,9 +217,9 @@ export const handleAddDeliveryAddress = async (
   }
 };
 
-export const handleStripeOnboarding = async () => {
+export const handleStripeOnboarding = async (isPartner: boolean=false) => {
   try {
-    const res = await axios.post(`${API_ENDPOINT}/auth-ext/stripe-onboarding`,{}, {
+    const res = await axios.post(`${API_ENDPOINT}/auth-ext/stripe-onboarding?isPartner=${isPartner}`,{}, {
       headers: setHeaders(),
     });
     return res.data;
@@ -230,7 +230,6 @@ export const handleStripeOnboarding = async () => {
 };
 
 export const handleStripeOnboardingRefresh = async (accountId: string) => {
-  console.log('first')
   try {
     const res = await axios.get(`${API_ENDPOINT}/auth-ext/stripe-onboarding?accountId=${accountId}`, {
       headers: setHeaders(),
@@ -245,6 +244,20 @@ export const handleStripeOnboardingRefresh = async (accountId: string) => {
 export const handleProducerRecordUpdate = async (producerId: string, accountId: string) => {
   try {
     const res = await axios.patch(`${API_ENDPOINT}/users/producer/${producerId}`, {
+      stripeConnectId: accountId
+    }, {
+      headers: setHeaders(),
+    });
+    return res.data;
+  } catch (e) {
+    const error = e as AxiosError;
+    return error?.response?.data;
+  }
+};
+
+export const handlePartnerRecordUpdate = async (partnerId: string, accountId: string) => {
+  try {
+    const res = await axios.patch(`${API_ENDPOINT}/store/${partnerId}`, {
       stripeConnectId: accountId
     }, {
       headers: setHeaders(),

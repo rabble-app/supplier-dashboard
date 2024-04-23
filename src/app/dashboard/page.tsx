@@ -30,7 +30,7 @@ import {
   handleGetProducerCategories,
 } from "@/actions/authActions";
 import OrdersDrawer from "../admin/dashboard/orders/components/OrdersDrawer";
-import usePage from "../auth/stripe/onboard-user/usePage";
+import usePage from "./stripe/onboard-user/usePage";
 
 export interface OrdersType {
   key: string;
