@@ -127,7 +127,7 @@ h6 {
   }
 }
 
-.custom-table {
+.custom-table, .custom-check {
   &.ant-table-wrapper .ant-table-tbody .ant-table-row.ant-table-row-selected>.ant-table-cell {
     background: transparent !important;
   }

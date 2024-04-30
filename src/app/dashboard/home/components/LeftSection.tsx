@@ -10,11 +10,13 @@ import TeamDetailsHeading from "./TeamDetailsHeading";
 import TeamDetailsInfo from "./TeamDetailsInfo";
 
 const LeftSection = ({
-  onClick,
+  onClick:onClickEditProfile,
+  onClickDeliveryAreas,
   producerData,
   isFetchingProducer,
 }: {
   onClick: () => void;
+  onClickDeliveryAreas: () => void;
   isFetchingProducer: boolean;
   producerData: any;
 }) => {
@@ -47,7 +49,7 @@ const LeftSection = ({
                 rightIcon={
                   <div
                     className="rounded-full bg-white-3 flex justify-center items-center w-12 h-12 cursor-pointer"
-                    onClick={onClick}
+                    onClick={onClickEditProfile}
                   >
                     <Image
                       src="/images/icons/edit.svg"
@@ -79,7 +81,7 @@ const LeftSection = ({
         )}
       </div>
 
-      <LeftSectionDeliveryArea />
+      <LeftSectionDeliveryArea onClick={onClickDeliveryAreas} />
     </div>
   );
 };

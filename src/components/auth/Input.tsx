@@ -64,6 +64,7 @@ const Input = ({
           } text-xl placeholder:text-grey-3 placeholder:font-light focus:outline-primary-light-1 text-grey-6 font-normal ${className}`}
           type={inputType}
           name={name}
+          value={value}
           placeholder={placeholder}
           required={required}
           defaultValue={value}

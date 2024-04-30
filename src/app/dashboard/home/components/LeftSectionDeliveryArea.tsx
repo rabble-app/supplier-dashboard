@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-const LeftSectionDeliveryArea = () => {
+const LeftSectionDeliveryArea = ({onClick}: {onClick: ()=>void}) => {
   return (
     <div className="p-4 flex justify-between items-center bg-white rounded-lg shadow-custom-2">
       <div className="flex gap-4 items-center">
@@ -18,7 +18,7 @@ const LeftSectionDeliveryArea = () => {
           Delivery Areas
         </h2>
       </div>
-      <div className="w-16 h-12 rounded-[100px] bg-black flex justify-center items-center cursor-pointer">
+      <div className="w-16 h-12 rounded-[100px] bg-black flex justify-center items-center cursor-pointer" onClick={onClick}>
         <Image
           src="/images/icons/arrow-right.svg"
           width={32}
