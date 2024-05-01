@@ -12,7 +12,10 @@ const StripeOnboarding = () => {
   const sId = searchParams.get("sId");
   const partnerId = searchParams.get("partnerId");
   sId ? localStorage.setItem("sId", sId) : "";
-  partnerId ? localStorage.setItem("partnerId", partnerId) : "";
+  
+  if (partnerId) {
+    localStorage.setItem("partnerId", partnerId);
+  }
 
   return (
     <div className="flex h-full w-full bg-[black] text-white font-normal font-poppins">
