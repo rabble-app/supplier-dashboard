@@ -131,7 +131,7 @@ const DeliveryAreasOverview = () => {
         open={openDeliveryAreasDrawer}
         setOpen={setOpenDeliveryAreasDrawer}
         isEditing={isEditing}
-        // key={crypto.randomUUID()}
+        key={crypto.randomUUID()}
       />
     </>
   );

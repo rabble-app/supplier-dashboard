@@ -125,6 +125,28 @@ const DeliveryAreasDrawer = ({
     );
   };
 
+  const handleUpdateRegion = (
+    region: { areas: string[]; region: string },
+    area: string
+  ) => {
+    if (region.areas.length !== 1) {
+      setSelectedRegions((prev) =>
+        prev.map((item) =>
+          item.region === region.region
+            ? {
+                ...item,
+                areas: item.areas.filter((a) => a !== area),
+              }
+            : item
+        )
+      );
+    } else {
+      setSelectedRegions((prev) =>
+        prev.filter((item) => item.region !== region.region)
+      );
+    }
+  };
+
   const onChange: CheckboxProps["onChange"] = (e) => {
     setIsChecked(e.target.checked);
   };
@@ -177,6 +199,7 @@ const DeliveryAreasDrawer = ({
                         key={i}
                         className="text-grey-2 text-base leading-6 px-6 py-2.5 bg-grey-1 w-fit rounded-[100px] cursor-pointer font-medium"
                         onClick={() => handleDayClick(day)}
+                        onKeyDown={() => handleDayClick(day)}
                       >
                         {day}
                       </div>
@@ -198,6 +221,9 @@ const DeliveryAreasDrawer = ({
                     <div
                       className="flex items-center gap-2.5 text-grey-2 px-6 py-2.5 w-fit rounded-[100px] cursor-pointer bg-primary"
                       onClick={() =>
+                        !isEditMode && handleDayClick(deliveryDay.day)
+                      }
+                      onKeyDown={() =>
                         !isEditMode && handleDayClick(deliveryDay.day)
                       }
                     >
@@ -266,6 +292,20 @@ const DeliveryAreasDrawer = ({
                               key={i}
                               className="cursor-pointer"
                               onClick={() => {
+                                if (isRegionSelected) {
+                                  setSelectedRegions((prev) =>
+                                    prev.filter(
+                                      (item) => item.region !== region.region
+                                    )
+                                  );
+                                } else {
+                                  setSelectedRegions((prev) => [
+                                    ...prev,
+                                    region,
+                                  ]);
+                                }
+                              }}
+                              onKeyDown={() => {
                                 if (isRegionSelected) {
                                   setSelectedRegions((prev) =>
                                     prev.filter(
@@ -369,6 +409,7 @@ const DeliveryAreasDrawer = ({
                                     : ""
                                 } text-grey-2 text-base font-semibold`}
                                 onClick={() => isEditMode && showModal()}
+                                onKeyDown={() => isEditMode && showModal()}
                               >
                                 {isEditMode && (
                                   <CloseOutlined style={{ color: "#334054" }} />
@@ -393,6 +434,9 @@ const DeliveryAreasDrawer = ({
                                     onClick={() =>
                                       handleToggleRegion(region.region)
                                     }
+                                    onKeyDown={() =>
+                                      handleToggleRegion(region.region)
+                                    }
                                     className={`${
                                       region.hidden
                                         ? "bg-white-1 text-grey-6"
@@ -409,6 +453,9 @@ const DeliveryAreasDrawer = ({
                                 ) : (
                                   <p
                                     onClick={() =>
+                                      handleToggleRegion(region.region)
+                                    }
+                                    onKeyDown={() =>
                                       handleToggleRegion(region.region)
                                     }
                                     className={`${
@@ -451,28 +498,7 @@ const DeliveryAreasDrawer = ({
                               <div
                                 key={i}
                                 className="flex items-center gap-1 text-grey-6 px-2 w-fit rounded-[20px] cursor-pointer bg-primary"
-                                onClick={() => {
-                                  if (region.areas.length !== 1) {
-                                    setSelectedRegions((prev) =>
-                                      prev.map((item) =>
-                                        item.region === region.region
-                                          ? {
-                                              ...item,
-                                              areas: item.areas.filter(
-                                                (a) => a !== area
-                                              ),
-                                            }
-                                          : item
-                                      )
-                                    );
-                                  } else {
-                                    setSelectedRegions((prev) =>
-                                      prev.filter(
-                                        (item) => item.region !== region.region
-                                      )
-                                    );
-                                  }
-                                }}
+                                onClick={() => handleUpdateRegion(region, area)}
                               >
                                 <CloseOutlined style={{ color: "#334054" }} />
                                 <p className="text-sm font-medium leading-5">
