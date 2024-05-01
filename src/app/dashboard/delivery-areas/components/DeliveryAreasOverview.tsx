@@ -55,20 +55,12 @@ const DeliveryAreasOverview = () => {
                     CO Time Saturday 21:00
                   </p>
                 </div>
-                <div
+                <button
                   className="rounded-full bg-white-3 flex justify-center items-center w-10 h-8 cursor-pointer"
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      setOpenDeliveryAreasDrawer(true);
-                      setIsEditing(true);
-                    }
-                  }}
                   onClick={() => {
                     setOpenDeliveryAreasDrawer(true);
                     setIsEditing(true);
                   }}
-                  role="button"
-                  tabIndex={0}
                 >
                   <Image
                     src="/images/icons/edit.svg"
@@ -76,7 +68,7 @@ const DeliveryAreasOverview = () => {
                     height={24}
                     alt="edit"
                   />
-                </div>
+                </button>
               </div>
               <hr className="my-4 border-0 border-t-[1.2px] border-grey-4" />
               <div className="mx-4 mb-4 flex justify-between items-center gap-4 bg-white-1 border-[1px] border-[#e2e6ec] rounded-[10px] px-2.5 py-4 w-fit shadow-custom-1">
