@@ -37,7 +37,7 @@ const DeliveryAreasOverview = () => {
         {days
           .filter((day) => ["Wednesday", "Saturday"].includes(day))
           .map((day, i) => (
-            <PageWrapper key={i} mt={20}>
+            <PageWrapper key={day} mt={20}>
               <div className="bg-grey-2 rounded-lg px-2.5 py-2 w-[384px] flex justify-between items-center mx-4">
                 <div className="flex flex-col gap-1">
                   <div className="flex gap-1">
@@ -65,6 +65,7 @@ const DeliveryAreasOverview = () => {
                     setOpenDeliveryAreasDrawer(true);
                     setIsEditing(true);
                   }}
+                  role="button"
                 >
                   <Image
                     src="/images/icons/edit.svg"
@@ -115,7 +116,7 @@ const DeliveryAreasOverview = () => {
                 <div className="flex flex-wrap gap-1 w-[80%]">
                   {regions[2].areas.map((area, i) => (
                     <p
-                      key={i}
+                      key={`${area}-${i}`}
                       className="text-grey-2 text-base font-semibold px-2 py-0.5 border-[1.2px] border-[#e2e6ec] shadow-custom-1 rounded-[20px]"
                     >
                       {area}

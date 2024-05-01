@@ -129,13 +129,14 @@ const DeliveryAreasDrawer = ({
     region: { areas: string[]; region: string },
     area: string
   ) => {
+    const filteredAreas = (areas: string[]) => areas.filter((a) => a !== area);
     if (region.areas.length !== 1) {
       setSelectedRegions((prev) =>
         prev.map((item) =>
           item.region === region.region
             ? {
                 ...item,
-                areas: item.areas.filter((a) => a !== area),
+                areas: filteredAreas(item.areas),
               }
             : item
         )
@@ -144,6 +145,19 @@ const DeliveryAreasDrawer = ({
       setSelectedRegions((prev) =>
         prev.filter((item) => item.region !== region.region)
       );
+    }
+  };
+
+  const handleUpdateRegionSearched = (
+    isRegionSelected: boolean,
+    region: { areas: string[]; region: string }
+  ) => {
+    if (isRegionSelected) {
+      setSelectedRegions((prev) =>
+        prev.filter((item) => item.region !== region.region)
+      );
+    } else {
+      setSelectedRegions((prev) => [...prev, region]);
     }
   };
 
@@ -196,7 +210,7 @@ const DeliveryAreasDrawer = ({
                   if (!selectedDeliveryDays.find((item) => item.day === day))
                     return (
                       <div
-                        key={i}
+                        key={`${day}-${i}`}
                         className="text-grey-2 text-base leading-6 px-6 py-2.5 bg-grey-1 w-fit rounded-[100px] cursor-pointer font-medium"
                         onClick={() => handleDayClick(day)}
                         onKeyDown={() => handleDayClick(day)}
@@ -215,7 +229,7 @@ const DeliveryAreasDrawer = ({
                 </h2>
                 {selectedDeliveryDays.map((deliveryDay, i) => (
                   <div
-                    key={i}
+                    key={`${deliveryDay}-${i}`}
                     className="my-4 flex items-center justify-between"
                   >
                     <div
@@ -239,14 +253,14 @@ const DeliveryAreasDrawer = ({
                       <div className="bg-grey-1 pr-2 rounded-lg cursor-pointer">
                         <select className="text-grey-6 font-medium bg-grey-1 rounded-lg py-1 pl-4 -pr-2 focus:outline-none cursor-pointer">
                           {days.map((day, i) => (
-                            <option key={i}>{day}</option>
+                            <option key={`${day}-${i}`}>{day}</option>
                           ))}
                         </select>
                       </div>
                       <div className="bg-grey-1 pr-2 rounded-lg cursor-pointer">
                         <select className="text-grey-6 font-medium bg-grey-1 rounded-lg py-1 pl-4 -pr-2 focus:outline-none cursor-pointer">
                           {times.map((time, i) => (
-                            <option key={i}>{time}</option>
+                            <option key={`${time}-${i}`}>{time}</option>
                           ))}
                         </select>
                       </div>
@@ -289,36 +303,20 @@ const DeliveryAreasDrawer = ({
 
                           return (
                             <li
-                              key={i}
+                              key={`${region}-${i}`}
                               className="cursor-pointer"
-                              onClick={() => {
-                                if (isRegionSelected) {
-                                  setSelectedRegions((prev) =>
-                                    prev.filter(
-                                      (item) => item.region !== region.region
-                                    )
-                                  );
-                                } else {
-                                  setSelectedRegions((prev) => [
-                                    ...prev,
-                                    region,
-                                  ]);
-                                }
-                              }}
-                              onKeyDown={() => {
-                                if (isRegionSelected) {
-                                  setSelectedRegions((prev) =>
-                                    prev.filter(
-                                      (item) => item.region !== region.region
-                                    )
-                                  );
-                                } else {
-                                  setSelectedRegions((prev) => [
-                                    ...prev,
-                                    region,
-                                  ]);
-                                }
-                              }}
+                              onClick={() =>
+                                handleUpdateRegionSearched(
+                                  isRegionSelected,
+                                  region
+                                )
+                              }
+                              onKeyDown={() =>
+                                handleUpdateRegionSearched(
+                                  isRegionSelected,
+                                  region
+                                )
+                              }
                             >
                               <div className="flex justify-between items-center text-xl text-grey-2 ">
                                 <p>{region.region}</p>
@@ -381,7 +379,7 @@ const DeliveryAreasDrawer = ({
                     );
                     return (
                       <div
-                        key={i}
+                        key={`${region}-${i}`}
                         className="border-[1.5px] border-grey-4 rounded-[10px] p-2.5 mb-4"
                       >
                         <div
@@ -496,10 +494,12 @@ const DeliveryAreasDrawer = ({
                           {!region.hidden &&
                             region.areas.map((area, i) => (
                               <div
-                                key={i}
+                                key={`${area}-${i}`}
                                 className="flex items-center gap-1 text-grey-6 px-2 w-fit rounded-[20px] cursor-pointer bg-primary"
                                 onClick={() => handleUpdateRegion(region, area)}
-                                onKeyDown={() => handleUpdateRegion(region, area)}
+                                onKeyDown={() =>
+                                  handleUpdateRegion(region, area)
+                                }
                               >
                                 <CloseOutlined style={{ color: "#334054" }} />
                                 <p className="text-sm font-medium leading-5">

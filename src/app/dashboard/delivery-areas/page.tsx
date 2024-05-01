@@ -3,11 +3,7 @@
 import DeliveryAreasOverview from "./components/DeliveryAreasOverview";
 
 const page = () => {
-  return (
-    <>
-      <DeliveryAreasOverview />
-    </>
-  );
+  return <DeliveryAreasOverview />;
 };
 
 export default page;
