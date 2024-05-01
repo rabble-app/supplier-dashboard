@@ -15,7 +15,6 @@ interface IInput extends React.InputHTMLAttributes<HTMLInputElement> {
 const Input = ({
   id,
   label,
-  placeholder = "",
   type,
   className = "",
   leftIcon,
