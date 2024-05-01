@@ -18,10 +18,9 @@ const LeftSectionDeliveryArea = ({ onClick }: { onClick: () => void }) => {
           Delivery Areas
         </h2>
       </div>
-      <div
+      <button
         className="w-16 h-12 rounded-[100px] bg-black flex justify-center items-center cursor-pointer"
         onClick={onClick}
-        onKeyDown={onClick}
       >
         <Image
           src="/images/icons/arrow-right.svg"
@@ -29,7 +28,7 @@ const LeftSectionDeliveryArea = ({ onClick }: { onClick: () => void }) => {
           height={32}
           alt="arrow-right"
         />
-      </div>
+      </button>
     </div>
   );
 };

@@ -209,14 +209,13 @@ const DeliveryAreasDrawer = ({
                 {days.map((day, i) => {
                   if (!selectedDeliveryDays.find((item) => item.day === day))
                     return (
-                      <div
+                      <button
                         key={`${day}-${i}`}
                         className="text-grey-2 text-base leading-6 px-6 py-2.5 bg-grey-1 w-fit rounded-[100px] cursor-pointer font-medium"
                         onClick={() => handleDayClick(day)}
-                        onKeyDown={() => handleDayClick(day)}
                       >
                         {day}
-                      </div>
+                      </button>
                     );
                 })}
               </div>
@@ -232,12 +231,9 @@ const DeliveryAreasDrawer = ({
                     key={`${deliveryDay}-${i}`}
                     className="my-4 flex items-center justify-between"
                   >
-                    <div
+                    <button
                       className="flex items-center gap-2.5 text-grey-2 px-6 py-2.5 w-fit rounded-[100px] cursor-pointer bg-primary"
                       onClick={() =>
-                        !isEditMode && handleDayClick(deliveryDay.day)
-                      }
-                      onKeyDown={() =>
                         !isEditMode && handleDayClick(deliveryDay.day)
                       }
                     >
@@ -247,7 +243,7 @@ const DeliveryAreasDrawer = ({
                       <p className="text-base leading-6 font-semibold">
                         {deliveryDay.day}
                       </p>
-                    </div>
+                    </button>
                     <div className="flex gap-2 items-center">
                       <p>Cut off time:</p>
                       <div className="bg-grey-1 pr-2 rounded-lg cursor-pointer">
@@ -302,16 +298,10 @@ const DeliveryAreasDrawer = ({
                           );
 
                           return (
-                            <li
+                            <button
                               key={`${region}-${i}`}
-                              className="cursor-pointer"
+                              className="cursor-pointer block w-full"
                               onClick={() =>
-                                handleUpdateRegionSearched(
-                                  isRegionSelected,
-                                  region
-                                )
-                              }
-                              onKeyDown={() =>
                                 handleUpdateRegionSearched(
                                   isRegionSelected,
                                   region
@@ -332,7 +322,7 @@ const DeliveryAreasDrawer = ({
                                 )}
                               </div>
                               <hr className="my-2.5 border-0 border-t-[1.5px] border-grey-4" />
-                            </li>
+                            </button>
                           );
                         }
                       })}
@@ -400,20 +390,19 @@ const DeliveryAreasDrawer = ({
                               </p>
                             </div>
                             <div className="flex justify-between items-center gap-1 pl-2 pr-0.5 py-0.5 border-[1px] border-[#e2e6ec] rounded-[20px]">
-                              <p
+                              <button
                                 className={`${
                                   isEditMode
                                     ? "flex gap-1 items-center cursor-pointer"
                                     : ""
                                 } text-grey-2 text-base font-semibold`}
                                 onClick={() => isEditMode && showModal()}
-                                onKeyDown={() => isEditMode && showModal()}
                               >
                                 {isEditMode && (
                                   <CloseOutlined style={{ color: "#334054" }} />
                                 )}
                                 {region.region}
-                              </p>
+                              </button>
                               {!isEditMode &&
                                 (region.areas.length ===
                                 regions[regionIndex].areas.length ? (
@@ -428,11 +417,8 @@ const DeliveryAreasDrawer = ({
                               {isEditMode &&
                                 (region.areas.length ===
                                 regions[regionIndex].areas.length ? (
-                                  <p
+                                  <button
                                     onClick={() =>
-                                      handleToggleRegion(region.region)
-                                    }
-                                    onKeyDown={() =>
                                       handleToggleRegion(region.region)
                                     }
                                     className={`${
@@ -447,13 +433,10 @@ const DeliveryAreasDrawer = ({
                                       <EyeSlashIcon color="#334054" />
                                     )}
                                     All areas
-                                  </p>
+                                  </button>
                                 ) : (
-                                  <p
+                                  <button
                                     onClick={() =>
-                                      handleToggleRegion(region.region)
-                                    }
-                                    onKeyDown={() =>
                                       handleToggleRegion(region.region)
                                     }
                                     className={`${
@@ -468,7 +451,7 @@ const DeliveryAreasDrawer = ({
                                       <EyeSlashIcon color="#0053F5" />
                                     )}
                                     Some areas
-                                  </p>
+                                  </button>
                                 ))}
                             </div>
                           </div>
@@ -493,19 +476,16 @@ const DeliveryAreasDrawer = ({
                         <div className="flex flex-wrap gap-2">
                           {!region.hidden &&
                             region.areas.map((area, i) => (
-                              <div
+                              <button
                                 key={`${area}-${i}`}
                                 className="flex items-center gap-1 text-grey-6 px-2 w-fit rounded-[20px] cursor-pointer bg-primary"
                                 onClick={() => handleUpdateRegion(region, area)}
-                                onKeyDown={() =>
-                                  handleUpdateRegion(region, area)
-                                }
                               >
                                 <CloseOutlined style={{ color: "#334054" }} />
                                 <p className="text-sm font-medium leading-5">
                                   {area}
                                 </p>
-                              </div>
+                              </button>
                             ))}
                         </div>
                       </div>
