@@ -14,8 +14,6 @@ const StripeOnboarding = () => {
   sId ? localStorage.setItem("sId", sId) : "";
   partnerId ? localStorage.setItem("partnerId", partnerId) : "";
 
-  const partnerIdExists = partnerId ? true : false;
-
   return (
     <div className="flex h-full w-full bg-[black] text-white font-normal font-poppins">
       <div className="flex flex-col items-center w-full justify-center">
@@ -26,7 +24,7 @@ const StripeOnboarding = () => {
         <Button
           label="Connect with stripe"
           className="px-[10px] py-[15px] mt-5"
-          onClick={() => stripeOnboarding(partnerIdExists)}
+          onClick={() => stripeOnboarding(!!partnerId)}
         />
       </div>
     </div>
