@@ -66,6 +66,7 @@ const DeliveryAreasOverview = () => {
                     setIsEditing(true);
                   }}
                   role="button"
+                  tabIndex={0}
                 >
                   <Image
                     src="/images/icons/edit.svg"
