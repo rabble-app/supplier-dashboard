@@ -499,6 +499,7 @@ const DeliveryAreasDrawer = ({
                                 key={i}
                                 className="flex items-center gap-1 text-grey-6 px-2 w-fit rounded-[20px] cursor-pointer bg-primary"
                                 onClick={() => handleUpdateRegion(region, area)}
+                                onKeyDown={() => handleUpdateRegion(region, area)}
                               >
                                 <CloseOutlined style={{ color: "#334054" }} />
                                 <p className="text-sm font-medium leading-5">
