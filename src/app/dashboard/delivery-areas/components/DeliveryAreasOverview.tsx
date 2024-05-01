@@ -57,6 +57,10 @@ const DeliveryAreasOverview = () => {
                 </div>
                 <div
                   className="rounded-full bg-white-3 flex justify-center items-center w-10 h-8 cursor-pointer"
+                  onKeyDown={() => {
+                    setOpenDeliveryAreasDrawer(true);
+                    setIsEditing(true);
+                  }}
                   onClick={() => {
                     setOpenDeliveryAreasDrawer(true);
                     setIsEditing(true);
