@@ -54,38 +54,28 @@ export const times = [
   "23:00",
 ];
 
+const commonAreas = [
+  "Bromley - BR",
+  "Croydon - CR",
+  "Dartford - DA",
+  "Enfield - EN",
+  "Harlow - CM",
+  "Harrow - HA",
+];
+
 export const regions = [
   {
     region: "West Midlands",
-    areas: [
-      "Bromley - BR",
-      "Croydon - CR",
-      "Dartford - DA",
-      "Enfield - EN",
-      "Harlow - CM",
-      "Harrow - HA",
-    ],
+    areas: commonAreas,
   },
   {
     region: "East Midlands",
-    areas: [
-      "Bromle - BR",
-      "Croyd - CR",
-      "Dartf - DA",
-      "Enfiel - EN",
-      "Harlo - CM",
-      "Harro - HA",
-    ],
+    areas: commonAreas,
   },
   {
     region: "East of England",
     areas: [
-      "Bromley1 - BR",
-      "Croydon1 - CR",
-      "Dartford1 - DA",
-      "Enfield1 - EN",
-      "Harlow1 - CM",
-      "Harrow1 - HA",
+      ...commonAreas,
       "Doncaster - DN",
       "Grimsby - DN",
       "Hull - HU",
@@ -102,57 +92,22 @@ export const regions = [
   },
   {
     region: "London",
-    areas: [
-      "Bromley2 - BR",
-      "Croydon2 - CR",
-      "Dartford2 - DA",
-      "Enfield2 - EN",
-      "Harlow2 - CM",
-      "Harrow2 - HA",
-    ],
+    areas: commonAreas,
   },
   {
     region: "North East",
-    areas: [
-      "Bromley3 - BR",
-      "Croydon3 - CR",
-      "Dartford3 - DA",
-      "Enfield3 - EN",
-      "Harlow3 - CM",
-      "Harrow3 - HA",
-    ],
+    areas: commonAreas,
   },
   {
     region: "North West",
-    areas: [
-      "Bromley4 - BR",
-      "Croydon4 - CR",
-      "Dartford4 - DA",
-      "Enfield4 - EN",
-      "Harlow4 - CM",
-      "Harrow4 - HA",
-    ],
+    areas:commonAreas,
   },
   {
     region: "South East",
-    areas: [
-      "Bromley5 - BR",
-      "Croydon5 - CR",
-      "Dartford5 - DA",
-      "Enfield5 - EN",
-      "Harlow5 - CM",
-      "Harrow5 - HA",
-    ],
+    areas: commonAreas,
   },
   {
     region: "South West",
-    areas: [
-      "Bromley6 - BR",
-      "Croydon6 - CR",
-      "Dartford6 - DA",
-      "Enfield6 - EN",
-      "Harlow6- CM",
-      "Harrow6 - HA",
-    ],
+    areas: commonAreas,
   },
 ];
