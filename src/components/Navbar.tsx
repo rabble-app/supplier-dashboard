@@ -1,9 +1,9 @@
 /** @format */
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import routes from "../navigation/routes";
 import { useAppSelector } from "@/redux/store";
@@ -40,11 +40,10 @@ const Navbar = () => {
             <Link
               key={link.path}
               href={`${url}${link.path}`}
-              onClick={() => console.log(3, url + link.path)}
             >
               <li
                 className={`${
-                  url + link.path === pathname
+                  pathname.includes(url + link.path)
                     ? "bg-white-1 text-black font-bold"
                     : ""
                 } px-10 py-[25px] border-0 border-r-[1px] border-grey-5 cursor-pointer capitalize`}
