@@ -1,8 +1,8 @@
 /** @format */
 
-const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+const PageWrapper = ({ children, mt = 30 }: { children: React.ReactNode, mt?: number }) => {
   return (
-    <div className="mt-[30px] border-grey-4 border-[1px] rounded-lg py-5 bg-white ">
+    <div className={`mt-[${mt}px] border-grey-4 border-[1px] rounded-lg py-5 bg-white shadow-custom-2`}>
       {children}
     </div>
   );
