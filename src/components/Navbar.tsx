@@ -7,10 +7,10 @@ import { usePathname, useRouter } from "next/navigation";
 
 import routes from "../navigation/routes";
 import { useAppSelector } from "@/redux/store";
+import useClickOutside from "@/hooks/useClickOutside";
 
 const Navbar = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const authUser = useAppSelector((state) => state.authReducer);
   const [toggleDropdown, setToggleDropdown] = useState<boolean>(false);
 
@@ -20,21 +20,9 @@ const Navbar = () => {
 
   const url = authUser.role === "ADMIN" ? "/admin/dashboard" : "/dashboard";
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setToggleDropdown(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useClickOutside(dropdownRef, () => {
+    setToggleDropdown(false);
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
