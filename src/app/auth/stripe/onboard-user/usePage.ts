@@ -11,10 +11,10 @@ const usePage = () => {
   const { push } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const stripeOnboarding = async () => {
+  const stripeOnboarding = async (isPartner: boolean) => {
     try {
       setIsLoading(true)
-      const result = await handleStripeOnboarding();
+      const result = await handleStripeOnboarding(isPartner);
       setIsLoading(false)
       if (result.error) {
         throw new Error(JSON.stringify(result));
