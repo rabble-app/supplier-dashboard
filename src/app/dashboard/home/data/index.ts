@@ -16,3 +16,98 @@ export const categories = [
   { id: "5411f7e3-450a-470d-a8eb-8d00804954f2", name: "installation24" },
   { id: "efa6fa1e-c334-4e8f-8ab1-0dd57ccc3f2f", name: "structure" },
 ];
+
+export const days = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+export const times = [
+  "0:00",
+  "1:00",
+  "2:00",
+  "3:00",
+  "4:00",
+  "5:00",
+  "6:00",
+  "7:00",
+  "8:00",
+  "9:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+  "19:00",
+  "20:00",
+  "21:00",
+  "22:00",
+  "23:00",
+];
+
+const commonAreas = [
+  "Bromley - BR",
+  "Croydon - CR",
+  "Dartford - DA",
+  "Enfield - EN",
+  "Harlow - CM",
+  "Harrow - HA",
+];
+
+export const regions = [
+  {
+    region: "West Midlands",
+    areas: commonAreas,
+  },
+  {
+    region: "East Midlands",
+    areas: commonAreas,
+  },
+  {
+    region: "East of England",
+    areas: [
+      ...commonAreas,
+      "Doncaster - DN",
+      "Grimsby - DN",
+      "Hull - HU",
+      "Leeds - LS",
+      "Sheffield - S",
+      "Wakefield - WF",
+      "Wolverhampton - WV",
+      "Worcester - WR",
+      "Coventry - CV",
+      "Derby - DE",
+      "Leicester - LE",
+      "Lincoln - LN",
+    ],
+  },
+  {
+    region: "London",
+    areas: commonAreas,
+  },
+  {
+    region: "North East",
+    areas: commonAreas,
+  },
+  {
+    region: "North West",
+    areas:commonAreas,
+  },
+  {
+    region: "South East",
+    areas: commonAreas,
+  },
+  {
+    region: "South West",
+    areas: commonAreas,
+  },
+];

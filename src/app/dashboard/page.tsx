@@ -30,7 +30,8 @@ import {
   handleGetProducerCategories,
 } from "@/actions/authActions";
 import OrdersDrawer from "../admin/dashboard/orders/components/OrdersDrawer";
-import usePage from "./stripe/onboard-user/usePage";
+import usePage from "../auth/stripe/onboard-user/usePage";
+import DeliveryAreasDrawer from "./home/components/DeliveryAreasDrawer";
 
 export interface OrdersType {
   key: string;
@@ -44,6 +45,7 @@ export interface OrdersType {
 const Dashboard = () => {
   const [isStripeConnected, setIsStripeConnected] = useState(false);
   const [openSupplierDrawer, setOpenSupplierDrawer] = useState(false);
+  const [openDeliveryAreasDrawer, setOpenDeliveryAreasDrawer] = useState(false);
 
   const { stripeOnboarding, isLoading } = usePage();
 
@@ -213,6 +215,7 @@ const Dashboard = () => {
           isFetchingProducer={isFetchingProducer}
           producerData={producerData}
           onClick={() => setOpenSupplierDrawer(true)}
+          onClickDeliveryAreas={()=>setOpenDeliveryAreasDrawer(true)}
         />
         <div className="bg-white h-full w-full py-8 px-5 relative">
           <MainHeading
@@ -273,6 +276,10 @@ const Dashboard = () => {
         categoriesData={categoriesData?.data}
         updateProducer={updateProducer}
         updateCategories={updateCategories}
+      />
+      <DeliveryAreasDrawer
+        open={openDeliveryAreasDrawer}
+        setOpen={setOpenDeliveryAreasDrawer}
       />
     </>
   );
