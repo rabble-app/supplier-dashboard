@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import { Spin } from "antd";
 
 interface IStripe {
-  handleStripeOnboarding: () => void;
+  handleStripeOnboarding: (x:boolean) => void;
   isLoading: boolean;
 }
 

@@ -14,10 +14,12 @@ const LeftSection = ({
   onClickDeliveryAreas,
   producerData,
   isFetchingProducer,
+  isFetchingDeliveryDays,
 }: {
   onClick: () => void;
   onClickDeliveryAreas: () => void;
   isFetchingProducer: boolean;
+  isFetchingDeliveryDays: boolean;
   producerData: any;
 }) => {
   return (
@@ -81,7 +83,7 @@ const LeftSection = ({
         )}
       </div>
 
-      <LeftSectionDeliveryArea onClick={onClickDeliveryAreas} />
+      <LeftSectionDeliveryArea isFetchingDeliveryDays={isFetchingDeliveryDays} onClick={onClickDeliveryAreas} />
     </div>
   );
 };

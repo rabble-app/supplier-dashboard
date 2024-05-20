@@ -22,6 +22,7 @@ interface ISupplierDetailsDrawer {
   open: boolean;
   setOpen: (open: boolean) => void;
   isEditing?: boolean;
+  deliveryDay?: any;
 }
 
 interface IDeliveryDay {
@@ -34,6 +35,7 @@ const DeliveryAreasDrawer = ({
   open,
   setOpen,
   isEditing = false,
+  deliveryDay,
 }: ISupplierDetailsDrawer) => {
   const [selectedDeliveryDays, setSelectedDeliveryDays] = useState<
     IDeliveryDay[]
@@ -70,11 +72,12 @@ const DeliveryAreasDrawer = ({
     setIsEditMode(isEditing);
 
     if (isEditing) {
+      const { cutOffDay, cutOffTime, day} = deliveryDay;
       setSelectedDeliveryDays([
         {
-          day: days[2],
-          cutOffDay: days[0],
-          cutOffTime: times[0],
+          day,
+          cutOffDay,
+          cutOffTime,
         },
       ]);
       setSelectedRegions([
@@ -90,7 +93,7 @@ const DeliveryAreasDrawer = ({
         },
       ]);
     }
-  }, [isEditing]);
+  }, [isEditing, deliveryDay]);
 
   const handleDayClick = (day: (typeof days)[number]) => {
     if (selectedDeliveryDays.find((item) => item.day === day)) {
@@ -240,23 +243,30 @@ const DeliveryAreasDrawer = ({
                       {!isEditMode && (
                         <CloseOutlined style={{ color: "#334054" }} />
                       )}
-                      <p className="text-base leading-6 font-semibold">
-                        {deliveryDay.day}
+                      <p className="text-base leading-6 font-semibold capitalize">
+                        {deliveryDay.day?.toLowerCase()}
                       </p>
                     </button>
                     <div className="flex gap-2 items-center">
                       <p>Cut off time:</p>
                       <div className="bg-grey-1 pr-2 rounded-lg cursor-pointer">
-                        <select className="text-grey-6 font-medium bg-grey-1 rounded-lg py-1 pl-4 -pr-2 focus:outline-none cursor-pointer">
-                          {days.map((day, i) => (
-                            <option key={`${day}-${i}`}>{day}</option>
-                          ))}
+                        <select className="text-grey-6 capitalize font-medium bg-grey-1 rounded-lg py-1 pl-4 -pr-2 focus:outline-none cursor-pointer">
+                          <option selected key={`${deliveryDay.cutOffDay}`}>
+                            {deliveryDay.cutOffDay.toLowerCase()}
+                          </option>
+                          {days.map(
+                            (day, i) =>
+                              deliveryDay.cutOffDay !== day && (
+                                <option key={`${day}-${i}`}>{day}</option>
+                              )
+                          )}
                         </select>
                       </div>
                       <div className="bg-grey-1 pr-2 rounded-lg cursor-pointer">
                         <select className="text-grey-6 font-medium bg-grey-1 rounded-lg py-1 pl-4 -pr-2 focus:outline-none cursor-pointer">
+                        <option selected key={`${deliveryDay.cutOffTime}`}>{deliveryDay.cutOffTime}</option>
                           {times.map((time, i) => (
-                            <option key={`${time}-${i}`}>{time}</option>
+                          deliveryDay.cutOffTime!==time&&  <option key={`${time}-${i}`}>{time}</option>
                           ))}
                         </select>
                       </div>

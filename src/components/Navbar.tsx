@@ -43,7 +43,7 @@ const Navbar = () => {
             >
               <li
                 className={`${
-                  pathname.includes(url + link.path)
+                  pathname === (url + link.path) 
                     ? "bg-white-1 text-black font-bold"
                     : ""
                 } px-10 py-[25px] border-0 border-r-[1px] border-grey-5 cursor-pointer capitalize`}
