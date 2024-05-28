@@ -9,7 +9,7 @@ export default function GeneralMinOrder({
   isChecked,
   handleUpdateRegion,
   disabled,
-}: {
+}: Readonly<{
   onChange: CheckboxProps["onChange"];
   isChecked: boolean;
   handleUpdateRegion: (
@@ -18,7 +18,7 @@ export default function GeneralMinOrder({
     value: string
   ) => void;
   disabled?: boolean;
-}) {
+}>) {
   return (
     <div className="flex gap-2 items-center justify-between custom-check mb-2.5">
       <Checkbox className="flex my-1" onChange={onChange}>

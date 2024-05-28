@@ -91,6 +91,13 @@ const DeliveryAreasDrawer = ({
     setSearchValue("");
   });
 
+  const getProducerAreas = (region: SelectedRegion) =>
+    region.producerAreas.map((area: any) => ({
+      id: area.area.id,
+      name: area.area.name,
+      areaDbId: area.id,
+    }));
+
   useEffect(() => {
     if (selectedDeliveryDayId && deliveryDaysData?.length) {
       const deliveryDay = deliveryDaysData.find(
@@ -105,12 +112,6 @@ const DeliveryAreasDrawer = ({
           },
         ]);
         setSelectedRegions(() => {
-          const getProducerAreas = (region: SelectedRegion) =>
-            region.producerAreas.map((area: any) => ({
-              id: area.area.id,
-              name: area.area.name,
-              areaDbId: area.id,
-            }));
           return deliveryDay.regions.map((region: SelectedRegion) => {
             return {
               id: region.region.id,
