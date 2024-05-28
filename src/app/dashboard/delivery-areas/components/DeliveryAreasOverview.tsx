@@ -15,7 +15,6 @@ import DeliveryAreasDrawer from "../../home/components/DeliveryAreasDrawer";
 import { handleGetDeliveryDays } from "../api";
 import { capitalizeFirstLetter, formatAmount } from "@/utils";
 
-
 const DeliveryAreasOverview = () => {
   const [openDeliveryAreasDrawer, setOpenDeliveryAreasDrawer] = useState(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -46,14 +45,12 @@ const DeliveryAreasOverview = () => {
 
   if (isDeliveryDaysError) return <div>Error...</div>;
 
-  const handleEditClicked = (day: any)=> {
+  const handleEditClicked = (day: any) => {
     setIsEditing(true);
     params.set("id", day.id);
-    
-    replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }
 
-  console.log(2, deliveryDaysData)
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <>
@@ -102,7 +99,9 @@ const DeliveryAreasOverview = () => {
                       </h3>
                     </div>
                     <p className="text-primary-light-2 text-xs font-medium">
-                      CO Time {capitalizeFirstLetter(day.cutOffDay?.toLowerCase())} {day.cutOffTime}
+                      CO Time{" "}
+                      {capitalizeFirstLetter(day.cutOffDay?.toLowerCase())}{" "}
+                      {day.cutOffTime}
                     </p>
                   </div>
                   <button
@@ -152,7 +151,9 @@ const DeliveryAreasOverview = () => {
                       width={24}
                       height={24}
                     />
-                    <p className="text-base text-black font-semibold mr-5">Areas</p>
+                    <p className="text-base text-black font-semibold mr-5">
+                      Areas
+                    </p>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {day.areas.map((area: any, i: number) => (
@@ -176,7 +177,6 @@ const DeliveryAreasOverview = () => {
         setOpen={setOpenDeliveryAreasDrawer}
         isEditing={isEditing}
         deliveryDaysData={deliveryDaysData}
-        // key={crypto.randomUUID()}
       />
     </>
   );

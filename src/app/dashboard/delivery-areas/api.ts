@@ -2,7 +2,7 @@
 
 import { API_ENDPOINT, setHeaders } from "../../../actions/config";
 import { message } from "antd";
-import { Region } from "../home/components/DeliveryAreasDrawer";
+import { Region } from "../home/interfaces";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const handleGetDeliveryDays = async () => {
@@ -152,15 +152,14 @@ export const useUpdateDeliveryRegionsOrAreas = () => {
   });
 };
 
-export const useDeleteDeliveryRegion = (id: string) => {
+export const useDeleteDeliveryRegion = () => {
   const token = localStorage.token;
-  let url = `${API_ENDPOINT}/postal-code/producer/delivery-region/${id}`;
 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      let res = await fetch(url, {
+    mutationFn: async (id: string) => {
+      let res = await fetch(`${API_ENDPOINT}/postal-code/producer/delivery-region/${id}`, {
         headers: setHeaders(token),
         method: "DELETE",
       });
@@ -178,15 +177,14 @@ export const useDeleteDeliveryRegion = (id: string) => {
   });
 };
 
-export const useDeleteDeliveryArea = (id: string) => {
+export const useDeleteDeliveryArea = () => {
   const token = localStorage.token;
-  let url = `${API_ENDPOINT}/postal-code/producer/delivery-area/${id}`;
 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      let res = await fetch(url, {
+    mutationFn: async (id: string) => {
+      let res = await fetch(`${API_ENDPOINT}/postal-code/producer/delivery-area/${id}`, {
         headers: setHeaders(token),
         method: "DELETE",
       });

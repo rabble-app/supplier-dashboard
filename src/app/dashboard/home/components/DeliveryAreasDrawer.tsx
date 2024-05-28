@@ -1,9 +1,8 @@
 /** @format */
 
 "use client";
-import { useState, useEffect, useRef, ChangeEvent } from "react";
-import { Checkbox, Divider, Drawer, Modal, Spin, message } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { useState, useEffect, useRef } from "react";
+import { Drawer, Modal, Spin, message } from "antd";
 import type { CheckboxProps } from "antd";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -11,20 +10,26 @@ import { useQuery } from "@tanstack/react-query";
 
 import CloseButton from "@/components/CloseButton";
 import Button from "@/components/Button";
-import Input from "@/components/auth/Input";
 import useClickOutside from "@/hooks/useClickOutside";
 import "react-phone-number-input/style.css";
-import EyeOpenIcon from "@/components/svgs/EyeOpenIcon";
-import EyeSlashIcon from "@/components/svgs/EyeSlashIcon";
-import { days, times, regions } from "../data";
+import { days, times } from "../data";
 import TrashIcon from "@/components/svgs/TrashIcon";
 import {
   handleSearchRegionsOrAreas,
   useAddDeliveryDays,
+  useDeleteDeliveryArea,
+  useDeleteDeliveryRegion,
   useUpdateDeliveryDay,
   useUpdateDeliveryRegionsOrAreas,
 } from "../../delivery-areas/api";
-import EditIcon from "@/components/svgs/EditIcon";
+import EditDeliveryDays from "./EditDeliveryDays";
+import AddDeliveryDays from "./AddDeliveryDays";
+import {
+  IDeliveryDay,
+  Region,
+  RegionOptionType,
+  SelectedRegion,
+} from "../interfaces";
 
 interface ISupplierDetailsDrawer {
   open: boolean;
@@ -32,30 +37,6 @@ interface ISupplierDetailsDrawer {
   isEditing?: boolean;
   deliveryDaysData?: any;
 }
-
-interface IDeliveryDay {
-  day: (typeof days)[number];
-  cutOffDay: (typeof days)[number];
-  cutOffTime: (typeof times)[number];
-}
-
-export interface Region {
-  id: string;
-  name: string;
-  postalCodeArea: { id: string; name: string }[];
-  producerAreas: { id: string; name: string; areaDbId?: string }[];
-  region: { id: string; name: string };
-}
-
-interface SelectedRegion extends Region {
-  minOrder?: string;
-  minimumOrder?: string;
-  hidden?: boolean;
-  regionDbId?: string;
-  originalAreasLength?: number;
-}
-
-type RegionOptionType = "minOrder" | "area" | "genMinOrder";
 
 const DeliveryAreasDrawer = ({
   open,
@@ -67,13 +48,14 @@ const DeliveryAreasDrawer = ({
     IDeliveryDay[]
   >([]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [selectedRegions, setSelectedRegions] = useState<SelectedRegion[]>(
-    []
-  );
+  const [selectedRegions, setSelectedRegions] = useState<SelectedRegion[]>([]);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchResultsOpen, setSearchResultsOpen] = useState<boolean>(false);
   const [notFound, setNotFound] = useState<boolean>(false);
+  const [selectedRegion, setSelectedRegion] = useState({} as SelectedRegion);
+  const [editModeAreas, setEditModeAreas] = useState(false);
+  const [editModeDays, setEditModeDays] = useState(false);
 
   const searchResultsDivRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -88,8 +70,13 @@ const DeliveryAreasDrawer = ({
     useAddDeliveryDays();
   const { mutate: updateDeliveryDay, isPending: isUpdatingDeliveryDay } =
     useUpdateDeliveryDay(selectedDeliveryDayId!);
-  const { mutate: updateDeliveryRegionsOrAreas, isPending: isUpdatingDeliveryRegionsOrAreas } =
-    useUpdateDeliveryRegionsOrAreas();
+  const {
+    mutate: updateDeliveryRegionsOrAreas,
+    isPending: isUpdatingDeliveryRegionsOrAreas,
+  } = useUpdateDeliveryRegionsOrAreas();
+  const { mutate: deleteDeliveryRegion, isPending: isDeletingDeliveryRegion } =
+    useDeleteDeliveryRegion();
+  const { mutate: deleteDeliveryArea } = useDeleteDeliveryArea();
 
   const { data: searchResultsData, isFetching: isFetchingSearchResults } =
     useQuery({
@@ -117,7 +104,7 @@ const DeliveryAreasDrawer = ({
             cutOffTime: deliveryDay.cutOffTime,
           },
         ]);
-        setSelectedRegions(() => {
+        setSelectedRegions((prev) => {
           return deliveryDay.regions.map((region: SelectedRegion) => {
             return {
               id: region.region.id,
@@ -305,12 +292,13 @@ const DeliveryAreasDrawer = ({
       {
         onSuccess: () => {
           message.success("Delivery day info updated successfully");
+          setEditModeDays(false);
         },
         onError: (error: any) => {
           message.error(error.message);
         },
       }
-    )
+    );
   };
 
   const handleUpdateDeliveryRegionsOrAreas = () => {
@@ -326,12 +314,37 @@ const DeliveryAreasDrawer = ({
       {
         onSuccess: () => {
           message.success("Delivery region/area added successfully");
+          setEditModeAreas(false);
         },
         onError: (error: any) => {
           message.error(error.message);
         },
       }
-    )
+    );
+  };
+
+  const handleDeleteDeliveryRegion = (id?: string) => {
+    deleteDeliveryRegion(id!, {
+      onSuccess: () => {
+        message.success("Delivery region deleted successfully");
+        handleCancel();
+      },
+      onError: (error: any) => {
+        message.error(error.message);
+      },
+    });
+  };
+
+  const handleDeleteDeliveryArea = (id?: string) => {
+    deleteDeliveryArea(id!!, {
+      onSuccess: () => {
+        message.success("Delivery area deleted successfully");
+        setEditModeAreas(false);
+      },
+      onError: (error: any) => {
+        message.error(error.message);
+      },
+    });
   };
 
   const onChange: CheckboxProps["onChange"] = (e) => {
@@ -349,12 +362,15 @@ const DeliveryAreasDrawer = ({
     params.delete("id");
     setSelectedDeliveryDays([]);
     setSelectedRegions([]);
+    setEditModeAreas(false);
+    setEditModeDays(false);
 
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const showModal = () => {
+  const showModal = (region: SelectedRegion) => {
     setIsModalOpen(true);
+    setSelectedRegion(region);
   };
 
   const handleOk = () => {
@@ -452,8 +468,17 @@ const DeliveryAreasDrawer = ({
                 isEditing={isEditing}
                 handleUpdateDeliveryDay={handleUpdateDeliveryDay}
                 isUpdatingDeliveryDay={isUpdatingDeliveryDay}
-                handleUpdateDeliveryRegionsOrAreas={handleUpdateDeliveryRegionsOrAreas}
-                isUpdatingDeliveryRegionsOrAreas={isUpdatingDeliveryRegionsOrAreas}
+                handleUpdateDeliveryRegionsOrAreas={
+                  handleUpdateDeliveryRegionsOrAreas
+                }
+                isUpdatingDeliveryRegionsOrAreas={
+                  isUpdatingDeliveryRegionsOrAreas
+                }
+                handleDeleteDeliveryArea={handleDeleteDeliveryArea}
+                editModeAreas={editModeAreas}
+                setEditModeAreas={setEditModeAreas}
+                editModeDays={editModeDays}
+                setEditModeDays={setEditModeDays}
               />
             )}
           </div>
@@ -498,7 +523,7 @@ const DeliveryAreasDrawer = ({
               <p className="text-base text-black font-semibold">Region</p>
             </div>
             <p className="rounded-[20px] border-[1px] border-[#e2e6ec] px-2 py-0.5">
-              Greater London
+              {selectedRegion.name}
             </p>
           </div>
         </div>
@@ -510,11 +535,21 @@ const DeliveryAreasDrawer = ({
             onClick={handleCancel}
           />
           <Button
-            label="Delete Region"
-            className="text-white bg-danger"
+            label={
+              isDeletingDeliveryRegion ? (
+                <Spin className="custom-spin-white" />
+              ) : (
+                "Delete Region"
+              )
+            }
+            className="text-white !bg-danger"
             size="sm"
-            onClick={handleCancel}
-            icon={<TrashIcon color="#ffffff" />}
+            onClick={() =>
+              handleDeleteDeliveryRegion(selectedRegion.regionDbId)
+            }
+            icon={
+              isDeletingDeliveryRegion ? <TrashIcon color="#ffffff" /> : null
+            }
           />
         </div>
       </Modal>
@@ -523,771 +558,3 @@ const DeliveryAreasDrawer = ({
 };
 
 export default DeliveryAreasDrawer;
-
-const AddDeliveryDays = ({
-  usedDays,
-  selectedDeliveryDays,
-  handleDayClick,
-  handleCutOffChange,
-  searchResultsDivRef,
-  searchValue,
-  setSearchValue,
-  searchResultsOpen,
-  setSearchResultsOpen,
-  selectedRegions,
-  handleUpdateRegion,
-  handleUpdateRegionSearched,
-  isChecked,
-  onChange,
-  isFetchingSearchResults,
-  searchResultsData,
-}: {
-  usedDays: string[] | undefined;
-  selectedDeliveryDays: IDeliveryDay[];
-  handleDayClick: (day: string) => void;
-  handleCutOffChange: (
-    type: "day" | "time",
-    deliveryDay: IDeliveryDay,
-    value: string
-  ) => void;
-  searchResultsDivRef: React.RefObject<HTMLDivElement>;
-  searchValue: string;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  searchResultsOpen: boolean;
-  setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedRegions: SelectedRegion[];
-  handleUpdateRegion: (
-    type: RegionOptionType,
-    region: Region | undefined,
-    value: string
-  ) => void;
-  handleUpdateRegionSearched: (
-    isRegionSelected: boolean,
-    region: Region
-  ) => void;
-  isChecked: boolean;
-  onChange: CheckboxProps["onChange"];
-  isFetchingSearchResults: boolean;
-  searchResultsData: Region[] | undefined;
-}) => {
-  return (
-    <>
-      <div className="my-2 flex gap-4 flex-wrap mt-8">
-        {days.map((day, i) => {
-          if (usedDays?.includes(day.toUpperCase())) return null;
-          if (!selectedDeliveryDays.find((item) => item.day === day))
-            return (
-              <button
-                key={`${day}-${i}`}
-                className="text-grey-2 text-base leading-6 px-6 py-2.5 bg-grey-1 w-fit rounded-[100px] cursor-pointer font-medium"
-                onClick={() => handleDayClick(day)}
-              >
-                {day}
-              </button>
-            );
-        })}
-      </div>
-
-      {selectedDeliveryDays.length ? (
-        <SelectedDeliveryDayConfig
-          selectedDeliveryDays={selectedDeliveryDays}
-          handleCutOffChange={handleCutOffChange}
-          handleDayClick={handleDayClick}
-          isRemovable={true}
-        />
-      ) : null}
-
-      {selectedDeliveryDays.length ? (
-        <SearchDeliveryAreas
-          searchResultsDivRef={searchResultsDivRef}
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-          searchResultsOpen={searchResultsOpen}
-          setSearchResultsOpen={setSearchResultsOpen}
-          selectedRegions={selectedRegions}
-          handleUpdateRegionSearched={handleUpdateRegionSearched}
-          isFetchingSearchResults={isFetchingSearchResults}
-          searchResultsData={searchResultsData}
-        />
-      ) : null}
-
-      {selectedRegions.length && selectedDeliveryDays.length ? (
-        <div className="my-8 relative">
-          <h2 className="text-grey-2 text-xl font-gosha mb-2.5">
-            Areas delivered to on &quot;selected.days&quot;
-          </h2>
-
-          <GeneralMinOrder
-            isChecked={isChecked}
-            onChange={onChange}
-            handleUpdateRegion={handleUpdateRegion}
-          />
-
-          <div className="max-h-[450px] overflow-y-scroll">
-            {selectedRegions.map((region) => {
-              return (
-                <div
-                  key={`${region.id}`}
-                  className="border-[1.5px] border-grey-4 rounded-[10px] p-2.5 mb-4"
-                >
-                  <div className={`flex items-center justify-between mb-3`}>
-                    <div className="flex justify-between items-center gap-4 bg-white-1 border-[1px] border-[#e2e6ec] rounded-[10px] p-2.5 w-fit">
-                      <div className="flex justify-between items-center gap-1">
-                        <Image
-                          src="/images/icons/location.svg"
-                          alt="location-icon"
-                          width={24}
-                          height={24}
-                        />
-                        <p className="text-base text-black font-semibold">
-                          Region
-                        </p>
-                      </div>
-                      <div className="flex justify-between items-center gap-1 pl-2 pr-0.5 py-0.5 border-[1px] border-[#e2e6ec] rounded-[20px]">
-                        <button
-                          className={`text-grey-2 text-base font-semibold`}
-                        >
-                          {region.name}
-                        </button>
-                        {region.postalCodeArea.length ===
-                        region.originalAreasLength ? (
-                          <p className="bg-primary rounded-[20px] border-[1px] border-[#e2e6ec] px-2 py-0.5 text-sm font-medium">
-                            All areas
-                          </p>
-                        ) : (
-                          <p className="bg-[#eef4ff] rounded-[20px] border-[1px] border-[#e2e6ec] px-2 py-0.5 text-sm text-blue-1 font-medium">
-                            Some areas
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {!isChecked && (
-                      <div className="flex items-center gap-3.5">
-                        <p className="text-sm text-grey-2 font-medium">
-                          Min Order
-                        </p>
-                        <div className="bg-grey-1 rounded-lg text-sm px-4 py-1 flex items-center gap-3">
-                          <p className="text-grey-6 font-medium">£</p>
-                          <input
-                            className="w-14 text-base text-right bg-grey-1 pr-2 outline-none"
-                            type="number"
-                            placeholder="0.00"
-                            step=".01"
-                            onChange={(e) =>
-                              handleUpdateRegion(
-                                "minOrder",
-                                region,
-                                e.target.value
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {region.postalCodeArea.map((area, i) => (
-                      <button
-                        key={`${area.id}`}
-                        className="flex items-center gap-1 text-grey-6 px-2 w-fit rounded-[20px] cursor-pointer bg-primary"
-                        onClick={() =>
-                          handleUpdateRegion("area", region, area.name)
-                        }
-                      >
-                        <CloseOutlined style={{ color: "#334054" }} />
-                        <p className="text-sm font-medium leading-5">
-                          {area.name}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : null}
-    </>
-  );
-};
-
-const EditDeliveryDays = ({
-  selectedDeliveryDayId,
-  selectedDeliveryDays,
-  handleDayClick,
-  handleCutOffChange,
-  searchResultsDivRef,
-  searchValue,
-  setSearchValue,
-  searchResultsOpen,
-  setSearchResultsOpen,
-  selectedRegions,
-  handleUpdateRegion,
-  handleUpdateRegionSearched,
-  isChecked,
-  onChange,
-  showModal,
-  handleToggleRegion,
-  isFetchingSearchResults,
-  searchResultsData,
-  notFound,
-  isEditing,
-  handleUpdateDeliveryDay,
-  isUpdatingDeliveryDay,
-  handleUpdateDeliveryRegionsOrAreas,
-  isUpdatingDeliveryRegionsOrAreas,
-}: {
-  selectedDeliveryDayId: string | null;
-  selectedDeliveryDays: IDeliveryDay[];
-  setSelectedDeliveryDays: React.Dispatch<React.SetStateAction<IDeliveryDay[]>>;
-  handleDayClick: (day: string) => void;
-  handleCutOffChange: (
-    type: "day" | "time",
-    deliveryDay: IDeliveryDay,
-    value: string
-  ) => void;
-  searchResultsDivRef: React.RefObject<HTMLDivElement>;
-  searchValue: string;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  searchResultsOpen: boolean;
-  setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedRegions: SelectedRegion[];
-  handleUpdateRegion: (
-    type: RegionOptionType,
-    region: Region | undefined,
-    value: string
-  ) => void;
-  handleUpdateRegionSearched: (
-    isRegionSelected: boolean,
-    region: Region
-  ) => void;
-  isChecked: boolean;
-  onChange: CheckboxProps["onChange"];
-  showModal: () => void;
-  handleToggleRegion: (region: string) => void;
-  isFetchingSearchResults: boolean;
-  searchResultsData: Region[] | undefined;
-  notFound: boolean;
-  isEditing: boolean;
-  handleUpdateDeliveryDay: () => void;
-  isUpdatingDeliveryDay: boolean;
-  handleUpdateDeliveryRegionsOrAreas: () => void;
-  isUpdatingDeliveryRegionsOrAreas: boolean;
-}) => {
-  const [editMode, setEditMode] = useState(false);
-
-  return (
-    <>
-      {notFound && (
-        <div className="flex justify-center items-center h-screen pb-[300px]">
-          <p className="text-lg">
-            No data found for ID:{" "}
-            <span className="text-blue-1">{selectedDeliveryDayId}</span>{" "}
-          </p>
-        </div>
-      )}
-      {selectedDeliveryDayId ? (
-        <>
-          {selectedDeliveryDays.length ? (
-            <SelectedDeliveryDayConfig
-              selectedDeliveryDays={selectedDeliveryDays}
-              handleCutOffChange={handleCutOffChange}
-              handleDayClick={handleDayClick}
-              isRemovable={false}
-              isEditing={isEditing}
-              isUpdatingDeliveryDay={isUpdatingDeliveryDay}
-              handleUpdateDeliveryDay={handleUpdateDeliveryDay}
-            />
-          ) : null}
-
-          {selectedDeliveryDays.length ? (
-            <SearchDeliveryAreas
-              searchResultsDivRef={searchResultsDivRef}
-              searchValue={searchValue}
-              setSearchValue={setSearchValue}
-              searchResultsOpen={searchResultsOpen}
-              setSearchResultsOpen={setSearchResultsOpen}
-              selectedRegions={selectedRegions}
-              handleUpdateRegionSearched={handleUpdateRegionSearched}
-              isFetchingSearchResults={isFetchingSearchResults}
-              searchResultsData={searchResultsData}
-              disabled={!editMode}
-            />
-          ) : null}
-
-          {selectedRegions.length && selectedDeliveryDays.length ? (
-            <div className="my-8 relative">
-              <DeliveryDayHeader
-                title='Areas delivered to on "selected.days"'
-                className="mb-2.5"
-                editMode={editMode}
-                setEditMode={setEditMode}
-                handleSave={() => {
-                  handleUpdateDeliveryRegionsOrAreas();
-                  setEditMode(false);
-                }}
-                isEditing={isEditing}
-                isUpdatingDeliveryDay={isUpdatingDeliveryRegionsOrAreas}
-                
-              />
-              <GeneralMinOrder
-                isChecked={isChecked}
-                onChange={onChange}
-                handleUpdateRegion={handleUpdateRegion}
-                disabled={!editMode}
-              />
-
-              <div className="max-h-[450px] overflow-y-scroll">
-                {selectedRegions.map((region, i) => {
-                  return (
-                    <div
-                      key={`${region}-${i}`}
-                      className="border-[1.5px] border-grey-4 rounded-[10px] p-2.5 mb-4"
-                    >
-                      <div
-                        className={`flex items-center justify-between ${
-                          region.hidden ? "" : "mb-3"
-                        }`}
-                      >
-                        <div className="flex justify-between items-center gap-4 bg-white-1 border-[1px] border-[#e2e6ec] rounded-[10px] p-2.5 w-fit">
-                          <div className="flex justify-between items-center gap-1">
-                            <Image
-                              src="/images/icons/location.svg"
-                              alt="location-icon"
-                              width={24}
-                              height={24}
-                            />
-                            <p className="text-base text-black font-semibold">
-                              Region
-                            </p>
-                          </div>
-                          <div className="flex justify-between items-center gap-1 pl-2 pr-0.5 py-0.5 border-[1px] border-[#e2e6ec] rounded-[20px]">
-                            <button
-                              className={`flex gap-1 items-center cursor-pointertext-grey-2 text-base font-semibold`}
-                              onClick={() => (editMode ? showModal() : null)}
-                            >
-                              {editMode && (
-                                <CloseOutlined style={{ color: "#334054" }} />
-                              )}
-
-                              {region.name}
-                            </button>
-                            {region.postalCodeArea.length ===
-                            region.originalAreasLength ? (
-                              <button
-                                onClick={() => handleToggleRegion(region.name)}
-                                className={`${
-                                  region.hidden
-                                    ? "bg-white-1 text-grey-6"
-                                    : "bg-primary text-grey-6"
-                                } flex gap-0.5 items-center cursor-pointer rounded-[20px] border-[1px] border-[#e2e6ec] px-2 py-0.5 text-sm font-medium`}
-                              >
-                                {region.hidden ? (
-                                  <EyeOpenIcon color="#334054" />
-                                ) : (
-                                  <EyeSlashIcon color="#334054" />
-                                )}
-                                All areas
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleToggleRegion(region.name)}
-                                className={`${
-                                  region.hidden
-                                    ? "bg-white-1 text-grey-6"
-                                    : "bg-[#eef4ff] text-blue-1"
-                                } flex gap-0.5 items-center cursor-pointer rounded-[20px] border-[1px] border-[#e2e6ec] px-2 py-0.5 text-sm font-medium`}
-                              >
-                                {region.hidden ? (
-                                  <EyeOpenIcon color="#334054" />
-                                ) : (
-                                  <EyeSlashIcon color="#0053F5" />
-                                )}
-                                Some areas
-                              </button>
-                            )}
-                          </div>
-                        </div>
-
-                        {!isChecked && (
-                          <div className="flex items-center gap-3.5">
-                            <p className="text-sm text-grey-2 font-medium">
-                              Min Order
-                            </p>
-                            <div
-                              className={`${
-                                editMode ? "bg-grey-1" : "bg-grey-4"
-                              } rounded-lg text-sm px-4 py-1 flex items-center gap-3`}
-                            >
-                              <p className="text-grey-6 font-medium">£</p>
-                              <input
-                                className={`w-14 text-base text-right ${
-                                  editMode ? "bg-grey-1" : "bg-grey-4"
-                                } pr-2 outline-none ${
-                                  editMode ? "" : "cursor-not-allowed"
-                                }`}
-                                type="number"
-                                placeholder="0.00"
-                                step=".01"
-                                defaultValue={region.minOrder}
-                                onChange={(e) =>
-                                  handleUpdateRegion(
-                                    "minOrder",
-                                    region,
-                                    e.target.value
-                                  )
-                                }
-                                disabled={!editMode}
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {!region.hidden &&
-                          region.postalCodeArea.map((area, i) => (
-                            <button
-                              key={`${area}-${i}`}
-                              className="flex items-center gap-1 text-grey-6 px-2 w-fit rounded-[20px] cursor-pointer bg-primary"
-                              onClick={() =>
-                                editMode
-                                  ? handleUpdateRegion(
-                                      "area",
-                                      region,
-                                      area.name
-                                    )
-                                  : null
-                              }
-                            >
-                              {editMode && (
-                                <CloseOutlined style={{ color: "#334054" }} />
-                              )}
-                              <p className="text-sm font-medium leading-5">
-                                {area.name}
-                              </p>
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-        </>
-      ) : null}
-    </>
-  );
-};
-
-const GeneralMinOrder = ({
-  onChange,
-  isChecked,
-  handleUpdateRegion,
-  disabled,
-}: {
-  onChange: CheckboxProps["onChange"];
-  isChecked: boolean;
-  handleUpdateRegion: (
-    type: RegionOptionType,
-    region: Region | undefined,
-    value: string
-  ) => void;
-  disabled?: boolean;
-}) => {
-  return (
-    <div className="flex gap-2 items-center justify-between custom-check mb-2.5">
-      <Checkbox className="flex my-1" onChange={onChange}>
-        <p className="text-grey-2 text-base">
-          Use the same min for all Regions
-        </p>
-      </Checkbox>
-
-      {isChecked && (
-        <div className="flex items-center gap-3.5">
-          <p className="text-sm text-grey-2 font-medium">Min Order</p>
-          <div
-            className={`${
-              disabled ? "bg-grey-4" : "bg-grey-1"
-            } rounded-lg text-sm px-4 py-1 flex items-center gap-3`}
-          >
-            <p className="text-grey-6 font-medium">£</p>
-            <input
-              className={`w-14 text-base text-right ${
-                disabled ? "bg-grey-4" : "bg-grey-1"
-              } pr-2 outline-none ${disabled ? "cursor-not-allowed" : ""}`}
-              type="number"
-              placeholder="0.00"
-              step=".01"
-              onChange={(e) =>
-                handleUpdateRegion("genMinOrder", undefined, e.target.value)
-              }
-              disabled={disabled}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const SearchDeliveryAreas = ({
-  searchResultsDivRef,
-  searchValue,
-  setSearchValue,
-  searchResultsOpen,
-  setSearchResultsOpen,
-  selectedRegions,
-  handleUpdateRegionSearched,
-  isFetchingSearchResults,
-  searchResultsData,
-  disabled,
-}: {
-  searchResultsDivRef: React.RefObject<HTMLDivElement>;
-  searchValue: string;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  searchResultsOpen: boolean;
-  setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedRegions: Region[];
-  handleUpdateRegionSearched: (
-    isRegionSelected: boolean,
-    region: Region
-  ) => void;
-  isFetchingSearchResults: boolean;
-  searchResultsData: Region[] | undefined;
-  disabled?: boolean;
-}) => {
-  return (
-    <div className="my-8 mb-2 relative z-[9999]">
-      <h2 className="text-grey-2 text-xl font-gosha mb-4">
-        Search your delivery regions or areas
-      </h2>
-      <div ref={searchResultsDivRef}>
-        <Input
-          label="Delivery Regions or Areas"
-          placeholder="Search your regions or areas"
-          id="delivery_areas"
-          type="text"
-          leftIcon="/images/icons/search.svg"
-          value={searchValue}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setSearchValue(e.target.value)
-          }
-          onFocus={() => setSearchResultsOpen(true)}
-          disabled={disabled}
-        />
-        {searchResultsOpen && searchValue.length > 1 ? (
-          <ul className="bg-white-1 mt-3 border-grey-4 border-[1.2px] rounded-lg px-6 py-4 absolute w-full z-20 max-h-[260px] overflow-y-scroll">
-            {isFetchingSearchResults ? (
-              <span className="flex justify-center items-center">
-                <Spin className="custom-spin mr-1" />
-                &nbsp;Loading search results...
-              </span>
-            ) : null}
-            {!isFetchingSearchResults &&
-              (searchResultsData?.length === 0 ? (
-                <p>No results found!</p>
-              ) : (
-                searchResultsData?.map((region: Region) => {
-                  const isRegionSelected = selectedRegions.some(
-                    (selectedRegion) => selectedRegion.id === region.id
-                  );
-
-                  return (
-                    <button
-                      key={`${region.id}`}
-                      className="cursor-pointer block w-full"
-                      onClick={() =>
-                        handleUpdateRegionSearched(isRegionSelected, region)
-                      }
-                    >
-                      <div className="flex justify-between items-center text-xl text-grey-2 ">
-                        <p>{region.name}</p>
-                        {isRegionSelected && (
-                          <div className="bg-black w-5 h-5 rounded-full flex justify-center items-center">
-                            <Image
-                              src="/images/icons/check.svg"
-                              alt="check"
-                              width={8.5}
-                              height={5.6}
-                            />
-                          </div>
-                        )}
-                      </div>
-                      <hr className="my-2.5 border-0 border-t-[1.5px] border-grey-4" />
-                    </button>
-                  );
-                })
-              ))}
-          </ul>
-        ) : null}
-      </div>
-    </div>
-  );
-};
-
-const SelectedDeliveryDayConfig = ({
-  selectedDeliveryDays,
-  handleCutOffChange,
-  handleDayClick,
-  isRemovable = true,
-  isEditing,
-  isUpdatingDeliveryDay,
-  handleUpdateDeliveryDay,
-}: {
-  selectedDeliveryDays: IDeliveryDay[];
-  handleDayClick: (day: (typeof days)[number]) => void;
-  handleCutOffChange: (
-    type: "day" | "time",
-    deliveryDay: IDeliveryDay,
-    value: string
-  ) => void;
-  isRemovable?: boolean;
-  isEditing?: boolean;
-  isUpdatingDeliveryDay?: boolean;
-  handleUpdateDeliveryDay?: () => void;
-}) => {
-  const [editMode, setEditMode] = useState(false);
-
-  return (
-    <div className="my-8 mb-2">
-      <DeliveryDayHeader
-        title="Selected delivery day"
-        editMode={editMode}
-        setEditMode={setEditMode}
-        handleSave={() => {
-          handleUpdateDeliveryDay?.();
-          setEditMode(false);
-        }}
-        isEditing={isEditing}
-        isUpdatingDeliveryDay={isUpdatingDeliveryDay}
-      />
-      {selectedDeliveryDays.map((deliveryDay, i) => (
-        <div
-          key={`${deliveryDay}-${i}`}
-          className="my-4 flex items-center justify-between"
-        >
-          <button
-            className={`flex items-center gap-2.5 text-grey-2 px-6 py-2.5 w-fit rounded-[100px] cursor-pointer bg-primary`}
-            onClick={() =>
-              isRemovable ? handleDayClick(deliveryDay.day) : null
-            }
-          >
-            {isRemovable && <CloseOutlined style={{ color: "#334054" }} />}
-
-            <p className="text-base leading-6 font-semibold capitalize">
-              {deliveryDay.day?.toLowerCase()}
-            </p>
-          </button>
-          <div className="flex gap-2 items-center">
-            <p>Cut off time:</p>
-            <select
-              className={`text-grey-6 capitalize font-medium rounded-lg py-1 pl-4 -pr-2 focus:outline-none ${
-                editMode
-                  ? "bg-grey-1 cursor-pointer"
-                  : "bg-grey-4 cursor-not-allowed"
-              }`}
-              onChange={(e) =>
-                handleCutOffChange("day", deliveryDay, e.target.value)
-              }
-              disabled={!editMode}
-            >
-              <option selected key={`${deliveryDay.cutOffDay}`}>
-                {deliveryDay.cutOffDay.toLowerCase()}
-              </option>
-              {days.map(
-                (day, i) =>
-                  deliveryDay.cutOffDay.toLowerCase() !== day.toLowerCase() && (
-                    <option key={`${day}-${i}`} value={day}>
-                      {day}
-                    </option>
-                  )
-              )}
-            </select>
-            <select
-              className={`text-grey-6 font-medium rounded-lg py-1 pl-4 -pr-2 focus:outline-none  ${
-                editMode
-                  ? "bg-grey-1 cursor-pointer"
-                  : "bg-grey-4 cursor-not-allowed"
-              }`}
-              onChange={(e) =>
-                handleCutOffChange("time", deliveryDay, e.target.value)
-              }
-              disabled={!editMode}
-            >
-              <option selected key={`${deliveryDay.cutOffTime}`}>
-                {deliveryDay.cutOffTime}
-              </option>
-              {times.map(
-                (time, i) =>
-                  deliveryDay.cutOffTime !== time && (
-                    <option key={`${time}-${i}`} value={time}>
-                      {time}
-                    </option>
-                  )
-              )}
-            </select>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const DeliveryDayHeader = ({
-  title,
-  editMode,
-  setEditMode,
-  handleSave,
-  className = "",
-  isEditing,
-  isUpdatingDeliveryDay,
-}: {
-  title: string;
-  editMode: boolean;
-  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
-  handleSave: () => void;
-  className?: string;
-  isEditing?: boolean;
-  isUpdatingDeliveryDay?: boolean;
-}) => {
-  return (
-    <div
-      className={`flex gap-2 items-center ${
-        editMode ? "justify-between" : ""
-      } ${className}`}
-    >
-      <h2 className="text-grey-2 text-xl font-gosha">{title}</h2>
-
-      {isEditing && (
-        <>
-          {!editMode && (
-            <EditIcon
-              color="#667085"
-              className="cursor-pointer"
-              onClick={() => setEditMode(true)}
-            />
-          )}
-
-          {editMode && (
-            <div className="flex gap-2.5">
-              <Button
-                label="Cancel"
-                className="text-grey-2 bg-white-3"
-                size="xs"
-                onClick={() => setEditMode(false)}
-              />
-              <Button
-                label={isUpdatingDeliveryDay ? <Spin size="small" /> : "Save"}
-                className="bg-primary"
-                size="xs"
-                onClick={handleSave}
-              />
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-};
