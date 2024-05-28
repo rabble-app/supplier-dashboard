@@ -73,13 +73,12 @@ export const handleSearchRegionsOrAreas = async (
 
 export const useAddDeliveryDays = () => {
   const token = localStorage.token;
-  let url = `${API_ENDPOINT}/postal-code/producer/delivery-days`;
 
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: any) => {
-      let res = await fetch(url, {
+      let res = await fetch(`${API_ENDPOINT}/postal-code/producer/delivery-days`, {
         headers: setHeaders(token),
         method: "POST",
         body: JSON.stringify(data),
@@ -100,13 +99,12 @@ export const useAddDeliveryDays = () => {
 
 export const useUpdateDeliveryDay = (id: string) => {
   const token = localStorage.token;
-  let url = `${API_ENDPOINT}/postal-code/producer/delivery-day-info/${id}`;
 
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: any) => {
-      let res = await fetch(url, {
+      let res = await fetch(`${API_ENDPOINT}/postal-code/producer/delivery-day-info/${id}`, {
         headers: setHeaders(token),
         method: "PATCH",
         body: JSON.stringify(data),
