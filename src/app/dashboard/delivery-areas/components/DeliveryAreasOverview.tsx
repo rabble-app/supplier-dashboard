@@ -1,23 +1,31 @@
 /** @format */
 
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
 import Button from "@/components/Button";
 import PageHeader from "@/components/PageHeader";
 import PageWrapper from "@/components/PageWrapper";
-import Image from "next/image";
 import BackButton from "@/components/BackButton";
 import DeliveryAreasDrawer from "../../home/components/DeliveryAreasDrawer";
 import { handleGetDeliveryDays } from "../api";
-import { formatAmount } from "@/utils";
-import { Spin } from "antd";
+import { capitalizeFirstLetter, formatAmount } from "@/utils";
+
 
 const DeliveryAreasOverview = () => {
   const [openDeliveryAreasDrawer, setOpenDeliveryAreasDrawer] = useState(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [deliveryDay, setDeliveryDay] = useState({});
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const params = new URLSearchParams(`${searchParams}`);
+
+  const selectedDeliveryDayId = params.get("id");
 
   const {
     data: deliveryDaysData,
@@ -29,7 +37,23 @@ const DeliveryAreasOverview = () => {
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    if (selectedDeliveryDayId && !isDeliveryDaysError) {
+      setOpenDeliveryAreasDrawer(true);
+      setIsEditing(true);
+    }
+  }, [selectedDeliveryDayId, isDeliveryDaysError]);
+
   if (isDeliveryDaysError) return <div>Error...</div>;
+
+  const handleEditClicked = (day: any)=> {
+    setIsEditing(true);
+    params.set("id", day.id);
+    
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  console.log(2, deliveryDaysData)
 
   return (
     <>
@@ -78,16 +102,12 @@ const DeliveryAreasOverview = () => {
                       </h3>
                     </div>
                     <p className="text-primary-light-2 text-xs font-medium">
-                      CO Time Saturday {day.cutOffTime}
+                      CO Time {capitalizeFirstLetter(day.cutOffDay?.toLowerCase())} {day.cutOffTime}
                     </p>
                   </div>
                   <button
                     className="rounded-full bg-white-3 flex justify-center items-center w-10 h-8 cursor-pointer"
-                    onClick={() => {
-                      setOpenDeliveryAreasDrawer(true);
-                      setIsEditing(true);
-                      setDeliveryDay(day);
-                    }}
+                    onClick={() => handleEditClicked(day)}
                   >
                     <Image
                       src="/images/icons/edit.svg"
@@ -155,9 +175,8 @@ const DeliveryAreasOverview = () => {
         open={openDeliveryAreasDrawer}
         setOpen={setOpenDeliveryAreasDrawer}
         isEditing={isEditing}
-        deliveryDay={deliveryDay}
         deliveryDaysData={deliveryDaysData}
-        key={crypto.randomUUID()}
+        // key={crypto.randomUUID()}
       />
     </>
   );

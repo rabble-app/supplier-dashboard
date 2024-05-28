@@ -97,3 +97,109 @@ export const useAddDeliveryDays = () => {
     }
   });
 };
+
+export const useUpdateDeliveryDay = (id: string) => {
+  const token = localStorage.token;
+  let url = `${API_ENDPOINT}/postal-code/producer/delivery-day-info/${id}`;
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      let res = await fetch(url, {
+        headers: setHeaders(token),
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+
+      let resp = await res.json();
+      if (res.ok) {
+        return resp.data;
+      } else {
+        throw new Error(JSON.stringify(resp));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["delivery-days"]});
+    }
+  });
+};
+
+export const useUpdateDeliveryRegionsOrAreas = () => {
+  const token = localStorage.token;
+  let url = `${API_ENDPOINT}/postal-code/producer/delivery-area`;
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      let res = await fetch(url, {
+        headers: setHeaders(token),
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+
+      let resp = await res.json();
+      if (res.ok) {
+        return resp.data;
+      } else {
+        throw new Error(JSON.stringify(resp));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["delivery-days"]});
+    }
+  });
+};
+
+export const useDeleteDeliveryRegion = (id: string) => {
+  const token = localStorage.token;
+  let url = `${API_ENDPOINT}/postal-code/producer/delivery-region/${id}`;
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      let res = await fetch(url, {
+        headers: setHeaders(token),
+        method: "DELETE",
+      });
+
+      let resp = await res.json();
+      if (res.ok) {
+        return resp.data;
+      } else {
+        throw new Error(JSON.stringify(resp));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["delivery-days"]});
+    }
+  });
+};
+
+export const useDeleteDeliveryArea = (id: string) => {
+  const token = localStorage.token;
+  let url = `${API_ENDPOINT}/postal-code/producer/delivery-area/${id}`;
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      let res = await fetch(url, {
+        headers: setHeaders(token),
+        method: "DELETE",
+      });
+
+      let resp = await res.json();
+      if (res.ok) {
+        return resp.data;
+      } else {
+        throw new Error(JSON.stringify(resp));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["delivery-days"]});
+    }
+  });
+};
