@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CloseOutlined } from "@ant-design/icons";
 
 import {
+    CommonProps,
   IDeliveryDay,
   Region,
   RegionOptionType,
@@ -14,6 +15,11 @@ import SelectedDeliveryDayConfig from "./SelectedDeliveryDayConfig";
 import SearchDeliveryAreas from "./SearchDeliveryAreas";
 import GeneralMinOrder from "./GenMinOrder";
 import { days } from "../data";
+
+interface Props extends CommonProps {
+    usedDays: string[] | undefined;
+    selectedDeliveryDays: IDeliveryDay[];
+  }
 
 const AddDeliveryDays = ({
   usedDays,
@@ -32,35 +38,7 @@ const AddDeliveryDays = ({
   onChange,
   isFetchingSearchResults,
   searchResultsData,
-}: {
-  usedDays: string[] | undefined;
-  selectedDeliveryDays: IDeliveryDay[];
-  handleDayClick: (day: string) => void;
-  handleCutOffChange: (
-    type: "day" | "time",
-    deliveryDay: IDeliveryDay,
-    value: string
-  ) => void;
-  searchResultsDivRef: React.RefObject<HTMLDivElement>;
-  searchValue: string;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  searchResultsOpen: boolean;
-  setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedRegions: SelectedRegion[];
-  handleUpdateRegion: (
-    type: RegionOptionType,
-    region: Region | undefined,
-    value: string
-  ) => void;
-  handleUpdateRegionSearched: (
-    isRegionSelected: boolean,
-    region: Region
-  ) => void;
-  isChecked: boolean;
-  onChange: CheckboxProps["onChange"];
-  isFetchingSearchResults: boolean;
-  searchResultsData: Region[] | undefined;
-}) => {
+}:Props) => {
   return (
     <>
       <div className="my-2 flex gap-4 flex-wrap mt-8">

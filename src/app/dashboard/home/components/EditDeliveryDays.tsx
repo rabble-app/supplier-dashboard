@@ -1,13 +1,11 @@
 /** @format */
 
-import { CheckboxProps } from "antd";
 import Image from "next/image";
 import { CloseOutlined } from "@ant-design/icons";
 
 import {
+    CommonProps,
   IDeliveryDay,
-  Region,
-  RegionOptionType,
   SelectedRegion,
 } from "../interfaces";
 import SelectedDeliveryDayConfig from "./SelectedDeliveryDayConfig";
@@ -16,6 +14,25 @@ import DeliveryDayHeader from "./DeliveryDayHeader";
 import GeneralMinOrder from "./GenMinOrder";
 import EyeOpenIcon from "@/components/svgs/EyeOpenIcon";
 import EyeSlashIcon from "@/components/svgs/EyeSlashIcon";
+
+interface Props extends CommonProps{
+    selectedDeliveryDayId: string | null;
+    selectedDeliveryDays: IDeliveryDay[];
+    setSelectedDeliveryDays: React.Dispatch<React.SetStateAction<IDeliveryDay[]>>;
+    showModal: (region: SelectedRegion) => void;
+    handleToggleRegion: (region: string) => void;
+    notFound: boolean;
+    isEditing: boolean;
+    handleUpdateDeliveryDay: () => void;
+    isUpdatingDeliveryDay: boolean;
+    handleUpdateDeliveryRegionsOrAreas: () => void;
+    isUpdatingDeliveryRegionsOrAreas: boolean;
+    handleDeleteDeliveryArea: (id?: string) => void;
+    editModeAreas: boolean;
+    setEditModeAreas: React.Dispatch<React.SetStateAction<boolean>>;
+    editModeDays?: boolean;
+    setEditModeDays?: React.Dispatch<React.SetStateAction<boolean>>;
+  }
 
 const EditDeliveryDays = ({
   selectedDeliveryDayId,
@@ -47,49 +64,7 @@ const EditDeliveryDays = ({
   setEditModeAreas,
   editModeDays,
   setEditModeDays,
-}: {
-  selectedDeliveryDayId: string | null;
-  selectedDeliveryDays: IDeliveryDay[];
-  setSelectedDeliveryDays: React.Dispatch<React.SetStateAction<IDeliveryDay[]>>;
-  handleDayClick: (day: string) => void;
-  handleCutOffChange: (
-    type: "day" | "time",
-    deliveryDay: IDeliveryDay,
-    value: string
-  ) => void;
-  searchResultsDivRef: React.RefObject<HTMLDivElement>;
-  searchValue: string;
-  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  searchResultsOpen: boolean;
-  setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedRegions: SelectedRegion[];
-  handleUpdateRegion: (
-    type: RegionOptionType,
-    region: Region | undefined,
-    value: string
-  ) => void;
-  handleUpdateRegionSearched: (
-    isRegionSelected: boolean,
-    region: Region
-  ) => void;
-  isChecked: boolean;
-  onChange: CheckboxProps["onChange"];
-  showModal: (region: SelectedRegion) => void;
-  handleToggleRegion: (region: string) => void;
-  isFetchingSearchResults: boolean;
-  searchResultsData: Region[] | undefined;
-  notFound: boolean;
-  isEditing: boolean;
-  handleUpdateDeliveryDay: () => void;
-  isUpdatingDeliveryDay: boolean;
-  handleUpdateDeliveryRegionsOrAreas: () => void;
-  isUpdatingDeliveryRegionsOrAreas: boolean;
-  handleDeleteDeliveryArea: (id?: string) => void;
-  editModeAreas: boolean;
-  setEditModeAreas: React.Dispatch<React.SetStateAction<boolean>>;
-  editModeDays?: boolean;
-  setEditModeDays?: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+}:Props) => {
   return (
     <>
       {notFound && (

@@ -1,5 +1,6 @@
 /** @format */
 
+import { CheckboxProps } from "antd";
 import { days, times } from "./data";
 
 export interface IDeliveryDay {
@@ -22,6 +23,34 @@ export interface SelectedRegion extends Region {
   hidden?: boolean;
   regionDbId?: string;
   originalAreasLength?: number;
+}
+
+export interface CommonProps {
+  handleDayClick: (day: string) => void;
+  handleCutOffChange: (
+    type: "day" | "time",
+    deliveryDay: IDeliveryDay,
+    value: string
+  ) => void;
+  searchResultsDivRef: React.RefObject<HTMLDivElement>;
+  searchValue: string;
+  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
+  searchResultsOpen: boolean;
+  setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedRegions: SelectedRegion[];
+  handleUpdateRegion: (
+    type: RegionOptionType,
+    region: Region | undefined,
+    value: string
+  ) => void;
+  handleUpdateRegionSearched: (
+    isRegionSelected: boolean,
+    region: Region
+  ) => void;
+  isChecked: boolean;
+  onChange: CheckboxProps["onChange"];
+  isFetchingSearchResults: boolean;
+  searchResultsData: Region[] | undefined;
 }
 
 export type RegionOptionType = "minOrder" | "area" | "genMinOrder";
