@@ -10,7 +10,6 @@ import PageWrapper from "@/components/PageWrapper";
 import Image from "next/image";
 import BackButton from "@/components/BackButton";
 import DeliveryAreasDrawer from "../../home/components/DeliveryAreasDrawer";
-import { days, regions } from "../../home/data";
 import { handleGetDeliveryDays } from "../api";
 import { formatAmount } from "@/utils";
 import { Spin } from "antd";
@@ -32,8 +31,6 @@ const DeliveryAreasOverview = () => {
 
   if (isDeliveryDaysError) return <div>Error...</div>;
 
-  console.log(deliveryDaysData);
-
   return (
     <>
       {isFetchingDeliveryDays ? (
@@ -49,16 +46,21 @@ const DeliveryAreasOverview = () => {
               title="Delivery Areas"
               subtitle="Select your area radius for delivery days and cut off time."
             />
-            <Button
-              onClick={() => {
-                setOpenDeliveryAreasDrawer(true);
-                setIsEditing(false);
-              }}
-              label="Add a New Delivery Day"
-              size="md"
-            />
+            {deliveryDaysData?.length < 7 && (
+              <Button
+                onClick={() => {
+                  setOpenDeliveryAreasDrawer(true);
+                  setIsEditing(false);
+                }}
+                label="Add a New Delivery Day"
+                size="md"
+              />
+            )}
           </div>
           <h2 className="text-black font-gosha text-xl">Set Delivery Days</h2>
+          {deliveryDaysData.length === 0 && (
+            <h3 className="mt-10 text-grey-5">No Data available.</h3>
+          )}
           {deliveryDaysData?.map((day: any, i: number) => (
             <div key={day.day} className="mt-5">
               <PageWrapper mt={20}>
@@ -84,7 +86,7 @@ const DeliveryAreasOverview = () => {
                     onClick={() => {
                       setOpenDeliveryAreasDrawer(true);
                       setIsEditing(true);
-                      setDeliveryDay(day)
+                      setDeliveryDay(day);
                     }}
                   >
                     <Image
@@ -130,7 +132,7 @@ const DeliveryAreasOverview = () => {
                       width={24}
                       height={24}
                     />
-                    <p className="text-base text-black font-semibold">Areas</p>
+                    <p className="text-base text-black font-semibold mr-5">Areas</p>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {day.areas.map((area: any, i: number) => (
@@ -154,6 +156,7 @@ const DeliveryAreasOverview = () => {
         setOpen={setOpenDeliveryAreasDrawer}
         isEditing={isEditing}
         deliveryDay={deliveryDay}
+        deliveryDaysData={deliveryDaysData}
         key={crypto.randomUUID()}
       />
     </>

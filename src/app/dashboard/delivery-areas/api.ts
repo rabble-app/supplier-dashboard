@@ -1,7 +1,9 @@
 /** @format */
 
-import { formatDate, formatRelativeTime } from "@/utils";
 import { API_ENDPOINT, setHeaders } from "../../../actions/config";
+import { message } from "antd";
+import { Region } from "../home/components/DeliveryAreasDrawer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const handleGetDeliveryDays = async () => {
   const token = localStorage.token;
@@ -14,21 +16,21 @@ export const handleGetDeliveryDays = async () => {
       headers: setHeaders(token),
     });
 
-    let data:any = await res.json();
+    let data: any = await res.json();
     if (res.ok) {
       return data.data?.map((item: any) => {
-        const mergeProducerAreas=(regions:any) =>{
-          const mergedAreas:any = [];
-      
-          regions.forEach((region:any) => {
-              mergedAreas.push(...region.producerAreas);
+        const mergeProducerAreas = (regions: any) => {
+          const mergedAreas: any = [];
+
+          regions.forEach((region: any) => {
+            mergedAreas.push(...region.producerAreas);
           });
-      
+
           return mergedAreas;
-      }
+        };
         return {
           ...item,
-          areas: mergeProducerAreas(item.regions)
+          areas: mergeProducerAreas(item.regions),
         };
       });
     } else {
@@ -36,23 +38,26 @@ export const handleGetDeliveryDays = async () => {
     }
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
 };
 
-export const handleGetCurrentProducer = async (producerId: string) => {
+export const handleSearchRegionsOrAreas = async (
+  query: string
+): Promise<Region[]> => {
   const token = localStorage.token;
 
-  let url = `${API_ENDPOINT}/users/producer/${producerId}`;
+  let url = `${API_ENDPOINT}/postal-code/search/${query}`;
 
   try {
-    console.log("FETCHING CURRENT PRODUCER...");
+    console.log("FETCHING SEARCH RESULTS...");
     let res = await fetch(url, {
       headers: setHeaders(token),
     });
 
-    let data = await res.json();
+    let data: any = await res.json();
     if (res.ok) {
       return data.data;
     } else {
@@ -60,91 +65,35 @@ export const handleGetCurrentProducer = async (producerId: string) => {
     }
   } catch (error: any) {
     const errorObject = JSON.parse(error.message);
+    message.error(errorObject.message);
     console.log(errorObject);
     return errorObject;
   }
 };
 
-export const handleUpdateProducer = async (producerId: string, data?: any) => {
+export const useAddDeliveryDays = () => {
   const token = localStorage.token;
+  let url = `${API_ENDPOINT}/postal-code/producer/delivery-days`;
 
-  let url = `${API_ENDPOINT}/users/producer/${producerId}`;
+  const queryClient = useQueryClient();
 
-  try {
-    console.log("UPDATING CURRENT PRODUCER...");
-    let res = await fetch(url, {
-      headers: setHeaders(token),
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
+  return useMutation({
+    mutationFn: async (data: any) => {
+      let res = await fetch(url, {
+        headers: setHeaders(token),
+        method: "POST",
+        body: JSON.stringify(data),
+      });
 
-    let resp = await res.json();
-    if (res.ok) {
-      return resp.data;
-    } else {
-      throw new Error(JSON.stringify(resp));
+      let resp = await res.json();
+      if (res.ok) {
+        return resp.data;
+      } else {
+        throw new Error(JSON.stringify(resp));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["delivery-days"]});
     }
-  } catch (error: any) {
-    const errorObject = JSON.parse(error.message);
-    return errorObject;
-  }
-};
-
-export const handleRemoveProducerCategory = async (id?: string) => {
-  const token = localStorage.token;
-
-  let url = `${API_ENDPOINT}/users/producer/category/remove`;
-
-  const data = {
-    producerCategoryId: id,
-  };
-
-  try {
-    let res = await fetch(url, {
-      headers: setHeaders(token),
-      method: "DELETE",
-      body: JSON.stringify(data),
-    });
-
-    let resp = await res.json();
-    if (res.ok) {
-      return resp.data;
-    } else {
-      throw new Error(JSON.stringify(resp));
-    }
-  } catch (error: any) {
-    const errorObject = JSON.parse(error.message);
-    return errorObject;
-  }
-};
-
-
-export const handleUploadProducerImage = async (id: string, file:File) => {
-  const token = localStorage.token;
-
-  let url = `${API_ENDPOINT}/uploads/producer-pix`;
-
-  console.log("UPLOADING PRODUCER IMAGE...");
-
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('producerId', id);
-
-  try {
-    let res = await fetch(url, {
-      headers: setHeaders(token, null),
-      method: "POST",
-      body: formData,
-    });
-
-    let resp = await res.json();
-    if (res.ok) {
-      return resp.data;
-    } else {
-      throw new Error(JSON.stringify(resp));
-    }
-  } catch (error: any) {
-    const errorObject = JSON.parse(error.message);
-    return errorObject;
-  }
+  });
 };

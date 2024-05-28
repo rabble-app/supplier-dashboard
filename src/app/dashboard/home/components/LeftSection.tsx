@@ -72,7 +72,7 @@ const LeftSection = ({
               />
               <TeamDetailsInfo
                 title="Business phone number"
-                subtitle={`+44${producerData?.user?.phone}` || "N/A"}
+                subtitle={`${producerData?.user?.phone}` || "N/A"}
               />
               <TeamDetailsInfo
                 title="Business website"
