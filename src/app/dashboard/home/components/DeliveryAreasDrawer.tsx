@@ -49,6 +49,8 @@ interface SelectedRegion extends Region {
   originalAreasLength?: number;
 }
 
+type RegionOptionType = "minOrder" | "area" | "genMinOrder";
+
 const DeliveryAreasDrawer = ({
   open,
   setOpen,
@@ -220,7 +222,7 @@ const DeliveryAreasDrawer = ({
   };
 
   const handleUpdateRegion1 = (
-    type: "minOrder" | "area" | "genMinOrder",
+    type: RegionOptionType,
     region: Region | undefined,
     value: string
   ) => {
@@ -498,7 +500,7 @@ const AddDeliveryDays = ({
   setSearchResultsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedRegions: SelectedRegion[];
   handleUpdateRegion: (
-    type: "minOrder" | "area" | "genMinOrder",
+    type: RegionOptionType,
     region: Region | undefined,
     value: string
   ) => void;
@@ -819,7 +821,7 @@ const GeneralMinOrder = ({
   onChange: CheckboxProps["onChange"];
   isChecked: boolean;
   handleUpdateRegion: (
-    type: "minOrder" | "area" | "genMinOrder",
+    type: RegionOptionType,
     region: Region | undefined,
     value: string
   ) => void;
