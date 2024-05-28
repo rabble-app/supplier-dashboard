@@ -18,7 +18,6 @@ import EyeSlashIcon from "@/components/svgs/EyeSlashIcon";
 interface Props extends CommonProps{
     selectedDeliveryDayId: string | null;
     selectedDeliveryDays: IDeliveryDay[];
-    setSelectedDeliveryDays: React.Dispatch<React.SetStateAction<IDeliveryDay[]>>;
     showModal: (region: SelectedRegion) => void;
     handleToggleRegion: (region: string) => void;
     notFound: boolean;

@@ -17,7 +17,7 @@ export default function SelectedDeliveryDayConfig({
   handleUpdateDeliveryDay,
   editModeDays,
   setEditModeDays,
-}: {
+}: Readonly<{
   selectedDeliveryDays: IDeliveryDay[];
   handleDayClick: (day: (typeof days)[number]) => void;
   handleCutOffChange: (
@@ -31,7 +31,7 @@ export default function SelectedDeliveryDayConfig({
   handleUpdateDeliveryDay?: () => void;
   editModeDays?: boolean;
   setEditModeDays?: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+}>) {
   return (
     <div className="my-8 mb-2">
       <DeliveryDayHeader

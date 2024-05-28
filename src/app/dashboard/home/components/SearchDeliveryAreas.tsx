@@ -4,7 +4,6 @@ import { ChangeEvent } from "react";
 import { Spin } from "antd";
 import Image from "next/image";
 
-
 import Input from "@/components/auth/Input";
 import { Region } from "../interfaces";
 
@@ -19,7 +18,7 @@ export default function SearchDeliveryAreas({
   isFetchingSearchResults,
   searchResultsData,
   disabled,
-}: {
+}: Readonly<{
   searchResultsDivRef: React.RefObject<HTMLDivElement>;
   searchValue: string;
   setSearchValue: React.Dispatch<React.SetStateAction<string>>;
@@ -33,7 +32,7 @@ export default function SearchDeliveryAreas({
   isFetchingSearchResults: boolean;
   searchResultsData: Region[] | undefined;
   disabled?: boolean;
-}) {
+}>) {
   return (
     <div className="my-8 mb-2 relative z-[9999]">
       <h2 className="text-grey-2 text-xl font-gosha mb-4">

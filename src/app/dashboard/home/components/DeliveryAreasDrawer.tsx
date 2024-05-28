@@ -104,16 +104,18 @@ const DeliveryAreasDrawer = ({
             cutOffTime: deliveryDay.cutOffTime,
           },
         ]);
-        setSelectedRegions((prev) => {
+        setSelectedRegions(() => {
+          const getProducerAreas = (region: SelectedRegion) =>
+            region.producerAreas.map((area: any) => ({
+              id: area.area.id,
+              name: area.area.name,
+              areaDbId: area.id,
+            }));
           return deliveryDay.regions.map((region: SelectedRegion) => {
             return {
               id: region.region.id,
               name: region.region.name,
-              postalCodeArea: region.producerAreas.map((area: any) => ({
-                id: area.area.id,
-                name: area.area.name,
-                areaDbId: area.id,
-              })),
+              postalCodeArea: getProducerAreas(region),
               minOrder: region.minimumOrder,
               originalAreasLength: region.producerAreas.length,
               regionDbId: region.id,
@@ -336,7 +338,7 @@ const DeliveryAreasDrawer = ({
   };
 
   const handleDeleteDeliveryArea = (id?: string) => {
-    deleteDeliveryArea(id!!, {
+    deleteDeliveryArea(id!, {
       onSuccess: () => {
         message.success("Delivery area deleted successfully");
         setEditModeAreas(false);
@@ -447,7 +449,6 @@ const DeliveryAreasDrawer = ({
               <EditDeliveryDays
                 selectedDeliveryDayId={selectedDeliveryDayId}
                 selectedDeliveryDays={selectedDeliveryDays}
-                setSelectedDeliveryDays={setSelectedDeliveryDays}
                 handleDayClick={handleDayClick}
                 handleCutOffChange={handleCutOffChange}
                 searchResultsDivRef={searchResultsDivRef}

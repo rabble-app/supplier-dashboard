@@ -13,7 +13,7 @@ export default function DeliveryDayHeader({
   className = "",
   isEditing,
   isUpdatingDeliveryDay,
-}: {
+}: Readonly<{
   title: string;
   editMode?: boolean;
   setEditMode?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,7 +21,7 @@ export default function DeliveryDayHeader({
   className?: string;
   isEditing?: boolean;
   isUpdatingDeliveryDay?: boolean;
-}) {
+}>) {
   return (
     <div
       className={`flex gap-2 items-center ${

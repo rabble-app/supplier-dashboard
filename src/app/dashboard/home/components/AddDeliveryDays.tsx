@@ -1,15 +1,11 @@
 /** @format */
 
-import { CheckboxProps } from "antd";
 import Image from "next/image";
 import { CloseOutlined } from "@ant-design/icons";
 
 import {
     CommonProps,
   IDeliveryDay,
-  Region,
-  RegionOptionType,
-  SelectedRegion,
 } from "../interfaces";
 import SelectedDeliveryDayConfig from "./SelectedDeliveryDayConfig";
 import SearchDeliveryAreas from "./SearchDeliveryAreas";
