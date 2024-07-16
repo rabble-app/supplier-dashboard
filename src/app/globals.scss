@@ -127,6 +127,12 @@ h6 {
   }
 }
 
+.custom-spin-white {
+  .ant-spin-dot-item {
+    background-color: var(--white-color) !important;
+  }
+}
+
 .custom-table,
 .custom-check {
   &.ant-table-wrapper .ant-table-tbody .ant-table-row.ant-table-row-selected>.ant-table-cell {

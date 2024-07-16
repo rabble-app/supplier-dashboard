@@ -32,6 +32,7 @@ import {
 import OrdersDrawer from "../admin/dashboard/orders/components/OrdersDrawer";
 import usePage from "../auth/stripe/onboard-user/usePage";
 import DeliveryAreasDrawer from "./home/components/DeliveryAreasDrawer";
+import { handleGetDeliveryDays } from "./delivery-areas/api";
 
 export interface OrdersType {
   key: string;
@@ -75,6 +76,15 @@ const Dashboard = () => {
   } = useQuery({
     queryKey: ["current-producer"],
     queryFn: () => handleGetCurrentProducer(authUser?.id),
+  });
+
+  const {
+    data: deliveryDaysData,
+    isFetching: isFetchingDeliveryDays,
+    isError: isDeliveryDaysError,
+  } = useQuery({
+    queryKey: ["delivery-days"],
+    queryFn: () => handleGetDeliveryDays(),
   });
 
   useEffect(() => {
@@ -154,7 +164,7 @@ const Dashboard = () => {
 
   const router = useRouter();
 
-  if (isProducerError || isError || isCategoriesError)
+  if (isProducerError || isError || isCategoriesError || isDeliveryDaysError)
     return <div>Error...</div>;
 
   const columns: ColumnsType<OrdersType> = [
@@ -208,14 +218,21 @@ const Dashboard = () => {
     },
   ];
 
+  console.log(34, deliveryDaysData);
+
   return (
     <>
       <div className="flex h-screen gap-5">
         <LeftSection
           isFetchingProducer={isFetchingProducer}
+          isFetchingDeliveryDays={isFetchingDeliveryDays}
           producerData={producerData}
           onClick={() => setOpenSupplierDrawer(true)}
-          onClickDeliveryAreas={()=>setOpenDeliveryAreasDrawer(true)}
+          onClickDeliveryAreas={() =>
+            deliveryDaysData.length
+              ? router.push("/dashboard/delivery-areas")
+              : setOpenDeliveryAreasDrawer(true)
+          }
         />
         <div className="bg-white h-full w-full py-8 px-5 relative">
           <MainHeading
